@@ -1,0 +1,137 @@
+// @import 'node_modules/@delon/theme/styles/default';
+:host {
+  ::ng-deep {
+    .container-fluid {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      background: #f0f2f5;
+      background-image: url('../../../../assets/images/login.jpg');
+      background-repeat: no-repeat;
+      background-position: center 110px;
+      background-size: 100%;
+      width: 100%;
+    }    
+    .wrap {
+      padding: 32px 0;
+      flex: 1;
+    }
+    .ant-form-item {
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .container-fluid {
+        background-image: url('../../../../assets/images/login.jpg');
+        background-repeat: no-repeat;
+        background-position: center 0px;
+        background-size: 100%;
+      }
+      .wrap {
+        padding: 112px 0 24px;
+      }
+    }
+    .top {
+      text-align: center;
+    }
+    .header {
+      height: 44px;
+      line-height: 44px;
+      a {
+        text-decoration: none;
+      }
+    }
+    .logo {
+      height: 44px;
+      margin-right: 16px;
+    }
+    .title {
+      font-size: 33px;
+      color: rgba(0,0,0,.85);
+      font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      font-weight: 600;
+      position: relative;
+      vertical-align: middle;
+    }
+    .desc {
+      font-size: 16px;
+      color: rgba(0,0,0,.45);
+      margin-top: 12px;
+      margin-bottom: 40px;
+    }
+
+    form
+    {
+      display: block;
+      width: 368px;
+      margin: 0 auto;
+      ::ng-deep {
+        .ant-tabs .ant-tabs-bar {
+          border-bottom: 0;
+          margin-bottom: 24px;
+          text-align: center;
+        }
+        .ant-tabs-tab {
+          font-size: 16px;
+          line-height: 24px;
+        }
+        .ant-input-affix-wrapper .ant-input:not(:first-child) {
+          padding-left: 34px;
+        }
+        .icon {
+          font-size: 24px;
+          color: rgba(0, 0, 0, 0.2);
+          margin-left: 16px;
+          vertical-align: middle;
+          cursor: pointer;
+          transition: color 0.3s;
+          &:hover {
+            color: blue;
+            // @primary-color;
+          }
+        }
+
+        .ant-btn__block
+{
+  width: 100%;
+}
+
+        .other {
+          text-align: left;
+          margin-top: 24px;
+          line-height: 22px;
+          nz-tooltip {
+            vertical-align: middle;
+          }
+          .register {
+            float: right;
+          }
+        }
+      }      
+    }
+
+    .ad-global-footer {
+      display:block;
+      padding:0 16px;
+      margin:48px 0 24px;
+      text-align:center
+    }
+    .ad-global-footer .links {
+      margin-bottom:8px
+    }
+    .ad-global-footer .links a {
+      color:rgba(0,0,0,.45);
+      transition:all .3s
+    }
+    .ad-global-footer .links a:not(:last-child) {
+      margin-right:40px
+    }
+    .ad-global-footer .links a:hover {
+      color:rgba(0,0,0,.65)
+    }
+    .ad-global-footer .copyright {
+      color:rgba(0,0,0,.45);
+      font-size:14px
+    }
+  }
+}

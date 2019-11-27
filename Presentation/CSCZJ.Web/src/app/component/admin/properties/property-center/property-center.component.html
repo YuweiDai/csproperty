@@ -1,0 +1,12 @@
+<div nz-row>
+    <div nz-col nzSpan="4">
+        <app-leftmenu [menuItems]="menuItems" [height]="containerHeight"></app-leftmenu>
+    </div>
+    <div nz-col nzSpan="20" class="properties-content">
+        <perfect-scrollbar [ngStyle]="{'height.px': containerHeight }" [config]="perfectScrollbarConfig">
+                <router-outlet></router-outlet>
+        </perfect-scrollbar>
+    </div>
+</div>
+
+

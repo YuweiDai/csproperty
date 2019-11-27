@@ -1,0 +1,74 @@
+<div class="table-header">
+    <div nz-row>
+        <div nz-col nzSpan="6">
+                <!-- <nz-button-group>
+                        <button nz-button><i class="iconfont icon-xuanze"></i> 全选</button>
+                        <button nz-button><i class="iconfont icon-fanxuan"></i> 反选</button>
+                        <button nz-button><i class="iconfont icon-quxiaoxuanze"></i> 取消选择</button>
+                </nz-button-group>          [(ngModel)="q"]   -->
+            </div>              
+        <div nz-col nzSpan="6" nzOffset="12">
+            <nz-input-group nzSuffixIcon="anticon anticon-search">
+                <input #searchBox id="search-box" type="text" nz-input placeholder="输入关键字搜索..."  [ngModel]="q"
+                (ngModelChange)="search(searchBox.value)"  >
+              </nz-input-group>          
+        </div>
+    </div>
+</div>
+<div class="table-content">
+        <nz-table #nzTable nzBordered [nzLoading]="loading" [nzData]="dataset" [nzScroll]="tableOption.nzScroll" [nzFrontPagination]="false" [nzShowPagination]="false" [nzSize]="small">
+            <thead (nzSortChange)="sort($event)" nzSingleSort>
+                <tr>
+                <!-- <th nzShowCheckbox nzShowRowSelection [nzSelections]="listOfSelection" [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>                         -->
+                    <th class="text-center" nzWidth="70px" nzLeft="0px">序号</th>                
+                    <ng-container *ngFor="let column of tableOption.columns">
+                        <th [ngClass]="{'text-center': column.noCenter}" *ngIf="column.left>0 && column.showSort" [nzShowSort]="column.showSort" [nzSortKey]="column.name" nzWidth="{{column.width}}px" nzLeft="{{column.left}}px">
+                            {{column.title}}
+                        </th>
+                        <th [ngClass]="{'text-center': column.noCenter}" *ngIf="column.left>0 && !column.showSort" nzWidth="{{column.width}}px" nzLeft="{{column.left}}px">
+                            {{column.title}}
+                        </th>
+                        <th [ngClass]="{'text-center': column.noCenter}" *ngIf="column.left==0 && column.showSort" [nzShowSort]="column.showSort" [nzSortKey]="column.name" nzWidth="{{column.width}}px">
+                            {{column.title}}
+                        </th>                                                
+                        <th  [ngClass]="{'text-center': column.noCenter}" *ngIf="column.left==0 && !column.showSort" nzWidth="{{column.width}}px">
+                            {{column.title}}
+                        </th>                        
+                    </ng-container >
+                    <th nzWidth="200px" nzRight="0px"></th>
+                </tr>
+            </thead>
+            <tbody>                
+                <tr *ngFor="let data of nzTable.data; let i = index">
+                        <!-- <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="refreshStatus($event)"></td>                     -->
+                    <td  class="text-center"  nzLeft="0px">{{(tableOption.pageSize.pageIndex-1)*tableOption.pageSize.pageSize+i+1}}</td>
+                    <ng-container *ngFor="let column of tableOption.columns">
+                        <td [ngClass]="{'text-center': column.noCenter}" *ngIf="column.left>0" nzLeft="{{column.left}}px">
+                            {{data[column.name]}}
+                        </td>
+                        <td [ngClass]="{'text-center': column.noCenter}" *ngIf="column.left==0">
+                            {{data[column.name]}}
+                        </td>                        
+                    </ng-container >                    
+                    <td  class="text-center"  nzRight="0px">
+                            <a [routerLink]="['./edit', data.id]">
+                                <i class="anticon anticon-edit"></i> 变更</a>                        
+                        <a [routerLink]="'./'+data.id">查询详情</a>
+                         <!-- | <a>删除</a> -->
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>     
+</div>
+<!-- [nzPageSize]="tableOption.pageSize.size"  -->
+<div class="table-footer">
+  <div nz-row *ngIf="!loading">
+      <div nz-col nzSpan="24" class="text-center" *ngIf="tableOption.pageSize.total>0">
+        <nz-pagination nzShowSizeChanger nzShowQuickJumper [(nzPageIndex)]="tableOption.pageSize.pageIndex" [nzTotal]="tableOption.pageSize.total" [nzShowTotal]="rangeTemplate"
+        [(nzPageSize)]="tableOption.pageSize.pageSize" [nzPageSizeOptions]="[15,50,100,200,500]" (nzPageIndexChange)="pageIndexChange()" (nzPageSizeChange)="pageSizeChange()"></nz-pagination>
+        <ng-template #rangeTemplate let-range="range" let-total>
+                第{{range[0]}}至{{range[1]}}  共{{total}}条数据
+        </ng-template>        
+      </div>
+  </div>
+</div>

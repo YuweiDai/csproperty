@@ -1,0 +1,8 @@
+<div class="leftMenu">
+  <ul class="leftMenu-list" [ngStyle]="{'height.px':height}">
+      <li class="leftMenu-item" [ngClass]="{'active': item.active}"(click)="menuClick(item)" routerLink="{{item.url}}" *ngFor="let item of menuItems">
+        <i class="iconfont {{item.icon}}"></i>
+        <div class="text">{{item.title}}</div>
+      </li>         
+  </ul>
+</div>

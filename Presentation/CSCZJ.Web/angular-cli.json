@@ -1,0 +1,77 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "project": {
+    "name": "csczj.web"
+  },
+  "apps": [
+    {
+      "root": "src",
+      "outDir": "dist",
+      "assets": [
+        "assets",
+        "favicon.ico",
+        "web.config"
+      ],
+      "index": "index.html",
+      "main": "main.ts",
+      "polyfills": "polyfills.ts",
+      "test": "test.ts",
+      "tsconfig": "tsconfig.app.json",
+      "testTsconfig": "tsconfig.spec.json",
+      "prefix": "app",
+      "styles": [
+        "styles.less"
+      ],
+      "scripts": [
+        "../node_modules/echarts/dist/echarts.min.js",
+        "../node_modules/wicket/wicket.js",        
+        "../node_modules/leaflet/dist/leaflet.js",
+        "../node_modules/wicket/wicket-leaflet.js",  
+        "../node_modules/leaflet/dist/leaflet.js",
+        "../node_modules/leaflet-iconlayers/dist/iconLayers.js",
+        "../node_modules/wicket/wicket.js",
+        "../node_modules/wicket/wicket-leaflet.js",
+       
+        "../node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js",
+        "../node_modules/heatmap.js/build/heatmap.min.js",
+        "../node_modules/heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js",
+
+        "../node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js",
+        "../node_modules/leaflet-draw/dist/leaflet.draw-src.js"
+      ],
+      "environmentSource": "environments/environment.ts",
+      "environments": {
+        "dev": "environments/environment.ts",
+        "prod": "environments/environment.prod.ts"
+      }
+    }
+  ],
+  "e2e": {
+    "protractor": {
+      "config": "./protractor.conf.js"
+    }
+  },
+  "lint": [
+    {
+      "project": "src/tsconfig.app.json",
+      "exclude": "**/node_modules/**"
+    },
+    {
+      "project": "src/tsconfig.spec.json",
+      "exclude": "**/node_modules/**"
+    },
+    {
+      "project": "e2e/tsconfig.e2e.json",
+      "exclude": "**/node_modules/**"
+    }
+  ],
+  "test": {
+    "karma": {
+      "config": "./karma.conf.js"
+    }
+  },
+  "defaults": {
+    "styleExt": "less",
+    "component": {}
+  }
+}

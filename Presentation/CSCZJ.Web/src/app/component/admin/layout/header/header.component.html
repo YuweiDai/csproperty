@@ -1,0 +1,45 @@
+<div class="headerWrapper">
+  <header class="header">
+    <div class="container-fluid">
+      <h1>
+        <img src="../../../assets/images/element-logo.svg"
+          alt="element-logo"
+          class="nav-logo"
+          draggable="false">
+        <img src="../../../assets/images/element-logo-small.svg"
+          alt="element-logo"
+          class="nav-logo-small"
+          draggable="false">
+          <!-- <i class="iconfont icon-loufang"></i> 资产管理系统 -->
+      </h1>
+      <ul class="nav">
+        <li class="nav-item">
+          <a  routerLinkActive="active" [routerLink]="['./dashboard']"><i class="iconfont icon-tongji"></i> 资产大数据</a>
+        </li>
+        <li class="nav-item">
+          <a  routerLinkActive="active" [routerLink]="['./properties']" ><i class="iconfont icon-guanli"></i> 资产管理</a>
+        </li>
+        <li class="nav-item">
+          <a  routerLinkActive="active" [routerLink]="['./map']" ><i class="iconfont icon-ditu"></i> 资产一张图</a>
+        </li>
+        <!-- <li class="nav-item">
+          <a  routerLinkActive="active" [routerLink]="['./manager']" ><i class="iconfont icon-guanlizhongxin"></i> 系统设置</a>
+        </li>     -->
+      </ul>
+
+      <div class="user-info">
+          <nz-dropdown class="user-name" [nzClickHide]="false" [(nzVisible)]="visible">
+              <a nz-dropdown>
+                  财政局 <i class="anticon anticon-down"></i>
+              </a>
+              <ul nz-menu nzSelectable>
+                <li nz-menu-item (click)='Exit()'>
+                  <a>退出</a>
+                </li>
+              </ul>
+            </nz-dropdown>        
+        <nz-avatar nzIcon="anticon anticon-user" nzSrc="../../../assets/images/user.jpg"></nz-avatar>
+      </div>
+    </div>
+  </header>
+</div>

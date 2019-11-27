@@ -1,0 +1,125 @@
+<div class="mapContainer" >
+  <div id="map" [ngStyle]="{'height.px': mapHeight}"></div>
+  <!-- <button (click)="panTO()" style="position: absolute;bottom: 10px;left: 10px;"> click</button>
+  <button (click)="showLngLat()" style="position: absolute;bottom: 10px;left: 10px;"> click2</button> -->
+  
+
+</div>
+
+<!-- 资产详细信息 -->
+<div nz-sider style="position: absolute;width: 350px;z-index: 10000;top:140px;height: 300px;left: 10px;" *ngIf="basicInfo" class="detailContent">
+  <div nz-col nzSpan="24">        
+    <nz-card nzTitle="资产详情列表" [nzExtra]="extraTemplate">
+      <div nz-row [nzGutter]="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 32 }">
+        <div nz-col  nzXs="24" nzSm="24" nzMd="24" nzLg="24" nzXl="24">
+            <nz-table  #nzTable nzBordered nzTitle="基本信息" [nzData]="basicInfo" [nzLoading]="loading" [nzFrontPagination]="false" [nzShowPagination]="false" [nzSize]="small"[nzScroll]="{ y: '550px' }">
+                <tbody>
+                  <tr *ngFor="let data of nzTable.data">
+                    <td nzWidth="300px">{{data.title}}</td>                          
+                    <td>{{data.value}}</td>
+                  </tr>                      
+                </tbody>
+              </nz-table>
+        </div>                            
+      </div>                
+    </nz-card>
+    <ng-template #extraTemplate>
+    </ng-template>
+</div>
+<a  (click)='closeDetail()' style="position: absolute;right: 5px;" >返回</a>
+</div>
+
+<!-- 搜索栏 -->
+<div class="example-input" style="position: absolute;width: 293px;z-index: 100000;top:90px;left: 10px;" (scroll)="onScroll($event)">
+ 
+        <input placeholder="请输入资产名称、地址......" nz-input [(ngModel)]="inputValue" (input)="onInput($event.target?.value)" [nzAutocomplete]="auto" style="height: 40px;">
+        <nz-autocomplete nzBackfill #auto style="z-index: 100000">
+        <nz-auto-option *ngFor="let option of options" [nzValue]="option.value" (click)="findThisOne(option)">
+        {{option.value}}
+        </nz-auto-option>
+        </nz-autocomplete>     
+
+  <button id="search-button" data-title="搜索" data-tooltip="2"></button>
+</div>
+
+<!-- 高级搜索 -->
+<div style="position: absolute;left: 380px;top:95px;z-index: 10000;" >
+  <nz-popover [nzTitle]="'高级搜索'" [nzPlacement]="'bottomLeft'"  [nzTrigger]="'click'" [(nzVisible)]="visible">
+    <button nz-button nz-popover [nzType]="'primary'">高级搜索</button>
+    <ng-template #nzTemplate>
+
+      <p>资产单位</p>
+      <nz-checkbox-group [(ngModel)]="propertyGoverment" ></nz-checkbox-group><br>
+      <nz-divider></nz-divider>
+      <p>资产类别</p>
+      <nz-checkbox-group [(ngModel)]="propertyType" ></nz-checkbox-group><br>
+      <nz-divider></nz-divider>
+      <p>所属乡镇</p>
+      <nz-checkbox-group [(ngModel)]="regionType" ></nz-checkbox-group><br>
+      <nz-divider></nz-divider>
+      <p>使用现状</p>
+      <nz-checkbox-group [(ngModel)]="currentType" ></nz-checkbox-group><br>
+      <nz-divider></nz-divider>
+      <p>产权情况</p>
+      <nz-checkbox-group [(ngModel)]="propertyRights" ></nz-checkbox-group><br>
+      <nz-divider></nz-divider>
+
+      <p>建筑面积</p>
+      <nz-checkbox-group [(ngModel)]="area" ></nz-checkbox-group><br>
+      <nz-divider></nz-divider>
+
+      <button nz-button [nzType]="'danger'" (click)='Close()' >关闭</button>
+      <button nz-button [nzType]="'default'" (click)='Reset()'>重置</button>
+      <button nz-button [nzType]="'primary'" (click)='Submit()' style="margin-left: 250px">确定</button>
+      
+
+    </ng-template>
+  </nz-popover>
+</div>
+
+
+<!-- 高级搜索返回栏内容 -->
+<div  style="position: absolute;width: 350px;z-index: 10000;top:140px;left: 10px;" *ngIf="showCollapse">
+
+  <nz-collapse >
+    <nz-collapse-panel  *ngFor="let panel of panels" [nzHeader]="panel.name" [nzActive]="panel.active" [nzDisabled]="panel.disabled">
+    <!-- <div  *ngFor="let p of searchProperties" nz-col nzSpan="24">
+    <div  style="height: 80px;">
+      <div>  
+        <p style="font-size: 16px;color: red;">{{p.name}}</p>
+        <p style="color: blue">{{p.address}}</p>
+      </div>   
+      <img src="../../assets/js/MarkerClusterGroup/房屋.png" style="position: relative;left: 200px;bottom: 80px;width: 90px;"/>
+    </div>
+    <nz-divider></nz-divider>
+   </div> -->
+   <perfect-scrollbar [ngStyle]="{'height.px': containerHeight }" [config]="perfectScrollbarConfig">
+    <div nz-sider *ngFor="let p of searchProperties">
+      <div (click)='chooseProperty(p)'>
+          <nz-card style="width:300px;" [nzCover]="coverTemplate" >
+              <nz-card-meta nzTitle="名称：{{p.name}}" nzDescription="地址：{{p.address}}" [nzAvatar]="avatarTemplate"></nz-card-meta>
+            </nz-card>
+            <ng-template #avatarTemplate>
+              <nz-avatar nzSrc="../../assets/js/MarkerClusterGroup/map-marker.png"></nz-avatar>
+            </ng-template>
+            <ng-template #coverTemplate>
+              <img alt="example" src="../../assets/js/MarkerClusterGroup/pp.png"/>
+            </ng-template>
+            <nz-divider></nz-divider>
+
+      </div>
+    
+    </div>
+</perfect-scrollbar>
+    
+    </nz-collapse-panel>
+  </nz-collapse>
+
+</div>
+
+<!-- 聚合图热力图切换 -->
+<div style="position: absolute;width: 350px;z-index: 10000;top:100px;right:-180px;">
+  <nz-switch [ngModel]="switchModel1" nzCheckedChildren="关闭全景" nzUnCheckedChildren="加载全景" (click)='SwitchPanos()'></nz-switch>
+  <nz-switch [ngModel]="switchModel" nzCheckedChildren="聚合图" nzUnCheckedChildren="热力图" (click)='Switch()'></nz-switch>
+ 
+</div>

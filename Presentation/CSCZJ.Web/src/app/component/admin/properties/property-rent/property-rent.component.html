@@ -1,0 +1,139 @@
+<div class="component-container">
+    <div nz-row>
+        <div nz-col nzSpan="24" class="breadcrumb-container">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    <a [routerLink]="'../'">
+                        <span> 资产管理</span>
+                    </a>
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{title}}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+        <!-- {{propertyRent|json}} -->
+        <div nz-col nzSpan="24">
+
+            <nz-spin nzTip='加载中...' [nzSpinning]='loading'>
+                <nz-card [nzTitle]="'资产出租'" [nzExtra]="extraTemplate">
+                    <!-- {{propertyRent|json}} {{selectedProperties|json}} {{timeRange|json}} {{priceControls|json}} -->
+                    <form nz-form [formGroup]="basicInfoForm">
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="4" nzRequired>出租资产</nz-form-label>
+                            <nz-form-control [nzSpan]="20" nzHasFeedback>
+                                <nz-select formControlName="pIds" nzMode="multiple" [(ngModel)]="selectedProperties" nzPlaceHolder="请选择要出租的资产..." nzAllowClear
+                                    nzShowSearch [nzServerSearch]="true" (nzOnSearch)="onSearch($event)">
+                                    <ng-container *ngFor="let o of optionList">
+                                        <nz-option nzCustomContent  *ngIf="!isPropertyLoading" [nzValue]="o.id" [nzLabel]="o.name">{{o.name}} ({{o.address}})</nz-option>
+                                    </ng-container>
+                                    <nz-option *ngIf="isPropertyLoading" nzDisabled nzCustomContent>
+                                        <i class="anticon anticon-loading anticon-spin loading-icon"></i> 搜索数据...
+                                    </nz-option>
+                                </nz-select>
+
+                                <nz-form-explain *ngIf="basicInfoForm.get('pIds').dirty && basicInfoForm.get('pIds').errors">
+                                    <ng-container *ngIf="basicInfoForm.get('pIds').hasError('required')">
+                                        请选择要出租的资产！
+                                    </ng-container>
+                                </nz-form-explain>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="4" nzRequired>租用人</nz-form-label>
+                            <nz-form-control [nzSpan]="20" nzHasFeedback>
+                                <input nz-input formControlName="pName" [(ngModel)]="propertyRent.name" placeholder="输入租用人..." type="text">
+                                <nz-form-explain *ngIf="basicInfoForm.get('pName').dirty&&basicInfoForm.get('pName').errors">
+                                    <ng-container *ngIf="basicInfoForm.get('pName').hasError('required')">
+                                        请输入租用人！
+                                    </ng-container>
+                                </nz-form-explain>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="4" nzRequired>出租起止日期</nz-form-label>
+                            <nz-form-control [nzSpan]="20" nzHasFeedback>
+                                <nz-range-picker formControlName="pTimeRange" [nzPlaceHolder]="[startTime, endTime]" [(ngModel)]="timeRange" [nzFormat]="dateFormat" (ngModelChange)="timeRangeChange()"></nz-range-picker>
+                                <nz-form-explain *ngIf="basicInfoForm.get('pTimeRange').dirty && basicInfoForm.get('pTimeRange').errors">
+                                    <ng-container *ngIf="basicInfoForm.get('pTimeRange').hasError('required')">
+                                        请选择出租起止日期！
+                                    </ng-container>
+                                </nz-form-explain>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="4" nzRequired>租用面积</nz-form-label>
+                            <nz-form-control [nzSpan]="20">
+                                <nz-input-number formControlName="pRentArea" [(ngModel)]="propertyRent.rentArea" [nzMin]="1" [nzMax]="1000000000" [nzStep]="0.01"></nz-input-number>
+                                平方米
+                                <nz-form-explain *ngIf="basicInfoForm.get('pRentArea').dirty && basicInfoForm.get('pRentArea').errors">
+                                    <ng-container *ngIf="basicInfoForm.get('pRentArea').hasError('required')">
+                                        请输入土地面积！
+                                    </ng-container>
+                                </nz-form-explain>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item *ngFor="let control of priceControls">
+                            <nz-form-label [nzSpan]="4" nzRequired>第{{control.index}}年租金</nz-form-label>
+                            <nz-form-control [nzSpan]="10">
+                                <nz-input-number [formControlName]="'pRentYear'+control.index" [(ngModel)]="control.price" [nzMin]="1" [nzMax]="1000000000"
+                                    [nzStep]="0.01"></nz-input-number>
+                                元
+                                <nz-form-explain *ngIf="basicInfoForm.get('pRentYear'+control.index).dirty && basicInfoForm.get('pRentYear'+control.index).errors">
+                                    <ng-container *ngIf="basicInfoForm.get('pRentYear'+control.index).hasError('required')">
+                                        请输入第{{control.index}}年租金！
+                                    </ng-container>
+                                </nz-form-explain>
+                               
+                            </nz-form-control>
+                            <nz-form-control [nzSpan]="10" >
+                                <label nz-checkbox [formControlName]="'checked'+control.index" [(ngModel)]="control.checked">
+                                  <span>是否已交</span>
+                                </label>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="4">备注</nz-form-label>
+                            <nz-form-control [nzSpan]="20">
+                                <textarea formControlName="pRemark" [(ngModel)]="propertyRent.reamrk" nz-input placeholder="输入资产备注说明信息..." [nzAutosize]="{ minRows: 2, maxRows: 6 }"></textarea>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <div nz-col nzSpan="20" nzOffset="4">
+                            <nz-upload nzMultiple [nzAction]="pictureUploadUrl" nzListType="picture-card" [(nzFileList)]="pictureList" [nzPreview]="handleAvatarPreview"
+                                [nzBeforeUpload]="beforeAvatarUpload" (nzChange)="handlePicturesChange($event)">
+                                <i class="anticon anticon-plus"></i>
+                                <div class="ant-upload-text"> 上传图片</div>
+                            </nz-upload>
+                            <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible=false">
+                                <ng-template #modalContent>
+                                    <img [src]="previewImage" [ngStyle]="{ 'width': '100%' }" />
+                                </ng-template>
+                            </nz-modal>
+                        </div>
+                        <div nz-col nzSpan="20" nzOffset="4">
+                            <nz-upload nzMultiple [nzAction]="fileUploadUrl" [nzFileList]="fileList" (nzChange)="handleFilesChange($event)">
+                                <button nz-button>
+                                    <i class="anticon anticon-upload"></i>
+                                    <span> 上传文件</span>
+                                </button>
+                            </nz-upload>
+                        </div>
+                    </form>
+
+                </nz-card>
+                <ng-template #extraTemplate>
+                    <a class="" (click)="save(false)">
+                        <i class="anticon anticon-profile"></i> 保存</a>
+                    <a class="m-l-md" (click)="save(true)">
+                        <i class="anticon anticon-upload"></i> 保存，并提交</a>
+                </ng-template>
+
+            </nz-spin>
+        </div>
+    </div>
+</div>

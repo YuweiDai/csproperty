@@ -1,0 +1,101 @@
+<div class="component-container">
+  <div nz-row>
+      <div nz-col nzSpan="24" class="breadcrumb-container">
+          <nz-breadcrumb>
+              <nz-breadcrumb-item>
+                  巡查列表
+              </nz-breadcrumb-item>
+          </nz-breadcrumb>
+          <div class="table-operations">
+              <button nz-button (click)="expotToExl()" style="position: absolute;right: 0px;top:0px">时间选择</button>
+            </div>
+      </div>
+
+      <div nz-col nzSpan="24">
+       
+        <div class="card-container">
+          <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" >
+            <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab"  (nzClick)="getPatrols(tab)" >
+
+                <nz-table
+                #ajaxTable
+                nzShowSizeChanger
+                [nzFrontPagination]="false"
+                [nzData]="dataSet"
+                [nzLoading]="loading"
+                [nzTotal]="total"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize"
+                (nzPageIndexChange)="searchData()"
+                (nzPageSizeChange)="searchData(true)">
+                <thead (nzSortChange)="sort($event)" nzSingleSort>
+                  <tr>
+                    <th  >资产名称</th>
+                    <th  >巡查人员</th>
+                    <th  >联系方式</th>
+                    <th nzShowSort nzSortKey="patrolDate">巡查时间</th>
+                    <th  >巡查结果</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of dataSet">
+                    <td>{{data.title}}</td>
+                    <td>{{data.people}}</td>
+                    <td>{{data.tel}}</td>
+                    <td>{{data.patrolDate}}</td>
+                    <td>{{data.content}}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+
+
+
+            </nz-tab>
+          </nz-tabset>
+        </div>
+
+
+      </div>
+
+
+
+  </div>
+</div>
+
+<nz-modal
+      [(nzVisible)]="isVisible"
+      nzTitle="选择出租时间区域"
+      (nzOnCancel)="handleCancel()"
+      (nzOnOk)="handleOk()"
+      [nzOkLoading]="isOkLoading"
+    >
+
+    <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor="email">月份查询</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+            <button nz-button [nzType]="'primary'" (click)="addmonth(1)">1月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(2)">2月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(3)">3月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(4)">4月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(5)">5月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(6)">6月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(7)">7月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(8)">8月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(9)">9月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(10)">10月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(11)">11月</button>
+            <button nz-button [nzType]="'primary'" (click)="addmonth(12)">12月</button>
+        </nz-form-control>
+      </nz-form-item >
+
+    <form nz-form>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor="email">起止时间</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-range-picker [nzFormat]="dateFormat"></nz-range-picker>
+        </nz-form-control>
+      </nz-form-item >
+    </form>
+      
+</nz-modal>
