@@ -18,6 +18,7 @@ namespace CSCZJ.Core.Domain.Properties
         private ICollection<PropertyEdit> _propertyEdits;
         private ICollection<PropertyPicture> _propertyPictures;
         private ICollection<PropertyFile> _propertyFiles;
+        private ICollection<PropertyPanorama> _propertyPanoramas;
 
         /// <summary>
         /// 资产名称
@@ -154,6 +155,7 @@ namespace CSCZJ.Core.Domain.Properties
         /// 是否抵押
         /// </summary>
         public bool IsMortgage { get; set; }
+         
 
         public virtual PropertyNewCreate PropertyNewCreate { get; set; }
 
@@ -220,5 +222,10 @@ namespace CSCZJ.Core.Domain.Properties
             protected set { _propertyFiles = value; }
         }
 
+        public virtual ICollection<PropertyPanorama> PropertyPanoramas
+        {
+            get { return _propertyPanoramas ?? (_propertyPanoramas = new List<PropertyPanorama>()); }
+            protected set { _propertyPanoramas = value; }
+        }
     }
 }

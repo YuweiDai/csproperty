@@ -1,0 +1,32 @@
+.page {
+  font-family: 微软雅黑;
+}
+
+.scanBtn {
+  color: white;
+  position: absolute;
+  top: 50%;
+  height: 200rpx;
+  width: 700rpx;
+  margin: 0 25rpx;
+  margin-top: -150rpx;
+  text-align: center;
+  font-size: 28rpx;
+  border-radius: 20rpx;
+  line-height: 200rpx;
+}
+
+.scanBtn > .iconfont
+{
+  padding-left: 10rpx;
+  font-size: 100rpx;
+}
+
+.footer {
+  text-align: center;
+  color: rgba(25, 31, 37, 28);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  margin: 10rpx auto;
+}

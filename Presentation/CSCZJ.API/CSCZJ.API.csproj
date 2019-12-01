@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -281,6 +282,7 @@
     <Compile Include="Models\Properties\PropertyOffModel.cs" />
     <Compile Include="Models\Properties\PropertyRentApproveModel.cs" />
     <Compile Include="Models\Properties\PropertyRentModel.cs" />
+    <Compile Include="Models\Properties\PropertyWechatModel.cs" />
     <Compile Include="Models\Properties\RentListModel.cs" />
     <Compile Include="Models\Properties\SimpleGovernmentUnitModel.cs" />
     <Compile Include="Models\Properties\SameIdPropertyModel.cs" />

@@ -57,6 +57,11 @@ namespace CSCZJ.Web.Api.Extensions
         {
             return entity.MapTo<Property, PropertyListModel>();
         }
+
+        public static PropertyWechatModel ToWechatModel(this Property entity)
+        {
+            return entity.MapTo<Property, PropertyWechatModel>();
+        }
         #endregion
 
         #region  每月表格

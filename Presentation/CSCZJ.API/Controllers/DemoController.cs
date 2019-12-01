@@ -154,6 +154,18 @@ namespace CSCZJ.API.Controllers
         }
 
         [HttpGet]
+        [Route("HW")]
+        public IHttpActionResult HW()
+        {
+            return Ok("123");
+
+            //var user = _accountUserService.GetAccountUserById(1);
+
+            
+        }
+
+
+        [HttpGet]
         [Route("SetLocation")]
         public IHttpActionResult Test()
         {

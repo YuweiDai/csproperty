@@ -1270,6 +1270,16 @@ namespace CSCZJ.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("wechat/{propertyId:int}")]
+        public IHttpActionResult GetForwechat(int propertyId)
+        {
+            var property = _propertyService.GetPropertyById(propertyId);
+            if (property == null || property.Deleted)
+                return NotFound();
+        }
+
+
         /// <summary>
         /// 获取要更新的资产
         /// </summary>

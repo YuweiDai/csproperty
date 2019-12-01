@@ -84,8 +84,13 @@
     <Compile Include="Mapping\Messages\EmailAccountMap.cs" />
     <Compile Include="Mapping\Messages\MessageTemplateMap.cs" />
     <Compile Include="Mapping\Messages\QueuedEmailMap.cs" />
+    <Compile Include="Mapping\Panoramas\HotspotMap.cs" />
+    <Compile Include="Mapping\Panoramas\PanoramaLocationMap.cs" />
+    <Compile Include="Mapping\Panoramas\PanoramaSceneMap.cs" />
+    <Compile Include="Mapping\Panoramas\StreetMap.cs" />
     <Compile Include="Mapping\Properties\GovernmentUnitMap.cs" />
     <Compile Include="Mapping\Properties\MonthTotalMap.cs" />
+    <Compile Include="Mapping\Properties\PropertyPanoramaMap.cs" />
     <Compile Include="Mapping\Properties\PropertyPatrolMap.cs" />
     <Compile Include="Mapping\Properties\PropertyPatrolPictureMap.cs" />
     <Compile Include="Mapping\Properties\PropertyRentFileMap.cs" />
