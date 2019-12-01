@@ -24,6 +24,8 @@ namespace CSCZJ.Services.Property
 
         IList<PropertyRent> GetAllRents();
 
+        List<PropertyRent> GetRentsByTime(List<string> timeList);
+
         IList<PropertyRent> GetRentsByPropertyId(int id);
 
         #region Property pictures
