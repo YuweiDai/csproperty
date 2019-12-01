@@ -330,5 +330,19 @@ namespace CSCZJ.Services.Property
         #endregion
 
 
+
+
+        public List<PropertyRent> GetRentsByTime(List<string> timeList)
+        {
+
+            var query = from c in _propertyRentRepository.Table
+                        where c.RentTime> Convert.ToDateTime(timeList[0]) && c.RentTime<Convert.ToDateTime(timeList[1])
+                        select c;
+            var rents = query.ToList();
+            return rents;
+
+
+            throw new NotImplementedException();
+        }
     }
 }

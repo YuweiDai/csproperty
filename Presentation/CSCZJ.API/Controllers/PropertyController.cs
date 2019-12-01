@@ -4851,14 +4851,14 @@ namespace CSCZJ.API.Controllers
 
         [HttpPost]
         [Route("ExportRents")]
-        public HttpResponseMessage ExportRents() {
+        public HttpResponseMessage ExportRents(List<string> timeList) {
             string path = System.Web.Hosting.HostingEnvironment.MapPath(@"~/Content/资产导出/" + DateTime.Now.ToString("yyyyMMddhhmmss"));
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
             string filePath = Path.Combine(path, "出租表.xls");
-            var rents = _propertyRentService.GetAllRents();
+            var rents = _propertyRentService.GetRentsByTime(timeList);
 
             using (FileStream stream = System.IO.File.Create(filePath)) {
                 _exportManager.ExportRentsToExl(stream, rents);

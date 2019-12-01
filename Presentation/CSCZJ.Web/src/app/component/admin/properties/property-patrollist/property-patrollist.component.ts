@@ -17,6 +17,8 @@ export class PropertyPatrollistComponent implements OnInit {
   pageSize = 10;
   total = 1;
   dataSet = [];
+  allpatrols=[];
+  searchpatrols=[];
   loading = true;
   sortValue = null;
   sortKey = null;
@@ -44,6 +46,7 @@ export class PropertyPatrollistComponent implements OnInit {
     this.propertyService.getPatrols(this.pageIndex, this.pageSize, this.sortKey, this.sortValue, this.tabKey).subscribe((data: any) => {
       this.loading = false;
       this.total = data.paging.total;
+      this.allpatrols=data.data;
       this.dataSet = data.data;
     });
   }
@@ -80,6 +83,14 @@ export class PropertyPatrollistComponent implements OnInit {
     else{
       this.monthlist.push(number);
     }
+
+    this.dataSet.forEach(data=>{
+      if(this.monthlist.indexOf(new Date(data.patrolDate).getMonth()+1)){
+        this.searchpatrols.push(data);
+      }
+    })
+
+    this.dataSet=this.searchpatrols;
     
 
   }

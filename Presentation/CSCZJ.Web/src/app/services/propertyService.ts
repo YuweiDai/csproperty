@@ -51,7 +51,7 @@ export class PropertyService {
       catchError(this.handleError<Property>(`addProperty `))
     );
   }
-
+//导出资产
   exportProperty(exportModel: ExportModel){
 
     const url = `${this.apiUrl}/Export`;
@@ -239,10 +239,10 @@ getRentById(id: number): Observable<PropertyRentModel> {
 
 
   //导出出租信息
-  exportToExl(){
+  exportToExl(monthlist:string[]){
     const url = `${this.apiUrl}/ExportRents`;
   
-    return this.http.post(url,null,{responseType:"arraybuffer"});
+    return this.http.post(url,monthlist,{responseType:"arraybuffer"});
   }
 
 
