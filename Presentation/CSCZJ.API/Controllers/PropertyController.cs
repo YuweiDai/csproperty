@@ -1277,6 +1277,8 @@ namespace CSCZJ.API.Controllers
             var property = _propertyService.GetPropertyById(propertyId);
             if (property == null || property.Deleted)
                 return NotFound();
+
+            return null;
         }
 
 
