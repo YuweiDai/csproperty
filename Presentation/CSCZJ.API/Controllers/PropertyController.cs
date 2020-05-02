@@ -1527,7 +1527,7 @@ namespace CSCZJ.API.Controllers
         {
             var currentUser = _workContext.CurrentAccountUser;
 
-      var      showHidden = currentUser.IsRegistered() && !(currentUser.IsAdmin() || currentUser.IsGovAuditor() || currentUser.IsStateOwnerAuditor() || currentUser.IsDataReviewer());   //只是注册单位可以获取未发布的
+            var showHidden = currentUser.IsRegistered() && !(currentUser.IsAdmin() || currentUser.IsGovAuditor() || currentUser.IsStateOwnerAuditor() || currentUser.IsDataReviewer());   //只是注册单位可以获取未发布的
 
             //初始化排序条件
             var sortConditions = PropertySortCondition.Instance(advance.Sort);
@@ -1540,7 +1540,7 @@ namespace CSCZJ.API.Controllers
 
             var governmentIds = _governmentService.GetGovernmentIdsByCurrentUser();  //获取当前账户的可查询的资产
 
-            var properties = _propertyService.GetAllProperties(governmentIds,advance.Query, advance.PageIndex, advance.PageSize,
+            var properties = _propertyService.GetAllProperties(governmentIds, advance.Query, advance.PageIndex, advance.PageSize,
                 showHidden, request, sortConditions);
 
             var response = new ListResponse<PropertyModel>

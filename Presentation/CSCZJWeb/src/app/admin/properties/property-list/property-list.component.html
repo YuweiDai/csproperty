@@ -1,0 +1,59 @@
+<div class="component-container">
+    <div nz-row>
+        <div nz-col nzSpan="24" class="breadcrumb-container">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    资产管理
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+        <div nz-col nzSpan="24">
+            <nz-card nzTitle="资产列表" [nzExtra]="extraTemplate">
+                <div class="component-content">
+                    <!-- [ngStyle]="{'height.px':contentHeight-135.875}" -->
+                    <app-ui-table [dataset]="data" [tableOption]="tableOption" [loading]="loading" (paramsChange)="getAllProperties($event)"></app-ui-table>
+                </div>
+            </nz-card>
+            <ng-template #extraTemplate>
+                <a class="" [routerLink]="['./create']">
+                    <i class="anticon anticon-plus"></i> 新增资产</a>
+                <a class="m-l-md" [routerLink]="['./rent']">
+                    <i class="anticon anticon-pay-circle"></i> 资产出租</a>
+                <a class="m-l-md" [routerLink]="['./off']">
+                    <i class="anticon anticon-poweroff"></i> 资产核销</a>
+                <a class="m-l-md" (click)="showModal()">
+                    <i class="anticon anticon-export"></i> 资产导出</a>
+                   
+
+                    <nz-modal [(nzVisible)]="isVisible" nzTitle="资产导出" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+                        <div style="border-bottom: 1px solid rgb(233, 233, 233);">
+                            <label nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllUnitChecked()" [nzIndeterminate]="Unitindeterminate">
+                              单位选择
+                            </label>
+                          </div>
+                          <br>
+                          <nz-checkbox-group [(ngModel)]="unit" (ngModelChange)="updateUnitChecked()"></nz-checkbox-group><br>
+            
+                          <nz-divider></nz-divider>
+               
+            
+                          <div style="border-bottom: 1px solid rgb(233, 233, 233);margin-top: 2em">
+                          <label nz-checkbox [(ngModel)]="allAttributesChecked" (ngModelChange)="updateAllAttributesChecked()" [nzIndeterminate]="Attributesindeterminate">
+                            字段选择
+                          </label>
+                        </div>                       
+                        <br>
+                        <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="updateAttributesChecked(data)" *ngFor="let data of Attributes">
+                                <div nz-row >
+                                  <div nz-col nzSpan="24"><label nz-checkbox nzValue="data.value" [ngModel]="data.checked" >{{data.label}}</label></div>
+                                </div>
+                              </nz-checkbox-wrapper>
+
+                        <!-- <nz-checkbox-group [(ngModel)]="Attributes" (ngModelChange)="updateAttributesChecked()"></nz-checkbox-group> -->
+            
+                      </nz-modal>
+
+            </ng-template>
+        </div>
+    </div>
+</div>
