@@ -6,6 +6,7 @@ import { LayoutService } from 'src/app/services/layout.service';
 import { PropertyService } from 'src/app/services/property.service';
 import L from 'leaflet';
 import Wkt from 'wicket';
+import { HttpClient } from '@angular/common/http';
 // import HeatmapOverlay from 'heatmapjs'
 // import {*} from 'leaflet-heatmap';
  
@@ -147,7 +148,7 @@ export class MapComponent implements OnInit {
 
 
 
-  constructor(private mapService: MapService, private layoutService: LayoutService, private propertyService: PropertyService) {
+  constructor(private mapService: MapService, private layoutService: LayoutService, private propertyService: PropertyService,private http: HttpClient) {
     this.containerHeight = layoutService.getActualScreenSize().height;
     this.containerHeight = layoutService.getContentHeight() - 200;
   }
@@ -479,26 +480,49 @@ export class MapComponent implements OnInit {
   }
 
   SwitchPanos() {
-    this.switchModel1 = !this.switchModel1;
-    var plan = L.icon({
-      iconUrl: '../../../assets/无人机.png',
-      iconAnchor: [8, 8]
-    })
+    this.switchModel1=!this.switchModel1;
+        var plan=L.icon({
+            iconUrl:'../../../assets/无人机.png',
+            iconAnchor:[8,8]
+        });
+        var lineStyle = {
+            icon:new L.Icon.Default(),
+            weight: 6,
+            opacity:0.7,
+            color: '#0000FF',
+            fillColor: '#0000FF',
+            fillOpacity: 0.2
+        };
 
-    if (this.switchModel1 == true) {
-      // 
-      console.log(123);
-      var m1 = L.marker([28.904104940593243, 118.50616335868835], { icon: plan }).on('click', function () {
-        window.open("http://220.191.237.169/cspanos?id=" + "xzf");
-      }).addTo(this.panomarkers);
-      var m2 = L.marker([28.91212558373809, 118.51464986801147], { icon: plan }).on('click', function () {
-        window.open("http://220.191.237.169/cspanos?id=" + "tyg");
-      }).addTo(this.panomarkers);
-      this.panomarkers.addTo(this.map);
-    }
-    else {
-      this.map.removeLayer(this.panomarkers);
-    }
+        if(this.switchModel1==true){
+           // 
+
+        //  this.http.get("../../assets/json/marker.json").subscribe(res => {
+        //      this.markerArr=res.features;
+        //      this.markerArr.forEach(element => {
+        //        var m1= L.marker([element.attributes.POINT_Y,element.attributes.POINT_X],{icon:plan}).on('click',function(){
+        //           window.open("http://localhost:8012?sence=sence_"+ element.attributes.FID);
+        //        }).addTo(this.panomarkers); 
+        //    });
+            
+        //   })
+
+        //   this.http.get("../../assets/json/line.json").subscribe(res => {
+        //      var lines=res.features;
+        //       lines.forEach(element => {
+        //      var wkt = new Wkt.Wkt();
+        //      wkt.read(element.attributes.wkt);
+        //       var line  = wkt.toObject(lineStyle);
+        //      line.addTo(this.map);
+        //  }); 
+         
+        //   }) 
+          
+        //   this.panomarkers.addTo(this.map);
+        }
+        else{
+            this.map.removeLayer(this.panomarkers);
+        }
   }
 
   chooseProperty(choosePropert) {

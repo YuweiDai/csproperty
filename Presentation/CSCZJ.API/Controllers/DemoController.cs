@@ -1,5 +1,4 @@
-﻿using Microsoft.SqlServer.Types;
-using CSCZJ.Core;
+﻿using CSCZJ.Core;
 using CSCZJ.Core.Domain.AccountUsers;
 using CSCZJ.Core.Domain.Common;
 using CSCZJ.Core.Domain.Media;

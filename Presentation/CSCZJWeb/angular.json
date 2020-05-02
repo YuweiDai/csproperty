@@ -36,8 +36,7 @@
               "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "src/styles.less"
             ],
-            "scripts": [
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -133,5 +132,8 @@
       }
     }
   },
-  "defaultProject": "CSCZJWeb"
+  "defaultProject": "CSCZJWeb",
+  "cli": {
+    "analytics": "abe4a5ec-06e5-4feb-a715-01b6c9e0d363"
+  }
 }
