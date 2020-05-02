@@ -164,7 +164,7 @@ namespace CSCZJ.Services.Property
 
         public IList<PropertyRent> GetAllRents() {
 
-            var query = from p in _propertyRentRepository.TableNoTracking
+            var query = from p in _propertyRentRepository.Table
                         where !p.Deleted
                         select p;
 

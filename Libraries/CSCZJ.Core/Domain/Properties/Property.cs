@@ -24,6 +24,10 @@ namespace CSCZJ.Core.Domain.Properties
         /// 资产名称
         /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 资产编号
+        /// </summary>
+        public string Number { get; set; }
 
         /// <summary>
         /// 资产类别

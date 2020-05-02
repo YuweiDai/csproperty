@@ -221,7 +221,7 @@ namespace CSCZJ.API.Controllers
 
             }
        
-            property.Region = Region.TMZ;
+            property.Region = Region.TMJD;
 
             if (propertyCreateModel.PropertyTypeId == 2) propertyCreateModel.Floor = 0;
 
@@ -1116,6 +1116,8 @@ namespace CSCZJ.API.Controllers
 
         #endregion
 
+
+
         #region 资产API
         [HttpGet]
         [Route("Unique/{name}")]
@@ -1277,6 +1279,8 @@ namespace CSCZJ.API.Controllers
             var property = _propertyService.GetPropertyById(propertyId);
             if (property == null || property.Deleted)
                 return NotFound();
+
+            return Ok("");
         }
 
 
@@ -1637,9 +1641,12 @@ namespace CSCZJ.API.Controllers
             var properties = _propertyService.GetAllProperties();
             var mapProperties = properties.ToList().Select(p => {
                 var geoModel = p.ToGeoModel();
-                geoModel.X =Convert.ToDouble( geoModel.Location.Split(' ')[2].Substring(0, geoModel.Location.Split(' ')[2].Length - 1));
-                geoModel.Y = Convert.ToDouble(geoModel.Location.Split(' ')[1].Substring(1, geoModel.Location.Split(' ')[1].Length - 1));
+                if (p.Location != null) {
+                    geoModel.X = Convert.ToDouble(geoModel.Location.Split(' ')[2].Substring(0, geoModel.Location.Split(' ')[2].Length - 1));
+                    geoModel.Y = Convert.ToDouble(geoModel.Location.Split(' ')[1].Substring(1, geoModel.Location.Split(' ')[1].Length - 1));
 
+                }
+               
                 return geoModel; });
 
             //activity log

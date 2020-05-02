@@ -213,6 +213,7 @@
     <Compile Include="Fakes\FakeHttpSessionState.cs" />
     <Compile Include="Fakes\FakeIdentity.cs" />
     <Compile Include="Fakes\FakePrincipal.cs" />
+    <Compile Include="GeographyHelper.cs" />
     <Compile Include="Html\BBCodeHelper.cs" />
     <Compile Include="Html\CodeFormatter\CLikeFormat.cs" />
     <Compile Include="Html\CodeFormatter\CodeFormat.cs" />

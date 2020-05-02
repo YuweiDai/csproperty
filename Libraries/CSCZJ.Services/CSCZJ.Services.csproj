@@ -139,6 +139,12 @@
     <Compile Include="Messages\Token.cs" />
     <Compile Include="Messages\Tokenizer.cs" />
     <Compile Include="Messages\WorkflowMessageService.cs" />
+    <Compile Include="Panoramas\HotspotService.cs" />
+    <Compile Include="Panoramas\IHotspotService.cs" />
+    <Compile Include="Panoramas\ILocationService.cs" />
+    <Compile Include="Panoramas\ISceneService.cs" />
+    <Compile Include="Panoramas\LocationService.cs" />
+    <Compile Include="Panoramas\SceneService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property\CopyPropertyService.cs" />
     <Compile Include="Property\GovernmentService.cs" />

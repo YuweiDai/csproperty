@@ -19,6 +19,8 @@ namespace CSCZJ.Core.Domain.Properties
         GYCF = 3,
         [Description("仓储")]
         CC = 4,
+        [Description("商业")]
+        SY = 5,
         [Description("其他")]
         Others = 99
     }

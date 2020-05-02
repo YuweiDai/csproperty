@@ -118,7 +118,11 @@ namespace CSCZJ.Web.Framework
             builder.RegisterType<MonthTotalService>().As<IMonthTotalService>().InstancePerLifetimeScope();
             builder.RegisterType<SubmitRecordService>().As<ISubmitRecordService>().InstancePerLifetimeScope();
             builder.RegisterType<PropertyPatrolService>().As<IPropertyPatrolService>().InstancePerLifetimeScope();
+
             # endregion
+
+            builder.RegisterType<SceneService>().As<ISceneService>().InstancePerLifetimeScope();
+            builder.RegisterType<LocationService>().As<ILocationService>().InstancePerLifetimeScope();
 
             //builder.RegisterType<BackInStockSubscriptionService>().As<IBackInStockSubscriptionService>().InstancePerLifetimeScope();
             //builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerLifetimeScope();
