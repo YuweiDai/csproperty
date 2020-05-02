@@ -1,0 +1,58 @@
+<div class="container-fluid">
+    <div class="wrap">
+      <div class="top">
+        <div class="head">
+          <img class="" src="../../../assets/logo.png" style="width: 100px">
+          <span class="title">常山县房产土地资产管理系统</span>
+        </div>
+        <div class="desc"></div>
+      </div>
+      <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
+          <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg m-b-md"></nz-alert>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-user">
+                <input nz-input formControlName="userName" placeholder="用户名">
+              </nz-input-group>
+              <nz-form-explain *ngIf="userName.dirty && userName.errors">请输入账户名！</nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-lock">
+                <input nz-input type="password" formControlName="password" placeholder="密码">
+              </nz-input-group>
+              <nz-form-explain *ngIf="password.dirty && password.errors">
+                请输入密码！
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <!-- <nz-form-item>
+            <nz-col [nzSpan]="12">
+              <label nz-checkbox formControlName="remember" style="color: #e40be4;font-weight: bolder;">自动登录</label>
+            </nz-col>
+            <nz-col [nzSpan]="12" class="text-right">
+              <a class="forgot" (click)="msg.error('请找管理员')" style="color:white;font-weight: bolder;">忘记密码？</a>
+            </nz-col>
+          </nz-form-item> -->
+          <nz-form-item>
+            <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading" class="ant-btn__block">登录</button>
+          </nz-form-item>
+        </form>
+  
+      <div class="ad-global-footer">
+        <!---->
+        <div class="links ng-star-inserted">
+          <!---->
+          <a href="#/" class="ng-star-inserted" style="color:white;font-weight: bolder;">帮助</a>
+          <a href="#/" class="ng-star-inserted" style="color:white;font-weight: bolder;">隐私</a>
+          <a href="#/" class="ng-star-inserted" style="color:white;font-weight: bolder;">条款</a>
+        </div>
+        <div class="copyright" style="color:white;font-weight: bolder;"> Copyright
+          <i class="anticon anticon-copyright" style="color:white;font-weight: bolder;"></i> 2018
+          <a href="http://www.zjcs.gov.cn/" target="_blank" style="color:white;font-weight: bolder;"> 常山县版权所有 </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
