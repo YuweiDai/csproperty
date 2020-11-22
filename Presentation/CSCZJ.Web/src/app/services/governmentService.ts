@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpHeaders,HttpParams  } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable,of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { ConfigService } from "./configService";
@@ -79,7 +79,7 @@ export class GovernmentService{
       this.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
-      return Observable.of(result as T);
+      return of(result as T);
     };
   }  
 

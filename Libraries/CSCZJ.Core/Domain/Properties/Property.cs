@@ -34,6 +34,11 @@ namespace CSCZJ.Core.Domain.Properties
         /// 资产类别
         /// </summary>
         public PropertyType PropertyType { get; set; }
+        /// <summary>
+        /// 资产分类
+        /// </summary>
+
+        public PropertyKind PropertyKind { get; set; }
 
         /// <summary>
         /// 资产所处区域
@@ -160,7 +165,29 @@ namespace CSCZJ.Core.Domain.Properties
         /// 是否抵押
         /// </summary>
         public bool IsMortgage { get; set; }
-         
+
+        /// <summary>
+        /// 全景位置字符串
+        /// </summary>
+        public string vtourString { get; set; }
+        /// <summary>
+        /// 水平角度
+        /// </summary>
+        public double Ath { get; set; }
+        /// <summary>
+        /// 垂直角度
+        /// </summary>
+        public double Atv { get; set; }
+
+        /// <summary>
+        /// 所在xml文件
+        /// </summary>
+        public string Xml { get; set; }
+        /// <summary>
+        /// 所在场景
+        /// </summary>
+        public string Scene { get; set; }
+
 
         public virtual PropertyNewCreate PropertyNewCreate { get; set; }
 

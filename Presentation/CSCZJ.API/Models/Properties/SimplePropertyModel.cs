@@ -1,4 +1,5 @@
 ﻿using CSCZJ.Web.Framework.Mvc;
+using System.Collections.Generic;
 
 namespace CSCZJ.API.Models.Properties
 {
@@ -11,5 +12,21 @@ namespace CSCZJ.API.Models.Properties
         public bool Locked { get; set; }
 
      //   public string GovernmentName { get; set; }
+    }
+
+    public class VtourStringModel
+    {
+
+       public  string id { get; set; }
+
+       public   List<string> vtourString { get; set; }
+
+        public double Ath { get; set; }
+    
+        public double Atv { get; set; }
+   
+        public string Xml { get; set; }
+     
+        public string Scene { get; set; }
     }
 }

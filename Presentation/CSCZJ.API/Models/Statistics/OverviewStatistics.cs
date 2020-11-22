@@ -24,5 +24,30 @@ namespace CSCZJ.API.Models.Statistics
         public double ConstrcutLandArea { get; set; }
 
         public double LandArea { get; set; }
+
+        public List<GovermentRent> GRentList { get; set; }
+        public UsingState UsingState { get; set; }
+
+        public List<int> TownNumber { get; set; }
+    }
+
+    public class GovermentRent {
+        public string GName { get; set; }
+        public List<int> RentPrice { get; set; }
+
+        public double TotalHouseArea { get; set; }
+        public double TotalLandArea { get; set; }
+
+    }
+
+    public class UsingState {
+
+        public double ZYTatol { get; set; }
+        public double CCTatol { get; set; }
+        public double CZTatol { get; set; }
+
+        public double CJTatol { get; set; }
+        public double DPSYTatol { get; set; }
+        public double XZTatol { get; set; }
     }
 }

@@ -26,6 +26,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Collections;
+using CSCZJ.API.Models.Statistics;
 
 namespace CSCZJ.API.Controllers
 {
@@ -250,9 +251,9 @@ namespace CSCZJ.API.Controllers
             if (advanceCondition.Region.Count == 3) advanceCondition.GovernmentTypes = new List<int>();
 
             advanceCondition.PropertyType = new List<int>();
-            if (propertyAdvanceConditionModel.PropertyType.Construct) advanceCondition.PropertyType.Add((int)PropertyType.House);
-            if (propertyAdvanceConditionModel.PropertyType.Land) advanceCondition.PropertyType.Add((int)PropertyType.Land);
-            if (propertyAdvanceConditionModel.PropertyType.ConstructOnLand) advanceCondition.PropertyType.Add((int)PropertyType.LandUnderHouse);
+          //  if (propertyAdvanceConditionModel.PropertyType.Construct) advanceCondition.PropertyType.Add((int)PropertyType.House);
+          //  if (propertyAdvanceConditionModel.PropertyType.Land) advanceCondition.PropertyType.Add((int)PropertyType.Land);
+         //   if (propertyAdvanceConditionModel.PropertyType.ConstructOnLand) advanceCondition.PropertyType.Add((int)PropertyType.LandUnderHouse);
             if (advanceCondition.PropertyType.Count == 3) advanceCondition.PropertyType = new List<int>();
 
             advanceCondition.Region = new List<int>();
@@ -5016,6 +5017,30 @@ namespace CSCZJ.API.Controllers
                 return new HttpResponseMessage(HttpStatusCode.NoContent);
             }
 
+        }
+
+        #endregion
+
+
+        #region 统计数据
+        [HttpGet]
+        [Route("Dashboard")]
+        public IHttpActionResult GetDashboardList() {
+            var overview = new OverviewStatistics();
+            var proeprties = _propertyService.GetAllProperties();
+            var goverments = _governmentService.GetAllGeoGovernmentUnits();
+
+            overview.TotalCount = proeprties.Count();
+            var lands = proeprties.Where(p => p.PropertyKind == PropertyKind.Land).ToList();
+            var house = proeprties.Where(p => p.PropertyKind == PropertyKind.House).ToList();
+
+            foreach (var g in goverments) {
+
+                var lambdaList = proeprties.Where(p => p.Government.Name== g.Name).ToList();
+
+            }
+
+            return Ok();
         }
 
         #endregion

@@ -130,19 +130,19 @@ namespace CSCZJ.Services.ExportImport
                         {
                             switch (worksheet.Cells[row, GetColumnIndex(excelProperty, "资产类别")].Value.ToString())
                             {
-                                case "房屋":
-                                    property.PropertyType = PropertyType.House;
-                                    break;
-                                case "土地":
-                                    property.PropertyType = PropertyType.Land;
-                                    break;
-                                case "房屋对应土地":
-                                    property.PropertyType = PropertyType.LandUnderHouse;
-                                    break;
-                                case "其他":
-                                default:
-                                    property.PropertyType = PropertyType.Others;
-                                    break;
+                                //case "房屋":
+                                //    property.PropertyType = PropertyType.House;
+                                //    break;
+                                //case "土地":
+                                //    property.PropertyType = PropertyType.Land;
+                                //    break;
+                                //case "房屋对应土地":
+                                //    property.PropertyType = PropertyType.LandUnderHouse;
+                                //    break;
+                                //case "其他":
+                                //default:
+                                //    property.PropertyType = PropertyType.Others;
+                                //    break;
                             }
                         }
                         else throw new Exception("资产类别不能为空");
@@ -425,21 +425,21 @@ namespace CSCZJ.Services.ExportImport
                         #region 资产逻辑验证
 
                         var sum =0;
-                        if (property.PropertyType == PropertyType.House)
-                        {
-                            if (property.ConstructArea < sum)
-                            {
-                                throw new Exception("建筑面积应大于自用、出租、出借、闲置面积之和");
-                            }
-                        }
+                        //if (property.PropertyType == PropertyType.House)
+                        //{
+                        //    if (property.ConstructArea < sum)
+                        //    {
+                        //        throw new Exception("建筑面积应大于自用、出租、出借、闲置面积之和");
+                        //    }
+                        //}
 
-                        if (property.PropertyType == PropertyType.Land)
-                        {
-                            if (property.LandArea < sum)
-                            {
-                                throw new Exception("土地面积应大于自用、出租、出借、闲置面积之和");
-                            }
-                        }
+                        //if (property.PropertyType == PropertyType.Land)
+                        //{
+                        //    if (property.LandArea < sum)
+                        //    {
+                        //        throw new Exception("土地面积应大于自用、出租、出借、闲置面积之和");
+                        //    }
+                        //}
 
                         if (!string.IsNullOrEmpty(property.EstateId) &&
                             (!string.IsNullOrEmpty(property.ConstructId) || !string.IsNullOrEmpty(property.LandId)))

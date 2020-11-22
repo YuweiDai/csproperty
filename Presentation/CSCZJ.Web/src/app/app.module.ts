@@ -1,21 +1,20 @@
-import { NgModule } from '@angular/core'
-import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser'
-import { RouterModule } from '@angular/router'
-import {  Http, HttpModule, XHRBackend, RequestOptions } from '@angular/http'
-import { AppRoutingModule } from './/app-routing.module'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 
-import {HashLocationStrategy , LocationStrategy} from '@angular/common';
-
-import { Ng2Webstorage } from 'ngx-webstorage';
-
-import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { AdminModule } from "./component/admin/admin.module";
-import { PassportModule } from "./component/passport/passport.module";
-
-
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+// import { NzLayoutModule } from 'ng-zorro-antd/layout';
+// import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NZ_I18N } from 'ng-zorro-antd/i18n';
+import { zh_CN } from 'ng-zorro-antd/i18n';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import zh from '@angular/common/locales/zh';
+import { AdminModule } from './components/admin/admin.module';
+import { PassportModule } from './components/passport/passport.module';
+
 
 import { AuthGuard } from "./services/auth-guard.service";
 import { LogService } from "./services/logService";
@@ -23,42 +22,28 @@ import { ConfigService } from "./services/configService";
 import { LayoutService } from "./services/layoutService";
 import { AuthInterceptorService, AuthService, TokensManagerService } from "./services/passportService";
 
-import { HttpInterceptorService }   from './extensions/HttpInterceptor';
- 
- export function interceptorFactory(xhrBackend: XHRBackend, requestOptions: RequestOptions){
-   let service = new HttpInterceptorService(xhrBackend, requestOptions);
-   return service;
- }
+
+// import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
+import 'heatmap.js';
+import 'leaflet.markercluster';
+import 'leaflet-iconlayers';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
-    FormsModule,
     BrowserModule,
-    BrowserAnimationsModule, Ng2Webstorage,
-    RouterModule,
-    NgZorroAntdModule.forRoot(),
-    AdminModule,
-    PassportModule,
     AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    PassportModule,
+    AdminModule, 
   ],
-  providers: [
-    LogService,
-    ConfigService,
-    LayoutService,
-    AuthGuard,
-    AuthInterceptorService, 
-    AuthService, TokensManagerService,
-    HttpInterceptorService,
-    {
-      provide: LocationStrategy,
-      useClass: HashLocationStrategy
-
-      //deps: [XHRBackend, RequestOptions]
-    }  
-  ],
+  providers: [LogService,AuthGuard,ConfigService,LayoutService,AuthInterceptorService,AuthService,TokensManagerService,
+    { provide: NZ_I18N, useValue: zh_CN }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

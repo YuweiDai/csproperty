@@ -204,7 +204,7 @@ namespace CSCZJ.Services.Properties
                     #region 房屋及房屋面积、土地面积
                     if (advanceCondition.PropertyType.Contains(0))
                     {
-                        Expression<Func<CSCZJ.Core.Domain.Properties.Property, bool>> xpression = p => p.PropertyType == CSCZJ.Core.Domain.Properties.PropertyType.House;
+                        Expression<Func<CSCZJ.Core.Domain.Properties.Property, bool>> xpression = null;//p => p.PropertyType == CSCZJ.Core.Domain.Properties.PropertyType.House;
 
                         if (constructRangeExpression != null)
                             xpression = xpression.And(constructRangeExpression);
@@ -539,7 +539,7 @@ namespace CSCZJ.Services.Properties
                     #region 房屋及房屋面积、土地面积
                     if (advanceCondition.PropertyType.Contains(0))
                     {
-                        Expression<Func<CSCZJ.Core.Domain.Properties.Property, bool>> xpression = p => p.PropertyType == CSCZJ.Core.Domain.Properties.PropertyType.House;
+                        Expression<Func<CSCZJ.Core.Domain.Properties.Property, bool>> xpression = null;//p => p.PropertyType == CSCZJ.Core.Domain.Properties.PropertyType.House;
 
                         if (constructRangeExpression != null)
                             xpression = xpression.And(constructRangeExpression);
@@ -975,15 +975,15 @@ namespace CSCZJ.Services.Properties
                         {
                             case 49:
                                 expression = expression.And(p => p.ConstructArea < 50);
-                                expression = expression.And(p => p.PropertyType == PropertyType.House);
+                              //  expression = expression.And(p => p.PropertyType == PropertyType.House);
                                 break;
                             case 1001:
                                 expression = expression.And(p => p.ConstructArea >= 1000);
-                                expression = expression.And(p => p.PropertyType == PropertyType.House);
+                             //   expression = expression.And(p => p.PropertyType == PropertyType.House);
                                 break;
                         }
                     }
-                    expression = expression.And(p => p.PropertyType == PropertyType.House);
+                  //  expression = expression.And(p => p.PropertyType == PropertyType.House);
                 }
 
                 if (properyTypeList.Contains(1))
@@ -1006,17 +1006,17 @@ namespace CSCZJ.Services.Properties
                         {
                             case 50:
                                 expression = expression.And(p => p.LandArea <= 50);
-                                expression = expression.And(p => p.PropertyType == PropertyType.Land);
+                            //    expression = expression.And(p => p.PropertyType == PropertyType.Land);
                                 break;
                             case 1001:
                                 expression = expression.And(p => p.LandArea >= 1000);
-                                expression = expression.And(p => p.PropertyType == PropertyType.Land);
+                           //     expression = expression.And(p => p.PropertyType == PropertyType.Land);
                                 break;
                         }
                     }
                     else
                     {
-                        expression = expression.And(p => p.PropertyType == PropertyType.Land);
+                      //  expression = expression.And(p => p.PropertyType == PropertyType.Land);
                     }
                 }
 

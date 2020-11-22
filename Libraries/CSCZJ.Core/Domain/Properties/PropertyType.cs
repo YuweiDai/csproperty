@@ -7,11 +7,11 @@ namespace CSCZJ.Core.Domain.Properties
     /// </summary>
     public enum PropertyType
     {
-        [Description("房产")]
-        House = 0,   //
+        [Description("房屋")]
+        House = 0, //
         [Description("土地")]
-        Land = 1,     //
-        [Description("房产对应土地")]
+        Land = 1, //
+        [Description("不动产")]
         LandUnderHouse = 2, //
         [Description("非转经（财政局）")]
         CZJ = 3, //

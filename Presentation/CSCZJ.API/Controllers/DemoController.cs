@@ -26,6 +26,7 @@ using Newtonsoft.Json;
 using System.Data;
 using Newtonsoft.Json.Linq;
 using CSCZJ.Core.Domain.Panoramas;
+using CSCZJ.API.Models.Properties;
 
 namespace CSCZJ.API.Controllers
 {
@@ -1095,6 +1096,24 @@ namespace CSCZJ.API.Controllers
             #endregion
 
             return Ok("导入结束\n");
+        }
+
+
+
+        [HttpPost]
+        [Route("VtourString")]
+        public IHttpActionResult InsertVtourString(VtourStringModel vtourModel) {
+            var p = _propertyService.GetPropertyById(Convert.ToInt32(vtourModel.id));
+            if (p != null) {
+                p.vtourString = string.Join(";", vtourModel.vtourString);
+
+                p.Ath = vtourModel.Ath;
+                p.Atv = vtourModel.Atv;
+                p.Xml = vtourModel.Xml;
+                p.Scene = vtourModel.Scene;
+                _propertyService.UpdateProperty(p);
+            }
+            return Ok();
         }
 
 

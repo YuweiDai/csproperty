@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable,of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 
@@ -112,7 +112,7 @@ export class AuthService {
                     that.authentication.roles = response.userRoles;
                     that.authentication.isAdmin = that.userHasRole(response.userRoles, "管理员");
 
-                    console.log(that.localStorageService.retrieve("authorizationData"));
+                   // console.log(that.localStorageService.retrieve("authorizationData"));
                     this.log(`getRefreshTokens`);
                 }
             }),
@@ -200,7 +200,7 @@ export class AuthService {
             // response.Data=null;
 
             // Let the app keep running by returning an empty result.
-            return Observable.of(result as T);
+            return of(result as T);
         };
     }
 
@@ -256,7 +256,7 @@ export class TokensManagerService {
             this.log(`${operation} failed: ${error.message}`);
 
             // Let the app keep running by returning an empty result.
-            return Observable.of(result as T);
+            return of(result as T);
         };
     }
 

@@ -1,0 +1,73 @@
+<div class="container-fluid">
+    <div class="wrap">
+      <div class="top">
+        <div class="head">
+          <img class="" src="../../../../assets/logo.png" style="width: 100px">
+          <span class="title">常山县房产土地资产管理系统</span>
+        </div>
+        <div class="desc"></div>
+      </div>
+      <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
+          <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg m-b-md"></nz-alert>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-input-group nzSize="large" nzPrefixIcon="user">
+                <input nz-input formControlName="userName" placeholder="用户名">
+              </nz-input-group>
+              <nz-form-explain *ngIf="userName.dirty && userName.errors">请输入账户名！</nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-input-group nzSize="large" nzPrefixIcon="lock">
+                <input nz-input type="password" formControlName="password" placeholder="密码">
+              </nz-input-group>
+              <nz-form-explain *ngIf="password.dirty && password.errors">
+                请输入密码！
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+         
+          <nz-form-item>
+            <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading" class="ant-btn__block">登录</button>
+          </nz-form-item>
+        </form>
+<!-- 
+        <form nz-form [nzLayout]="'inline'" [formGroup]="validateForm" (ngSubmit)="submitForm()">
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Please input your username!">
+              <nz-input-group nzPrefixIcon="user">
+                <input formControlName="userName" nz-input placeholder="Username" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Please input your Password!">
+              <nz-input-group nzPrefixIcon="lock">
+                <input formControlName="password" nz-input type="password" placeholder="Password" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <button nz-button nzType="primary" [disabled]="!validateForm.valid">Log in</button>
+            </nz-form-control>
+          </nz-form-item>
+        </form> -->
+  
+      <div class="ad-global-footer">
+        <!---->
+        <div class="links ng-star-inserted">
+          <!---->
+          <a href="#/" class="ng-star-inserted" style="color:white;font-weight: bolder;">帮助</a>
+          <a href="#/" class="ng-star-inserted" style="color:white;font-weight: bolder;">隐私</a>
+          <a href="#/" class="ng-star-inserted" style="color:white;font-weight: bolder;">条款</a>
+        </div>
+        <div class="copyright" style="color:white;font-weight: bolder;"> Copyright
+          <i class="anticon anticon-copyright" style="color:white;font-weight: bolder;"></i> 2017
+          <a href="//github.com/cipchk" target="_blank" style="color:white;font-weight: bolder;"> 某某单位版权所有 </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  

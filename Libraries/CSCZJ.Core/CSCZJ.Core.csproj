@@ -168,6 +168,7 @@
     <Compile Include="Domain\Properties\GovernmentUnit.cs" />
     <Compile Include="Domain\Properties\MonthTotal.cs" />
     <Compile Include="Domain\Properties\NextStepType.cs" />
+    <Compile Include="Domain\Properties\PropertyKind.cs" />
     <Compile Include="Domain\Properties\PropertyLendFile.cs" />
     <Compile Include="Domain\Properties\PropertyLendPicture.cs" />
     <Compile Include="Domain\Properties\PropertyOffFile.cs" />
