@@ -6,23 +6,33 @@ using System.Threading.Tasks;
 
 namespace CSCZJ.Web.Framework
 {
-    /// <summary>
-    /// Web API
-    /// </summary>
-    public class ApiResponseResult
+
+    public class SimpleResponse
     {
+        public string Code { get; set; }
+
         public string Message { get; set; }
 
-        public int Code { get; set; }
-
-        /// <summary>
-        /// 请求时间
-        /// </summary>
-        public int RequestTime { get; set; }
+        public string Data { get; set; }
     }
 
-    public class ApiResponseResult<T>:ApiResponseResult
+    public class ResponseObject<T>
     {
-        public T Object { get; set; }
+        public string Code { get; set; }
+
+        public string Message { get; set; }
+
+        public T Data { get; set; }
+    }
+
+    public class ResponseObjectList<T>
+    {
+        public string Code { get; set; }
+
+        public string Message { get; set; }
+
+        public IList<T> Data { get; set; }
+
+        public int Total { get; set; }
     }
 }

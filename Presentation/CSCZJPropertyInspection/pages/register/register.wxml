@@ -1,0 +1,42 @@
+<view class="container">
+  <view class="wechatUserInfo">
+    <view class="getUserInfoButton" wx:if="{{!hasUserInfo && canIUse}}">
+      <van-button open-type="getUserInfo" bindgetuserinfo="getUserInfo" type="primary" color="#cbd9a6" plain block>
+        点击授权获取用户头像昵称
+      </van-button>
+    </view>
+    <block wx:else>
+      <view class="avatar">
+        <van-image round height="342rpx" width="342rpx" src="{{userInfo.avatarUrl}}" />
+      </view>
+      <view class="nickName">{{userInfo.nickName}}</view>
+    </block>
+  </view>
+
+  <view class="registerForms" style="height:{{layout.registerFormsHeight}}px">    
+    <form bindsubmit="submitForm">
+      <scroll-view style="height:{{layout.scrolViewHeight}}px" scroll-x="false" scroll-y="true">
+        <block>
+          <van-cell-group>
+            <van-field name="fname" clearable label="账号" placeholder="请输入账号..." input-align="right" />
+            <van-field name="fnumb" clearable label="密码" placeholder="请输入密码..." input-align="right" type="password" />
+          </van-cell-group>
+        </block>    
+      </scroll-view>
+      <view class="submitBtns">
+        <block>
+          <van-button form-type="submit" color="#cbd9a6" block>绑定账号</van-button>
+        </block>
+      </view>
+    </form>
+  </view>
+</view>
+
+<!-- 在页面内添加对应的节点 -->
+<van-notify id="van-notify" />
+
+<!-- 提示框 -->
+<van-toast id="van-toast" />
+
+<!-- 提示对话框 -->
+<van-dialog id="van-dialog" />

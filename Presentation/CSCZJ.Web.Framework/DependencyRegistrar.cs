@@ -123,6 +123,7 @@ namespace CSCZJ.Web.Framework
 
             builder.RegisterType<SceneService>().As<ISceneService>().InstancePerLifetimeScope();
             builder.RegisterType<LocationService>().As<ILocationService>().InstancePerLifetimeScope();
+            builder.RegisterType<WechatLoginEventService>().As<IWechatLoginEventService>().InstancePerLifetimeScope();
 
             //builder.RegisterType<BackInStockSubscriptionService>().As<IBackInStockSubscriptionService>().InstancePerLifetimeScope();
             //builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerLifetimeScope();

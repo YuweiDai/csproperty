@@ -78,6 +78,8 @@ namespace CSCZJ.Services.AccountUsers
         /// <returns>true表示唯一</returns>
         bool NameUniqueCheck(string accountUserName,int accountUserId=0);
 
+        AccountUser GetAccountByOpenId(string openId);
+
         #region AccountUser roles
 
         /// <summary>

@@ -11,6 +11,5 @@
     "navigationBarTitleText": "资产巡查系统",
     "navigationBarTextStyle": "black"
   },
-  "style": "v2",
   "sitemapLocation": "sitemap.json"
 }

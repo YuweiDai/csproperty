@@ -129,6 +129,7 @@
     <Compile Include="Data\IDataProvider.cs" />
     <Compile Include="Data\IRepository.cs" />
     <Compile Include="Domain\Authentication\RefreshToken.cs" />
+    <Compile Include="Domain\Authentication\WechatLoginEvent.cs" />
     <Compile Include="Domain\Common\CommonSettings.cs" />
     <Compile Include="Domain\Common\FulltextSearchMode.cs" />
     <Compile Include="Domain\Common\GenericAttribute.cs" />

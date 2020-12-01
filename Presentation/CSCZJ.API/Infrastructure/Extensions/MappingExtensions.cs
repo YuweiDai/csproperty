@@ -2,6 +2,7 @@
 using CSCZJ.API.Models.AccountUsers;
 using CSCZJ.API.Models.Properties;
 using CSCZJ.Core.Domain.AccountUsers;
+using CSCZJ.Core.Domain.Authentication;
 using CSCZJ.Core.Domain.Media;
 using CSCZJ.Core.Domain.Properties;
 using CSCZJ.Web.Api.Extensions;
@@ -450,9 +451,26 @@ namespace CSCZJ.Web.Api.Extensions
         public static GovernmentUnit ToEntity(this GovernmentUnitModel model, GovernmentUnit destination)
         {
             return model.MapTo(destination);
-        } 
+        }
         #endregion
 
+        #region wechatmodels
+
+        public static WechatLoginEventModel ToModel(this WechatLoginEvent entity)
+        {
+            return entity.MapTo<WechatLoginEvent, WechatLoginEventModel>();
+        }
+        public static WechatLoginEvent ToEntity(this WechatLoginEventModel createmodel)
+        {
+            return createmodel.MapTo<WechatLoginEventModel, WechatLoginEvent>();
+        }
+
+        public static WechatLoginEvent ToEntity(this WechatLoginEventModel createmodel, WechatLoginEvent destination)
+        {
+            return createmodel.MapTo(destination);
+        }
+
+        #endregion
 
         #region 用户
 

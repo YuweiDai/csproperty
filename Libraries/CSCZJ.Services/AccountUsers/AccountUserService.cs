@@ -152,6 +152,20 @@ namespace CSCZJ.Services.AccountUsers
             return _accountUserRepository.GetById(accountUserId);
         }
 
+        /// <summary>
+        /// 根据openId获取探索者
+        /// </summary>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        public AccountUser GetAccountByOpenId(string openId)
+        {
+            if (string.IsNullOrWhiteSpace(openId))
+                throw new ArgumentNullException("openId is null");
+
+            var finder = _accountUserRepository.Table.Where(f => f.WechatOpenId == openId).SingleOrDefault();
+            return finder;
+        }
+
         public virtual IList<AccountUser> GetAccountUsersByIds(int[] accountUserIds)
         {
             if (accountUserIds == null || accountUserIds.Length == 0)
