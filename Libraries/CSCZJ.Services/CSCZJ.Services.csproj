@@ -86,8 +86,10 @@
   <ItemGroup>
     <Compile Include="Authentication\IAuthenticationService.cs" />
     <Compile Include="Authentication\IRefreshTokenService.cs" />
+    <Compile Include="Authentication\IWechatLoginEventService.cs" />
     <Compile Include="Authentication\RefreshTokenService.cs" />
     <Compile Include="Authentication\TokenAuthenticationService.cs" />
+    <Compile Include="Authentication\WechatLoginEventService.cs" />
     <Compile Include="Common\GenericAttributeExtensions.cs" />
     <Compile Include="Common\GenericAttributeService.cs" />
     <Compile Include="Common\IGenericAttributeService.cs" />

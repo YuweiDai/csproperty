@@ -50,6 +50,25 @@ namespace CSCZJ.Core.Domain.AccountUsers
 
         public string Remark { get; set; }
 
+        #region 扩展微信账号信息
+
+        /// <summary>
+        /// 微信用户唯一ID，用于绑定微信账号
+        /// </summary>
+        public string WechatOpenId { get; set; }
+
+        /// <summary>
+        /// 用户昵称，来自微信
+        /// </summary>
+        public string WechatNickName { get; set; }
+
+        /// <summary>
+        /// 用户头像，来自微信
+        /// </summary>
+        public string AvatarUrl { get; set; }
+
+        #endregion
+
         /// <summary>
         /// Gets or sets the customer roles
         /// </summary>

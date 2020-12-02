@@ -14,6 +14,9 @@ using CSCZJ.Web.Api.Extensions;
 using System.Linq;
 using CSCZJ.Services.Property;
 using CSCZJ.Services.Security;
+using CSCZJ.Web.Framework;
+using System.Web;
+using CSCZJ.Api.Models.AccountUser;
 
 namespace CSCZJ.API.Controllers
 {
@@ -22,6 +25,7 @@ namespace CSCZJ.API.Controllers
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IAccountUserService _accountService;
+        private readonly IWechatLoginEventService _wechatLoginEventService = null;
         private readonly IAccountUserRegistrationService _accountUserRegistrationService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IWorkflowMessageService _workflowMessageService;
@@ -35,6 +39,7 @@ namespace CSCZJ.API.Controllers
 
         public AccountController(
             IAuthenticationService authenticationService,
+            IWechatLoginEventService wechatLoginEventService,
             IAccountUserService customerService,
                  IAccountUserRegistrationService customerRegistrationService,
              IGenericAttributeService genericAttributeService,
@@ -46,6 +51,7 @@ namespace CSCZJ.API.Controllers
             AccountUserSettings customerSettings)
         {
             _authenticationService = authenticationService;
+            _wechatLoginEventService = wechatLoginEventService;
             _accountService = customerService;
             _accountUserRegistrationService = customerRegistrationService;
             _genericAttributeService = genericAttributeService;
@@ -287,6 +293,150 @@ namespace CSCZJ.API.Controllers
 
             return Ok();
         }
+        #endregion
+
+        #region 微信小程序 API
+
+        /// <summary>
+        /// 获取当前微信账号的状态
+        /// 0代表未绑定；
+        /// 1代表已绑定
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("GetWechatStatus")]
+        public IHttpActionResult GetWechatStatus()
+        {
+            var response = new SimpleResponse();
+            var status = "0";
+            var message = "当前用户未绑定";
+            AccountUser account = null;
+
+            try
+            {
+                var request = HttpContext.Current.Request;
+                var authToken = request.Headers["Authorization"].Replace("Bear ", "");
+
+                var openId = _wechatLoginEventService.GetOpenIdWithToken(authToken);
+                if (string.IsNullOrEmpty(openId)) throw new Exception("当前token无效");
+                account = _accountService.GetAccountByOpenId(openId);
+
+                if (account != null) status = "1";
+
+                response.Data = status;
+                response.Message = message;
+                response.Code = "200";
+                //_logger.Information("获取微信状态成功！", account);
+            }
+            catch (Exception ex)
+            {
+                response.Message = message;
+                response.Code = "401";
+
+                //_logger.Error(string.Format("获取微信状态失败，错误原因：{0}", ex.GetOriginalException().Message), finder);
+            }
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// 绑定学生账号
+        /// </summary>
+        /// <param name="accountBindModel"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Binding")]
+        public IHttpActionResult BindingFinder(AccountBindModel accountBindModel)
+        {
+            var response = new SimpleResponse();
+            AccountUser account = null;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(accountBindModel.Username)) throw new Exception("账号不能为空！");
+                if (string.IsNullOrWhiteSpace(accountBindModel.Password)) throw new Exception("密码不能为空！");
+
+                //删除请求中的空字符串
+                accountBindModel.Username = accountBindModel.Username.Replace(" ", "");
+                accountBindModel.Password = accountBindModel.Password.Replace(" ", "");
+
+
+                var result = _accountUserRegistrationService.ValidateAccountUser(accountBindModel.Username, accountBindModel.Password);
+                if (result != AccountUserLoginResults.Successful) throw new Exception("账号和密码不匹配！");
+
+                account = _accountService.GetAccountUserByUsername(accountBindModel.Username);
+                account.WechatNickName = accountBindModel.NickName;
+                account.AvatarUrl = accountBindModel.AvatarUrl;
+
+                var request = HttpContext.Current.Request;
+                var authToken = request.Headers["Authorization"].Replace("Bear ", "");
+                var openId = _wechatLoginEventService.GetOpenIdWithToken(authToken);
+
+                account.WechatOpenId = openId;
+                _accountService.UpdateAccountUser(account);
+                response.Message = "绑定成功！";
+                response.Code = "200";
+            }
+            catch (Exception ex)
+            {
+                //var finderInfo = string.Format("{0}{1}{2}{3}", accountBindModel.Name, accountBindModel.SchoolNumber);
+                //_logger.Error(string.Format("{0}，绑定失败，错误原因：{1}", finderInfo, ex.GetOriginalException().Message), account);
+
+                response.Message = ex.Message;
+                response.Code = "400";
+            }
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// 解绑账号
+        /// </summary>
+        /// <param name="finderBindingModel"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("UnBinding")]
+        public IHttpActionResult UnBindingFinder()
+        {
+            var response = new SimpleResponse();
+            AccountUser account = null;
+            try
+            {
+                var request = HttpContext.Current.Request;
+                var authToken = request.Headers["Authorization"].Replace("Bear ", "");
+                var openId = _wechatLoginEventService.GetOpenIdWithToken(authToken);
+                account = _accountService.GetAccountByOpenId(openId);
+                if (account == null) throw new Exception("当前微信未绑定学生信息！");
+
+                if (account == null)
+                {
+                    throw new Exception("所输入的学生的学校、班级、姓名和学号不匹配！");
+                }
+                else
+                {
+                    account.WechatOpenId = string.Empty;
+                    _accountService.UpdateAccountUser(account);
+                    response.Message = "绑定成功！";
+
+                    //_logger.Information("学生与微信解绑成功！", account);
+                }
+                response.Code = "200";
+            }
+            catch (Exception ex)
+            {
+
+                //_logger.Error(string.Format("{0}，解绑失败，错误原因：{1}", account.Name, ex.GetOriginalException().Message), account);
+
+                response.Message = ex.Message;
+                response.Code = "400";
+            }
+
+            return Ok(response);
+        }
+
+
         #endregion
 
         //[AllowAnonymous]

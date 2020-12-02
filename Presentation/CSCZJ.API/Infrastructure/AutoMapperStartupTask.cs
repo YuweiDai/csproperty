@@ -8,6 +8,7 @@ using CSCZJ.API.Models.Properties;
 using CSCZJ.Core.Domain.Properties;
 using CSCZJ.Core;
 using System.Data.Entity.Spatial;
+using CSCZJ.Core.Domain.Authentication;
 
 namespace CSCZJ.Web.Api.Infrastructure
 {
@@ -20,6 +21,9 @@ namespace CSCZJ.Web.Api.Infrastructure
 
         public void Execute()
         {
+
+            Mapper.CreateMap<WechatLoginEventModel, WechatLoginEvent>();
+
             //用户对象映射
             Mapper.CreateMap<AccountUserModel, AccountUser>()
                 .ForMember(dest => dest.LastActivityDate, mo => mo.Ignore())

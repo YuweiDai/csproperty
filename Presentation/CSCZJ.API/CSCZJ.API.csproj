@@ -231,6 +231,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\DemoController.cs" />
     <Compile Include="Controllers\GovernmentUnitController.cs" />
     <Compile Include="Controllers\MediaController.cs" />
@@ -239,10 +240,13 @@
     <Compile Include="Infrastructure\Extensions\MappingExtensions.cs" />
     <Compile Include="Infrastructure\AutoMapperStartupTask.cs" />
     <Compile Include="Infrastructure\DependencyRegistrar.cs" />
+    <Compile Include="Models\AccountUsers\AccountBindModel.cs" />
     <Compile Include="Models\AccountUsers\AccountResetPwdModel.cs" />
     <Compile Include="Models\AccountUsers\AccountUserModel.cs" />
     <Compile Include="Models\AccountUsers\LoginModel.cs" />
     <Compile Include="Models\AccountUsers\AccountUserRoleModel.cs" />
+    <Compile Include="Models\AccountUsers\WechatLoginEventModel.cs" />
+    <Compile Include="Models\AccountUsers\WechatTokenModel.cs" />
     <Compile Include="Models\Media\MediaModel.cs" />
     <Compile Include="Models\Properties\ApproveApplyModel.cs" />
     <Compile Include="Models\Properties\ApproveStatisticsModel.cs" />
