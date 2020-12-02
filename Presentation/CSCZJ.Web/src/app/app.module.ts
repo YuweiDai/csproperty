@@ -14,6 +14,7 @@ import { CommonModule, registerLocaleData } from '@angular/common';
 import zh from '@angular/common/locales/zh';
 import { AdminModule } from './components/admin/admin.module';
 import { PassportModule } from './components/passport/passport.module';
+import { NgxWebstorageModule } from 'ngx-webstorage';
 
 
 import { AuthGuard } from "./services/auth-guard.service";
@@ -25,9 +26,7 @@ import { AuthInterceptorService, AuthService, TokensManagerService } from "./ser
 
 // import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
-import 'heatmap.js';
-import 'leaflet.markercluster';
-import 'leaflet-iconlayers';
+
 
 @NgModule({
   declarations: [
@@ -40,7 +39,7 @@ import 'leaflet-iconlayers';
     HttpClientModule,
     BrowserAnimationsModule,
     PassportModule,
-    AdminModule, 
+    AdminModule,  NgxWebstorageModule.forRoot(),
   ],
   providers: [LogService,AuthGuard,ConfigService,LayoutService,AuthInterceptorService,AuthService,TokensManagerService,
     { provide: NZ_I18N, useValue: zh_CN }],

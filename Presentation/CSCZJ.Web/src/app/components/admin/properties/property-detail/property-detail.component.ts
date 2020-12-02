@@ -15,15 +15,15 @@ declare var Wkt: any;
 })
 export class PropertyDetailComponent implements OnInit {
 
-  private loading: boolean;
-  private property: Property;
-  private wkt: any;
-  private map: any;
-  private subProperties:SameIdPropertyModel[];
+  public loading: boolean;
+  public property: Property;
+  public wkt: any;
+  public map: any;
+  public subProperties:SameIdPropertyModel[];
 
   constructor(
-    private propertyService: PropertyService, private mapService: MapService,
-    private route: ActivatedRoute, private router: Router) {
+    public propertyService: PropertyService, public mapService: MapService,
+    public route: ActivatedRoute, public router: Router) {
     this.property = new Property();
 
     this.subProperties=[];

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule,registerLocaleData } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminCenterComponent } from './admin-center/admin-center.component';
@@ -19,6 +19,8 @@ import { PropertyRentComponent } from './properties/property-rent/property-rent.
 import { PropertyRentlistComponent } from './properties/property-rentlist/property-rentlist.component';
 import { OverviewComponent } from './statistics/overview/overview.component';
 import { AccountListComponent } from './systemmanager/account-list/account-list.component';
+
+
 
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -54,18 +56,58 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzAnchorModule } from 'ng-zorro-antd/anchor';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+  suppressScrollX: true
+};
+import { NgxEchartsModule } from 'ngx-echarts';
+
+import { PropertyService } from 'src/app/services/propertyService';
+import { GovernmentService } from 'src/app/services/governmentService';
+import { ConfigService } from 'src/app/services/configService';
+import zh from '@angular/common/locales/zh';
+registerLocaleData(zh);
+
+import 'leaflet';
+import 'leaflet-draw';
+import 'wicket';
+import 'leaflet.markercluster';
 
 
 
 @NgModule({
   declarations: [AdminCenterComponent, LeftmenuComponent, UiTableComponent, FooterComponent, HeaderComponent, MapHomeComponent, PropertyCenterComponent, PropertyCreateComponent, PropertyDetailComponent, PropertyExportComponent, PropertyListComponent, PropertyOffComponent, PropertyPatrollistComponent, PropertyRentComponent, PropertyRentlistComponent, OverviewComponent, AccountListComponent],
   imports: [
+    NgxEchartsModule.forRoot({
+      /**
+       * This will import all modules from echarts.
+       * If you only need custom modules,
+       * please refer to [Custom Build] section.
+       */
+      echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
+    }),
     CommonModule,
-    AdminRoutingModule,
+    AdminRoutingModule,PerfectScrollbarModule,
     NzGridModule,NzTableModule,NzAutocompleteModule,NzListModule,NzAnchorModule,NzStatisticModule,NzTabsModule,NzTagModule,NzDividerModule,NzSpinModule,NzSelectModule,
     NzDatePickerModule,NzRadioModule,NzInputNumberModule,NzInputModule,NzFormModule,NzStepsModule,NzUploadModule,NzNotificationModule,NzMessageModule,NzModalModule,
     NzSpaceModule,FormsModule,ReactiveFormsModule,NzCardModule,NzButtonModule,NzPaginationModule,NzBreadCrumbModule,NzAvatarModule,NzPageHeaderModule,
-    NzIconModule,NzMenuModule,NzLayoutModule,
+    NzIconModule,NzMenuModule,NzLayoutModule,NzDropDownModule,NzTimePickerModule,NzCheckboxModule,NzAlertModule,NzPopoverModule,NzCollapseModule,NzSwitchModule,
+  ],
+  providers: [PropertyService,GovernmentService,ConfigService,
+    {
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+    }
   ]
 })
 export class AdminModule { }

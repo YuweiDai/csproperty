@@ -25,20 +25,23 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
               "src/styles.less"
             ],
             "scripts": [
               "node_modules/leaflet/dist/leaflet.js",
+              
               "node_modules/leaflet-draw/dist/leaflet.draw.js",
-              "node_modules/leaflet-iconlayers/dist/iconLayers.js",
               "node_modules/wicket/wicket.js",
               "node_modules/wicket/wicket-leaflet.js",
-              "node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js",
-              "node_modules/heatmap.js/build/heatmap.min.js",
-              "node_modules/heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js"
+              "node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js"
             ]
           },
           "configurations": {
@@ -75,7 +78,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "CSCZJ:build"
+            "browserTarget": "CSCZJ:build",            
+            "proxyConfig":"proxy.config.json"
           },
           "configurations": {
             "production": {

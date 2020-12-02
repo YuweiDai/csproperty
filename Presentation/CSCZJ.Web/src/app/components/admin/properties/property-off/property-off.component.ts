@@ -20,33 +20,33 @@ import { ConfigService } from '../../../../services/configService';
   styleUrls: ['./property-off.component.less']
 })
 export class PropertyOffComponent implements OnInit {
-  private offId: number;
-  private pid: number;
+  public offId: number;
+  public pid: number;
   propertyOff = new PropertyOffModel();
   basicInfoForm: FormGroup;
 
-  private isPropertyLoading = false;
-  private optionList = [];
-  private selectedProperties = [];
+  public isPropertyLoading = false;
+  public optionList = [];
+  public selectedProperties = [];
 
-  private timeRange = "";
-  private priceControls = [];
+  public timeRange = "";
+  public priceControls = [];
 
-  private pictureUploadUrl: string;
-  private picureUploading = false;
-  private fileUploadUrl: string;
-  private fileUploading = false;
-  private previewImage = '';
-  private previewVisible = false;
-  private pictureList = [];
-  private fileList = [];
+  public pictureUploadUrl: string;
+  public picureUploading = false;
+  public fileUploadUrl: string;
+  public fileUploading = false;
+  public previewImage = '';
+  public previewVisible = false;
+  public pictureList = [];
+    fileList = [];
 
-  private isSubmit = false;
-  private loading = false;
+  public isSubmit = false;
+  public loading = false;
   dateFormat = 'yyyy/MM/dd';
-  constructor(private modalService: NzModalService, private msg: NzMessageService, private notification: NzNotificationService,
-    private router: Router, private route: ActivatedRoute, private fb: FormBuilder,
-    private configService: ConfigService, private propertyService: PropertyService) {
+  constructor(public modalService: NzModalService, public msg: NzMessageService, public notification: NzNotificationService,
+    public router: Router, public route: ActivatedRoute, public fb: FormBuilder,
+    public configService: ConfigService, public propertyService: PropertyService) {
   }
 
 

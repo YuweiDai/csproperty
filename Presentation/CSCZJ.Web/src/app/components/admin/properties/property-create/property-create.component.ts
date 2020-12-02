@@ -13,10 +13,10 @@ import { format, compareAsc } from 'date-fns'
 
 import { PropertyCreateModel, PropertyPictureModel, PropertyFileModel,SameIdPropertyModel } from '../../../../viewModels/Properties/property';
 
-import { MapService } from '../../../../services/map/mapService';
-import { PropertyService } from '../../../../services/propertyService';
-import { GovernmentService } from '../../../../services/governmentService';
-import { ConfigService } from '../../../../services/configService';
+import { MapService } from 'src/app/services/map/mapService';
+import { PropertyService } from 'src/app/services/propertyService';
+import { GovernmentService } from 'src/app/services/governmentService';
+import { ConfigService } from 'src/app/services/configService';
 
 declare var L: any;
 declare var Wkt: any;
@@ -29,22 +29,22 @@ declare var Wkt: any;
 })
 
 export class PropertyCreateComponent implements OnInit {
-  private id: number;
-  private title: string;
-  private current: number;  
-  private stepStatus: string;
-  private property = new PropertyCreateModel();
-  private orginalPropertyName: string;
-  private isSameCardIdLoading:boolean;
-  private sameCardIdChecked:boolean;
-  private sameCardProperties:SameIdPropertyModel[];
+  public id: number;
+  public title: string;
+  public current: number;  
+  public stepStatus: string;
+  public property = new PropertyCreateModel();
+  public orginalPropertyName: string;
+  public isSameCardIdLoading:boolean;
+  public sameCardIdChecked:boolean;
+  public sameCardProperties:SameIdPropertyModel[];
  
-  private wkt: any;
-  private map: any;
-  private marker = null;
-  private extent = null;
-  private editableLayers = new L.FeatureGroup();
-  private mapOverlayOption = {
+  public wkt: any;
+  public map: any;
+  public marker = null;
+  public extent = null;
+  public editableLayers = new L.FeatureGroup();
+  public mapOverlayOption = {
     edit: true,
     //icon: new L.Icon.Default(),
     //color: '#AA0000',
@@ -54,7 +54,7 @@ export class PropertyCreateComponent implements OnInit {
     //fillOpacity: 0.2
   };
 
-  private basicFormValidateConfig = {
+  public basicFormValidateConfig = {
     constructAreaRequired: false,
     estateIdRequired: true,
     estateTimeRequired: true,
@@ -63,25 +63,25 @@ export class PropertyCreateComponent implements OnInit {
     landIdRequired: false,
     landTimeRequired: false,
   };
-  private isGovernmentLoading = false;
-  private optionList = [];
+  public isGovernmentLoading = false;
+  public optionList = [];
 
   basicInfoForm: FormGroup;
   geoInfoForm: FormGroup;
   fileInfoForm: FormGroup;
 
-  private pictureUploadUrl: string;
-  private picureUploading = false;
-  private fileUploadUrl: string;
-  private fileUploading = false;
-  private previewImage = '';
-  private previewVisible = false;
-  private avatarList = [];
-  private pictureList = [];
-  private fileList = [];
+  public pictureUploadUrl: string;
+  public picureUploading = false;
+  public fileUploadUrl: string;
+  public fileUploading = false;
+  public previewImage = '';
+  public previewVisible = false;
+  public avatarList = [];
+  public pictureList = [];
+  public fileList = [];
 
-  private isSubmit = false;
-  private loading = false;
+  public isSubmit = false;
+  public loading = false;
 
 
   constructor(private modalService: NzModalService, private msg: NzMessageService, private notification: NzNotificationService,

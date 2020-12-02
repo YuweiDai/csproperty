@@ -114,13 +114,16 @@
                                 </ng-template>
                             </nz-modal>
                         </div>
-                        <div nz-col nzSpan="20" nzOffset="4">
-                            <nz-upload nzMultiple [nzAction]="fileUploadUrl" [nzFileList]="fileList" (nzChange)="handleFilesChange($event)">
+                        <div nz-col nzSpan="20" nzOffset="4">                   
+
+                            <nz-upload nzMultiple [nzAction]="fileUploadUrl" [(nzFileList)]="fileList" (nzChange)="handleFilesChange($event)">
                                 <button nz-button>
                                     <i class="anticon anticon-upload"></i>
                                     <span> 上传文件</span>
                                 </button>
                             </nz-upload>
+
+
                         </div>
                     </form>
 

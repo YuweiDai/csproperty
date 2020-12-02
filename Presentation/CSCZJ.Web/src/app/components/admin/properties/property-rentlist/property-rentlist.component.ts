@@ -27,6 +27,7 @@ export class PropertyRentlistComponent implements OnInit {
   tabKey = "即将过期";
   timeRange = [];
   timeList = [];
+  dateFormat = 'yyyy/MM/dd';
 
 
 

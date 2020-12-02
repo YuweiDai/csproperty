@@ -28,17 +28,26 @@
         </ul>
   
         <div class="user-info">
-            <nz-dropdown class="user-name" [nzClickHide]="false" [(nzVisible)]="visible">
-                <a nz-dropdown>
-                    财政局 <i class="anticon anticon-down"></i>
-                </a>
-                <ul nz-menu nzSelectable>
-                  <li nz-menu-item (click)='Exit()'>
-                    <a>退出</a>
-                  </li>
-                </ul>
-              </nz-dropdown>        
-          <nz-avatar nzIcon="anticon anticon-user" nzSrc="../../../assets/images/user.jpg"></nz-avatar>
+          <a nz-dropdown [nzDropdownMenu]="menu">
+            城投公司
+            <i nz-icon nzType="down"></i>
+          </a>
+          <!-- <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu nzSelectable>
+              <li nz-menu-item (click)='Exit()'>
+                <a>退出</a>
+              </li>
+            </ul>
+          </nz-dropdown-menu> -->
+        
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu nzSelectable>
+              <li nz-menu-item (click)='Exit()'>
+                <a>退出</a>
+              </li>
+            </ul>
+          </nz-dropdown-menu>   
+          <!-- <nz-avatar nzIcon="anticon anticon-user" nzSrc="../../../assets/images/user.jpg"></nz-avatar> -->
         </div>
       </div>
     </header>

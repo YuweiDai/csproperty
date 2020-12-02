@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PropertyListComponent } from './property-list.component';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 describe('PropertyListComponent', () => {
   let component: PropertyListComponent;

@@ -29,12 +29,12 @@
                 [(nzPageSize)]="pageSize"
                 (nzPageIndexChange)="searchData()"
                 (nzPageSizeChange)="searchData(true)">
-                <thead (nzSortChange)="sort($event)" nzSingleSort>
+                <thead (nzQueryParams)="sort($event)" nzSingleSort>
                   <tr>
                     <th  >出租方</th>
                     <th  >资产名称</th>
-                    <th nzShowSort nzSortKey="rentTime">起始时间</th>
-                    <th nzShowSort nzSortKey="backTime">结束时间</th>
+                    <th [nzSortFn]="true" nzColumnKey="rentTime">起始时间</th>
+                    <th [nzSortFn]="true" nzColumnKey="backTime">结束时间</th>
                     <th  ><span>已收金额</span></th>
                     <th  ><span>未收金额</span></th>
                     <th  ><span>操作</span></th>
@@ -90,8 +90,11 @@
 
       <nz-form-item>
         <nz-form-label [nzSpan]="6" nzFor="email">起止时间</nz-form-label>
+
+
         <nz-form-control [nzSpan]="14">
-          <nz-range-picker [nzFormat]="dateFormat" [(ngModel)]="timeRange"></nz-range-picker>
+          <!-- <nz-range-picker [nzFormat]="dateFormat" [(ngModel)]="timeRange" name="timeRange"></nz-range-picker> -->
+          <nz-range-picker [nzFormat]="dateFormat"></nz-range-picker>
         </nz-form-control>
       </nz-form-item >
     </form>
