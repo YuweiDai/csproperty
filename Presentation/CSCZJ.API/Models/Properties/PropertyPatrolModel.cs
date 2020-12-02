@@ -22,4 +22,16 @@ namespace CSCZJ.API.Models.Properties
         public virtual ICollection<PropertyPatrolPictureModel> PatrolPictures { get; set; }
 
     }
+
+    public class PropertyPatrolCreateModel : BaseQMEntityModel
+    {
+
+        public string Content { get; set; }
+
+        public string Title { get; set; }
+
+        public int Property_Id { get; set; }
+
+        public List<string> PatrolPictures { get; set; }
+    }
 }

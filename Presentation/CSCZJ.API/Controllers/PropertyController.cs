@@ -5097,7 +5097,7 @@ namespace CSCZJ.API.Controllers
 
             var openId = _wechatLoginEventService.GetOpenIdWithToken(authToken);
             if (string.IsNullOrEmpty(openId)) throw new Exception("当前token无效");
-            var account = _accountUserService.GetAccountByOpenId(openId);
+            var account = _accountUserService.GetAccountByOpenId(openId);    
 
             //页码-1
             if (pageIndex <= 0) pageIndex = 1;
@@ -5137,6 +5137,43 @@ namespace CSCZJ.API.Controllers
             _accountUserActivityService.InsertActivity("GetpropertyList", "获取资产列表信息");
 
             return Ok(response);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Patrol/Create")]
+        public IHttpActionResult CreatePropertyPatrol(PropertyPatrolCreateModel createModel)
+        {
+            var request = HttpContext.Current.Request;
+            var authToken = request.Headers["Authorization"].Replace("Bear ", "");
+
+            var openId = _wechatLoginEventService.GetOpenIdWithToken(authToken);
+            if (string.IsNullOrEmpty(openId)) throw new Exception("当前token无效");
+            var account = _accountUserService.GetAccountByOpenId(openId);
+
+            try
+            {
+                var patrol = createModel.ToEntity();
+                patrol.Property = _propertyService.GetPropertyById(createModel.Property_Id);
+                if (patrol == null) throw new Exception("所巡查的资产不存在！");
+
+                patrol.PatrolDate = DateTime.Now;
+                patrol.People = account.UserName;
+                patrol.Title = patrol.Property.Name;
+
+                #region 处理巡查照片
+                var directoryPath = System.IO.Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath(@"~/Content"), openId);
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+
+                var filePath = System.IO.Path.Combine(directoryPath, string.Format("HealthCode-{0}.jpg", DateTime.Now.ToString("yyyyMMddHHmmssss")));
+                if (!UitilityHelper.Base64ToImage(healthReportUploadModel.HealthCode, filePath)) throw new Exception("健康码上传失败！");
+                #endregion
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok("巡查记录添加成功！");
         }
 
         #endregion

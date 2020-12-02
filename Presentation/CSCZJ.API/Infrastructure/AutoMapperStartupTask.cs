@@ -314,7 +314,11 @@ namespace CSCZJ.Web.Api.Infrastructure
 
             Mapper.CreateMap<PropertyPatrol, PropertyPatrolModel>()
                    .ForMember(dest => dest.PatrolDate, mo => mo.MapFrom(src => src.PatrolDate.ToString("yyyy-MM-dd")));
-               
+
+
+            Mapper.CreateMap<PropertyPatrolCreateModel, PropertyPatrol>()
+            .ForMember(dest => dest.PatrolPictures, mo => mo.Ignore());
+
 
             //资产核销
             Mapper.CreateMap<PropertyOffModel, PropertyOff>()

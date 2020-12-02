@@ -232,10 +232,13 @@ namespace CSCZJ.Web.Api.Extensions
         }
 
 
-        public static PropertyPatrol ToEntity(this PropertyPatrolModel createmodel, PropertyPatrol destination)
+        public static PropertyPatrol ToEntity(this PropertyPatrolCreateModel createmodel)
         {
-            return createmodel.MapTo(destination);
+            return createmodel.MapTo<PropertyPatrolCreateModel, PropertyPatrol>();
         }
+
+
+        
         #endregion
 
         #region 资产划拨
