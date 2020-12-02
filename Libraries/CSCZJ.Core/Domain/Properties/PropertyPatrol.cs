@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSCZJ.Core.Domain.Properties
 {
-    public class PropertyPatrol:BaseEntity
+    public class PropertyPatrol : BaseEntity
     {
         private ICollection<PropertyPatrolPicture> _propertyPatrolPictures;
 
-        public PropertyPatrol() { 
-        
+        public PropertyPatrol()
+        {
+
         }
         /// <summary>
         /// 巡查时间

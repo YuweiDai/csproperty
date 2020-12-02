@@ -1,5 +1,5 @@
 // pages/index/index.js
-// import Dialog from '../../miniprogram_npm/@vant/weapp/dialog/dialog';
+import Dialog from '../../miniprogram_npm/@vant/weapp/dialog/dialog';
 import Notify from '../../miniprogram_npm/@vant/weapp/notify/notify';
 import Toast from '../../miniprogram_npm/@vant/weapp/toast/toast';
 
@@ -7,6 +7,15 @@ const util = require('../../utils/util');
 const app = getApp();
 
 Page({
+
+  data: {
+    properties: [],
+    page: {
+      index: 1,
+      pageSize: 15,
+      query: ""
+    }
+  },
 
   //#region 页面事件集合
 
@@ -28,17 +37,19 @@ Page({
     app.requestWithToken({
       url: app.globalData.apiUrl + 'Systemmanage/Accounts/GetWechatStatus',
     }).then(function (res) {
+      console.log(res);
       var response = res.data;
       if (response.code == "200") {
+        Toast.clear();
 
-        if (response.data == "0" || response.data == "1") {
+        if (response.data == "0") {
           that.setData({
             'initial.accountLoading': false
           });
-          Toast.clear();
-          //#region  若为状态0，1 则表示当前微信用户未绑定，专跳绑定页面
+
+          //#region  若为状态0则表示当前微信用户未绑定，专跳绑定页面
           wx.navigateTo({
-            url: '../register/register?active=' + response.data,
+            url: '../register/register',
           })
           //#endregion
         }
@@ -47,58 +58,8 @@ Page({
           'account.status': response.data
         });
 
-        //#region 加载checkinpoints数据
-        app.requestWithToken({
-          url: app.globalData.apiUrl + 'checkinpoints',
-          header: {
-            'content-type': 'application/json' // 默认值
-          }
-        }).then(function (res) {
-          var response = res.data;
-          if (response.code == "200") {
-            var checkInPoints = response.data;
+        that.getProperties();
 
-            //重新计算位置
-            checkInPoints.forEach(function (item, index) {
-              item.x = item.x * (app.globalData.clientWidth / 1080);
-              item.y = item.y * (app.globalData.clientHeight / 1920);
-              item.width = (app.globalData.clientWidth / 1080) * item.width;
-              item.height = (app.globalData.clientHeight / 1920) * item.height;
-            });
-
-            that.setData({
-              'initial.checkInPointsLoading': false,
-              'checkInPoints': checkInPoints
-            });
-
-            if (!that.data.initial.accountLoading && !that.data.initial.checkInPointsLoading) {
-              Toast.clear();
-              //启动计算
-              that.startCalculation();
-            }
-          } else {
-            Notify({
-              message: '获取信打卡点信息失败!',
-              duration: 2000
-            });
-
-            Toast.clear();
-          }
-        }, function (err) {});
-        //#endregion
-
-        //#region 加载系统配置
-
-        app.requestWithToken({
-          url: app.globalData.apiUrl + 'Common/LoadSystemConfig',
-        }).then(function (res) {
-          var response = res.data;
-          that.setData({
-            'config.mock': response.data == "TRUE"
-          })
-        }, function (err) {});
-
-        //#endregion
       } else {
         Notify({
           type: 'danger',
@@ -133,6 +94,35 @@ Page({
     }
   },
 
+  //触底加载
+  onReachBottom: function () {
+
+  },
+
   //#endregion
 
+
+  //加载资产
+  getProperties: function () {
+    var that = this;
+
+    // string query = "", string sort = "", int pageSize = 15, int pageIndex = 1,
+    var url = app.globalData.apiUrl + 'Properties/AllForWechat?' + 'pageSize=' + that.data.page.pageSize + "&pageIndex=" + that.data.page.index + "&time=" + Date.parse(new Date());
+    app.requestWithToken({
+      url: url,
+    }).then(function (res) {
+      var response = res.data;
+
+      if (response.data.length > 0) {
+
+        var newProperties = that.data.properties.concat(response.data);
+
+        that.setData({
+          properties: newProperties
+        })
+      } else {
+
+      }
+    });
+  }
 })

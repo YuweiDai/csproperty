@@ -27,10 +27,11 @@ using System.Web;
 using System.Web.Http;
 using System.Collections;
 using CSCZJ.API.Models.Statistics;
+using CSCZJ.Services.Authentication;
 
 namespace CSCZJ.API.Controllers
 {
-  
+
     [RoutePrefix("Properties")]
     public class PropertyController : ApiController //BaseAdminApiController
     {
@@ -54,6 +55,7 @@ namespace CSCZJ.API.Controllers
         private readonly IMonthTotalService _monthTotalService;
         private readonly ISubmitRecordService _submitRecordService;
         private readonly IPropertyPatrolService _propertyPatrolService;
+        private readonly IWechatLoginEventService _wechatLoginEventService;
 
         public PropertyController(
             IPropertyService propertyService,
@@ -68,8 +70,9 @@ namespace CSCZJ.API.Controllers
              IPropertyAllotService propertyAllotService, IPropertyOffService propertyOffService,
               IPropertyEditService propertyEditService, ICopyPropertyService copyPropertyService,
               IPictureService pictureService, IFileService fileService, IExportManager exportManager,
-              IImportManager importManager,IMonthTotalService monthTotalService,
+              IImportManager importManager, IMonthTotalService monthTotalService,
               ISubmitRecordService submitRecordService,
+            IWechatLoginEventService wechatLoginEventService,
         IWorkContext workContext)
         {
             _propertyService = propertyService;
@@ -92,7 +95,8 @@ namespace CSCZJ.API.Controllers
             _monthTotalService = monthTotalService;
             _submitRecordService = submitRecordService;
             _propertyPatrolService = propertyPatrolService;
-           // _exportMonthTotalManager = exportMonthTotalManager;
+            // _exportMonthTotalManager = exportMonthTotalManager;
+            _wechatLoginEventService = wechatLoginEventService;
         }
 
         #region utility     
@@ -110,7 +114,7 @@ namespace CSCZJ.API.Controllers
             var sum = propertyCreateModel.CurrentUse_Idle + propertyCreateModel.CurrentUse_Lend + propertyCreateModel.CurrentUse_Rent + propertyCreateModel.CurrentUse_Self;
             if (propertyCreateModel.PropertyTypeId == 0)
             {
-                if (propertyCreateModel.ConstructArea <sum)
+                if (propertyCreateModel.ConstructArea < sum)
                 {
                     return "建筑面积应大于自用、出租、出借、闲置面积之和";
                 }
@@ -118,7 +122,7 @@ namespace CSCZJ.API.Controllers
 
             if (propertyCreateModel.PropertyTypeId == 1)
             {
-                if (propertyCreateModel.LandArea <sum)
+                if (propertyCreateModel.LandArea < sum)
                 {
                     return "土地面积应大于自用、出租、出借、闲置面积之和";
                 }
@@ -187,7 +191,7 @@ namespace CSCZJ.API.Controllers
             else property.LandTime = null;
             #endregion
 
-            if(propertyCreateModel.RegisterEstate)
+            if (propertyCreateModel.RegisterEstate)
             {
                 property.ConstructId = "";
                 property.ConstructTime = null;
@@ -221,14 +225,14 @@ namespace CSCZJ.API.Controllers
             {
 
             }
-       
+
             property.Region = Region.TMJD;
 
             if (propertyCreateModel.PropertyTypeId == 2) propertyCreateModel.Floor = 0;
 
 
-         //   property.HasConstructID = !string.IsNullOrEmpty(property.EstateId) || !string.IsNullOrEmpty(property.ConstructId);  //是否拥有房产证
-        //    property.HasLandID = !string.IsNullOrEmpty(property.EstateId) || !string.IsNullOrEmpty(property.LandId);  //是否土地证
+            //   property.HasConstructID = !string.IsNullOrEmpty(property.EstateId) || !string.IsNullOrEmpty(property.ConstructId);  //是否拥有房产证
+            //    property.HasLandID = !string.IsNullOrEmpty(property.EstateId) || !string.IsNullOrEmpty(property.LandId);  //是否土地证
         }
 
         /// <summary>
@@ -251,9 +255,9 @@ namespace CSCZJ.API.Controllers
             if (advanceCondition.Region.Count == 3) advanceCondition.GovernmentTypes = new List<int>();
 
             advanceCondition.PropertyType = new List<int>();
-          //  if (propertyAdvanceConditionModel.PropertyType.Construct) advanceCondition.PropertyType.Add((int)PropertyType.House);
-          //  if (propertyAdvanceConditionModel.PropertyType.Land) advanceCondition.PropertyType.Add((int)PropertyType.Land);
-         //   if (propertyAdvanceConditionModel.PropertyType.ConstructOnLand) advanceCondition.PropertyType.Add((int)PropertyType.LandUnderHouse);
+            //  if (propertyAdvanceConditionModel.PropertyType.Construct) advanceCondition.PropertyType.Add((int)PropertyType.House);
+            //  if (propertyAdvanceConditionModel.PropertyType.Land) advanceCondition.PropertyType.Add((int)PropertyType.Land);
+            //   if (propertyAdvanceConditionModel.PropertyType.ConstructOnLand) advanceCondition.PropertyType.Add((int)PropertyType.LandUnderHouse);
             if (advanceCondition.PropertyType.Count == 3) advanceCondition.PropertyType = new List<int>();
 
             advanceCondition.Region = new List<int>();
@@ -540,7 +544,7 @@ namespace CSCZJ.API.Controllers
             copy.Government_Id = property.Government.Id;
 
             var dbLocation = DbGeography.FromText(propertyCreateModel.Location);
-            copy.Region = _propertyService.GetPropertyRegion(dbLocation);          
+            copy.Region = _propertyService.GetPropertyRegion(dbLocation);
 
             //  copy.Region = propertyCreateModel.re
             copy.Property_Id = property.Id;
@@ -952,7 +956,7 @@ namespace CSCZJ.API.Controllers
                 propertyPictureModel.Href = _pictureService.GetPictureUrl(propertyPictureModel.PictureId);
             }
 
-            propertyPatrolModel.PatrolPictures = propertyPatrolModel.PatrolPictures.OrderBy(pp => pp.DisplayOrder).ToList();          
+            propertyPatrolModel.PatrolPictures = propertyPatrolModel.PatrolPictures.OrderBy(pp => pp.DisplayOrder).ToList();
         }
 
         [NonAction]
@@ -1128,20 +1132,21 @@ namespace CSCZJ.API.Controllers
 
             return Ok(result);
         }
-        
+
         [HttpGet]
         [Route("MonthTotal")]
-        public IHttpActionResult GetMonthTotal() {
+        public IHttpActionResult GetMonthTotal()
+        {
             var currentUser = _workContext.CurrentAccountUser;
 
-            var response = _propertyService.GetMonthTotalPropertyProcess(currentUser.Government.Id).Select(p=>
+            var response = _propertyService.GetMonthTotalPropertyProcess(currentUser.Government.Id).Select(p =>
             {
                 var property = p.ToModel();
                 property.LogoUrl = GetLogoUrl(p);
-                property.MonthTotalModel = _monthTotalService.GetPropertyMonthTotal(property.Id, DateTime.Now.Year.ToString() +";"+ DateTime.Now.Month.ToString()).Select(m=>
-                {
-                    return m.ToModel();
-                }
+                property.MonthTotalModel = _monthTotalService.GetPropertyMonthTotal(property.Id, DateTime.Now.Year.ToString() + ";" + DateTime.Now.Month.ToString()).Select(m =>
+                  {
+                      return m.ToModel();
+                  }
                 ).ToList();
                 return property;
             }).ToList();
@@ -1151,12 +1156,14 @@ namespace CSCZJ.API.Controllers
 
         [HttpGet]
         [Route("GetRecord")]
-        public IHttpActionResult GetRecord() {
+        public IHttpActionResult GetRecord()
+        {
             var record = false;
             var user = _workContext.CurrentAccountUser;
-            var submitRecord = _submitRecordService.GetSubmitRecordByGId(user.Government.Id,DateTime.Now.Year.ToString()+DateTime.Now.Month.ToString());
+            var submitRecord = _submitRecordService.GetSubmitRecordByGId(user.Government.Id, DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString());
 
-            if (submitRecord != null) {
+            if (submitRecord != null)
+            {
                 record = true;
             }
 
@@ -1166,7 +1173,8 @@ namespace CSCZJ.API.Controllers
 
         [HttpGet]
         [Route("CurrentUserId")]
-        public IHttpActionResult GetCurrentUserId() {
+        public IHttpActionResult GetCurrentUserId()
+        {
 
             var currentUser = _workContext.CurrentAccountUser;
 
@@ -1177,7 +1185,8 @@ namespace CSCZJ.API.Controllers
 
         [HttpPost]
         [Route("createmonthtotal")]
-        public IHttpActionResult CreateMonthTotal(MonthTotalModel monthTotalModel){
+        public IHttpActionResult CreateMonthTotal(MonthTotalModel monthTotalModel)
+        {
             var monthTotal = new MonthTotal();
             monthTotal = monthTotalModel.ToEntity();
             monthTotal.Month = DateTime.Now;
@@ -1188,10 +1197,11 @@ namespace CSCZJ.API.Controllers
 
         [HttpPost]
         [Route("createall")]
-        public IHttpActionResult CreateAll(IList <MonthTotalModel> All)
+        public IHttpActionResult CreateAll(IList<MonthTotalModel> All)
         {
             var user = _workContext.CurrentAccountUser;
-            foreach (var model in All) {
+            foreach (var model in All)
+            {
                 var monthTotal = new MonthTotal();
                 monthTotal = model.ToEntity();
                 monthTotal.Month = DateTime.Now;
@@ -1220,7 +1230,7 @@ namespace CSCZJ.API.Controllers
             //    return NotFound();
 
             if (simple)
-            {                
+            {
                 var model = property.ToSimpleModel();
 
                 //activity log
@@ -1249,23 +1259,24 @@ namespace CSCZJ.API.Controllers
                 PreparePropertyFiles(model);
 
                 //获取出租信息
-                foreach(var rentModel in model.Rents)
+                foreach (var rentModel in model.Rents)
                 {
                     var rent = _propertyRentService.GetPropertyRentById(rentModel.Id);
-                    if (rent == null || rent.Deleted) throw new Exception("无法找到出租信息资源");                   
+                    if (rent == null || rent.Deleted) throw new Exception("无法找到出租信息资源");
 
                     rentModel.Valid = DateTime.Now >= rent.RentTime && DateTime.Now < rent.BackTime;
 
                     if (rentModel.PriceString.EndsWith(";")) rentModel.PriceString = rentModel.PriceString.TrimEnd(';');
 
-                    PreparePropertyRentPicturesAndFiles(rentModel);                   
+                    PreparePropertyRentPicturesAndFiles(rentModel);
                 }
 
-                foreach(var patrolModel in model.Patrols){
-                   // var patrol = _propertyPatrolService.GetPropertyPatrolById(patrolModel.Id);
+                foreach (var patrolModel in model.Patrols)
+                {
+                    // var patrol = _propertyPatrolService.GetPropertyPatrolById(patrolModel.Id);
                     PreparePropertyPatrolPictures(patrolModel);
                 }
- 
+
 
                 //activity log
                 _accountUserActivityService.InsertActivity("GetpropertyInfo", "获取 名为 {0} 的资产信息", property.Name);
@@ -1305,11 +1316,12 @@ namespace CSCZJ.API.Controllers
             var propertyCreatModel = new PropertyCreateModel();
 
             var edit = property.Edits.Where(e => e.State == PropertyApproveState.Start && !e.Deleted).FirstOrDefault();
-            if (edit != null) {
+            if (edit != null)
+            {
                 var copyproperty = _copyPropertyService.GetCopyPropertyById(edit.CopyProperty_Id);
                 propertyCreatModel = copyproperty.ToCreateModel();
 
-               // propertyCreatModel.Owner_self = propertyCreatModel.GovernmentId == currentUser.Government.Id;
+                // propertyCreatModel.Owner_self = propertyCreatModel.GovernmentId == currentUser.Government.Id;
                 propertyCreatModel.Owner_children = propertyCreatModel.Owner_self;
 
                 #region 新数据库对象
@@ -1355,19 +1367,19 @@ namespace CSCZJ.API.Controllers
                 }
 
                 #endregion
-                var logoUrl= _pictureService.GetPictureUrl(copyproperty.LogoPicture_Id);
+                var logoUrl = _pictureService.GetPictureUrl(copyproperty.LogoPicture_Id);
                 propertyCreatModel.LogoUrl = string.IsNullOrEmpty(logoUrl) ? null : logoUrl;
                 propertyCreatModel.Logo = null;
                 propertyCreatModel.LogoPictureId = copyproperty.LogoPicture_Id;
                 #endregion
-            }   
-            else 
+            }
+            else
             {
                 //if (!currentUser.IsAdmin() && !(property.Government.Id == currentUser.Government.Id || property.Government.ParentGovernmentId == currentUser.Government.Id)
                 //    return NotFound();
 
                 propertyCreatModel = property.ToCreateModel();
-               // propertyCreatModel.Owner_self = propertyCreatModel.GovernmentId == currentUser.Government.Id;
+                // propertyCreatModel.Owner_self = propertyCreatModel.GovernmentId == currentUser.Government.Id;
                 propertyCreatModel.Owner_children = propertyCreatModel.Owner_self;
                 propertyCreatModel.LogoUrl = string.IsNullOrEmpty(GetLogoUrl(property)) ? null : GetLogoUrl(property);
                 var propertyLogoPicture = GetLogoPicture(property);
@@ -1489,7 +1501,7 @@ namespace CSCZJ.API.Controllers
             var governmentIds = new List<int>();//  _governmentService.GetGovernmentIdsByCurrentUser();  //获取当前账户的可查询的资产
 
 
-            var properties = _propertyService.GetAllProperties(governmentIds, query, pageIndex-1, pageSize,
+            var properties = _propertyService.GetAllProperties(governmentIds, query, pageIndex - 1, pageSize,
                showHidden, null, sortConditions);
 
             var response = new ListResponse<PropertyListModel>
@@ -1504,7 +1516,7 @@ namespace CSCZJ.API.Controllers
                 },
                 Data = properties.Select(s =>
                 {
-                    var propertyModel = s.ToListModel();                    
+                    var propertyModel = s.ToListModel();
                     if (s.Off)
                         propertyModel.Name = propertyModel.Name + "（已核销）";
                     else if (!s.Published)
@@ -1530,7 +1542,7 @@ namespace CSCZJ.API.Controllers
         {
             var currentUser = _workContext.CurrentAccountUser;
 
-      var      showHidden = currentUser.IsRegistered() && !(currentUser.IsAdmin() || currentUser.IsGovAuditor() || currentUser.IsStateOwnerAuditor() || currentUser.IsDataReviewer());   //只是注册单位可以获取未发布的
+            var showHidden = currentUser.IsRegistered() && !(currentUser.IsAdmin() || currentUser.IsGovAuditor() || currentUser.IsStateOwnerAuditor() || currentUser.IsDataReviewer());   //只是注册单位可以获取未发布的
 
             //初始化排序条件
             var sortConditions = PropertySortCondition.Instance(advance.Sort);
@@ -1543,7 +1555,7 @@ namespace CSCZJ.API.Controllers
 
             var governmentIds = _governmentService.GetGovernmentIdsByCurrentUser();  //获取当前账户的可查询的资产
 
-            var properties = _propertyService.GetAllProperties(governmentIds,advance.Query, advance.PageIndex, advance.PageSize,
+            var properties = _propertyService.GetAllProperties(governmentIds, advance.Query, advance.PageIndex, advance.PageSize,
                 showHidden, request, sortConditions);
 
             var response = new ListResponse<PropertyModel>
@@ -1640,15 +1652,18 @@ namespace CSCZJ.API.Controllers
             //var governmentIds = _governmentService.GetGovernmentIdsByCurrentUser();
             //var properties = _propertyService.GetAllProperties(governmentIds, showHidden);
             var properties = _propertyService.GetAllProperties();
-            var mapProperties = properties.ToList().Select(p => {
+            var mapProperties = properties.ToList().Select(p =>
+            {
                 var geoModel = p.ToGeoModel();
-                if (p.Location != null) {
+                if (p.Location != null)
+                {
                     geoModel.X = Convert.ToDouble(geoModel.Location.Split(' ')[2].Substring(0, geoModel.Location.Split(' ')[2].Length - 1));
                     geoModel.Y = Convert.ToDouble(geoModel.Location.Split(' ')[1].Substring(1, geoModel.Location.Split(' ')[1].Length - 1));
 
                 }
-               
-                return geoModel; });
+
+                return geoModel;
+            });
 
             //activity log
             _accountUserActivityService.InsertActivity("GetGeopropertyList", "地图获取资产列表信息");
@@ -1657,7 +1672,8 @@ namespace CSCZJ.API.Controllers
         }
         [HttpGet]
         [Route("search")]
-        public IHttpActionResult GetSearchKey(string search) {
+        public IHttpActionResult GetSearchKey(string search)
+        {
 
             var response = _propertyService.GetKeyProperties(search).ToList().Select(p =>
             {
@@ -1676,7 +1692,7 @@ namespace CSCZJ.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("geo/suggestion")]
-        public IHttpActionResult Suggestion(string query = "",long time=0, int pageSize = 10, bool showHidden = false)
+        public IHttpActionResult Suggestion(string query = "", long time = 0, int pageSize = 10, bool showHidden = false)
         {
             var currentUser = _workContext.CurrentAccountUser;
 
@@ -1733,11 +1749,11 @@ namespace CSCZJ.API.Controllers
             {
                 var currentProperty = response.Where(p => p.Id == id).SingleOrDefault();
                 if (currentProperty != null)
-                    response.Remove(currentProperty);               
+                    response.Remove(currentProperty);
             }
 
- 
-        
+
+
 
             return Ok(response);
         }
@@ -1755,19 +1771,19 @@ namespace CSCZJ.API.Controllers
             var checkMessage = PropertyCreateModelValid(propertyCreateModel);
 
             if (!string.IsNullOrEmpty(checkMessage)) throw new Exception(checkMessage);
-           
-            var property = propertyCreateModel.ToEntity();       
+
+            var property = propertyCreateModel.ToEntity();
 
             PrepareProperty(property, propertyCreateModel);
 
             //一证多资产处理
             var orginParentPropertyId = propertyCreateModel.IsMain ? propertyCreateModel.ParentPropertyId : 0;
 
- 
+
 
             _propertyService.InsertProperty(property);
 
- 
+
 
             //activity log
             _accountUserActivityService.InsertActivity("AddNewproperty", "增加 名为 {0} 的资产", property.Name);
@@ -1808,11 +1824,11 @@ namespace CSCZJ.API.Controllers
                 Title = property.Name,
                 State = propertyCreateModel.Submit ? PropertyApproveState.DepartmentApprove : PropertyApproveState.Start,
                 ProcessDate = DateTime.Now,
-                SuggestGovernmentId =  0//_workContext.CurrentAccountUser.Government.Id
+                SuggestGovernmentId = 0//_workContext.CurrentAccountUser.Government.Id
             };
 
             //如果当前用户是主管部门，则跳过主管部门审核环节
-            if (propertyCreateModel.Submit )//&& _workContext.CurrentAccountUser.Government.ParentGovernmentId == 0)
+            if (propertyCreateModel.Submit)//&& _workContext.CurrentAccountUser.Government.ParentGovernmentId == 0)
             {
                 propertyNewRecord.State = PropertyApproveState.AdminApprove;
                 propertyNewRecord.DSuggestion = "同意";
@@ -1880,17 +1896,17 @@ namespace CSCZJ.API.Controllers
             //文件更新
             SavePropertyFiles(property, propertyCreateModel.Files);
             property.ParentPropertyId = parentid;
-           
+
 
             //保存资产
             _propertyService.UpdateProperty(property);
 
 
- 
 
-                return Ok(property.ToModel());
-                
-                
+
+            return Ok(property.ToModel());
+
+
         }
 
         /// <summary>
@@ -1990,8 +2006,8 @@ namespace CSCZJ.API.Controllers
             _accountUserActivityService.InsertActivity("Deleteproperty", "删除 名为 {0} 的资产", property.Name);
 
             var newCreate = property.PropertyNewCreate;
-            if(newCreate==null) newCreate = _propertyNewCreateService.GetPropertyNewCreateByPropertyId(property.Id);
-            _propertyNewCreateService.DeletePropertyNewCreate(newCreate);            
+            if (newCreate == null) newCreate = _propertyNewCreateService.GetPropertyNewCreateByPropertyId(property.Id);
+            _propertyNewCreateService.DeletePropertyNewCreate(newCreate);
 
             //通知
             //SuccessNotification(_localizationService.GetResource("Admin.Catalog.Categories.Deleted"));
@@ -2025,7 +2041,7 @@ namespace CSCZJ.API.Controllers
 
             //活动日志
             _accountUserActivityService.InsertActivity("Deletepropertys", "批量删除 Id为 {0} 的资产", propertyIdString);
-           
+
             //通知
             //SuccessNotification(_localizationService.GetResource("Admin.Catalog.Categories.Deleted"));
 
@@ -2039,7 +2055,7 @@ namespace CSCZJ.API.Controllers
         {
             var governmentIdList = new List<int>();
 
-            if(loadChildren)
+            if (loadChildren)
             {
                 var childrenGovernments = _governmentService.GetGovernmentIdsByParentId(governmentId);
                 governmentIdList.AddRange(childrenGovernments);
@@ -2052,8 +2068,9 @@ namespace CSCZJ.API.Controllers
                 return new SimplePropertyModel
                 {
                     Id = p.Id,
-                    Name = p.Name
-                 //   GovernmentName = p.Government.Name
+                    Name = p.Name,
+
+                    //   GovernmentName = p.Government.Name
                 };
             });
 
@@ -2084,7 +2101,7 @@ namespace CSCZJ.API.Controllers
                 {
                     var pcrl = pcr.ToListModel();
 
-                    pcrl.PatrolDate = pcr.PatrolDate.ToString("yyyy/MM/dd");                 
+                    pcrl.PatrolDate = pcr.PatrolDate.ToString("yyyy/MM/dd");
                     pcrl.Property_Id = pcr.Property.Id;
                     return pcrl;
                 })
@@ -2098,12 +2115,13 @@ namespace CSCZJ.API.Controllers
         //获取资产出租列表
         [HttpGet]
         [Route("rentlist")]
-        public IHttpActionResult GetRentList(int page = 0, int results = int.MaxValue, string sortField = "", string sortOrder = "",string tabKey="即将过期") {
-         
+        public IHttpActionResult GetRentList(int page = 0, int results = int.MaxValue, string sortField = "", string sortOrder = "", string tabKey = "即将过期")
+        {
+
             //初始化排序条件
             var sortConditions = PropertySortCondition.Instance(sortField);
 
-            var allRecords = _propertyRentService.GetRentListRecords(page,results,sortField,sortOrder,tabKey);
+            var allRecords = _propertyRentService.GetRentListRecords(page, results, sortField, sortOrder, tabKey);
             var response = new ListResponse<PropertyRentApproveListModel>
             {
 
@@ -2133,7 +2151,7 @@ namespace CSCZJ.API.Controllers
                                 pcrl.PriceString += "...";
                                 break;
                             }
-                            pcrl.PriceString += string.Format("第{0}年租金{1}元;", index, price.Substring(0,price.Length-5));
+                            pcrl.PriceString += string.Format("第{0}年租金{1}元;", index, price.Substring(0, price.Length - 5));
                             ysindex++;
                         }
                         if (price.Contains("false"))
@@ -2146,14 +2164,14 @@ namespace CSCZJ.API.Controllers
                             pcrl.UnPriceString += string.Format("第{0}年租金{1}元;", index, price.Substring(0, price.Length - 6));
                             wsindex++;
                         }
-                       
+
                         index++;
                     }
 
                     pcrl.Property_Id = pcr.Property.Id;
-                  //  pcrl.CanApprove = PropertyCanApprove(pcr.State, pcr.SuggestGovernmentId);
+                    //  pcrl.CanApprove = PropertyCanApprove(pcr.State, pcr.SuggestGovernmentId);
 
-                //    pcrl.CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(pcr.State, pcr.SuggestGovernmentId);
+                    //    pcrl.CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(pcr.State, pcr.SuggestGovernmentId);
 
                     return pcrl;
                 })
@@ -2166,18 +2184,20 @@ namespace CSCZJ.API.Controllers
         //[AllowAnonymous]
         [HttpGet]
         [Route("PropertyProcess/{name}")]
-        public IHttpActionResult GetPropertyProcess(string name="") {
+        public IHttpActionResult GetPropertyProcess(string name = "")
+        {
 
             //var currentAccount = _workContext.CurrentAccountUser;
             var governmentIds = new List<int>();// _governmentService.GetGovernmentIdsByCurrentUser(true);
-           
-            var properties = _propertyService.GetProcessProperties(name,governmentIds).Select(sp => {
+
+            var properties = _propertyService.GetProcessProperties(name, governmentIds).Select(sp =>
+            {
                 return new
                 {
                     Id = sp.Id,
                     Name = sp.Name,
                     Address = sp.Address,
-                    Locked=sp.Locked
+                    Locked = sp.Locked
                 };
 
                 //return simplePropertyModel;
@@ -2185,14 +2205,14 @@ namespace CSCZJ.API.Controllers
 
             return Ok(properties);
         }
-   
+
 
         [HttpGet]
         [Route("Process/Records")]
-        public IHttpActionResult GetAllApproveRecords(string approveType = "newCreate",string checkState = "", 
+        public IHttpActionResult GetAllApproveRecords(string approveType = "newCreate", string checkState = "",
             string query = "", string sort = "", int pageSize = Int32.MaxValue, int pageIndex = 0, long time = 0)
         {
-            var currentUser = _workContext.CurrentAccountUser;          
+            var currentUser = _workContext.CurrentAccountUser;
             var government = currentUser.Government;
 
             IList<int> targetGovIds = new List<int>();
@@ -2244,10 +2264,10 @@ namespace CSCZJ.API.Controllers
                                 return pcrl;
                             })
                         };
-                      
+
                         if (currentUser.IsGovAuditor())
                         {
-                         
+
                         }
 
                         //activity log
@@ -2310,7 +2330,7 @@ namespace CSCZJ.API.Controllers
                                 var pcrl = pcr.ToListModel();
                                 pcrl.Property_Id = pcr.Property.Id;
                                 pcrl.ApproveType = approveType;
-                                
+
                                 pcrl.CanApprove = PropertyCanApprove(pcr.State, pcr.SuggestGovernmentId);
 
                                 pcrl.CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(pcr.State, pcr.SuggestGovernmentId);
@@ -2344,13 +2364,14 @@ namespace CSCZJ.API.Controllers
                             {
                                 var pcrl = pcr.ToListModel();
 
-                                pcrl.RentTime = pcr.RentTime.ToString("yyyy/MM/dd") +" - "+pcr.BackTime.ToString("yyyy/MM/dd");
+                                pcrl.RentTime = pcr.RentTime.ToString("yyyy/MM/dd") + " - " + pcr.BackTime.ToString("yyyy/MM/dd");
                                 pcrl.PriceString = "";
                                 var priceList = pcr.PriceString.Split(';');
                                 var index = 1;
-                                foreach(var price in priceList)
+                                foreach (var price in priceList)
                                 {
-                                    if (index > 2) {
+                                    if (index > 2)
+                                    {
                                         pcrl.PriceString += "...";
                                         break;
                                     }
@@ -2457,8 +2478,10 @@ namespace CSCZJ.API.Controllers
             //var suggestGovernmentId = currentUser.Government.Id;
             if (propertyLendModel.Ids == "") throw new Exception("请选择需要处置的资产");
             var lendIds = propertyLendModel.Ids.Split(';');
-            foreach (var id in lendIds) {
-                if (id != "") {
+            foreach (var id in lendIds)
+            {
+                if (id != "")
+                {
                     var property = _propertyService.GetPropertyById(Convert.ToInt32(id));
                     if (property == null) continue;  //防止错误的PropertyId传入
                     if (property.Locked || property.Deleted || !property.Published)
@@ -2474,10 +2497,10 @@ namespace CSCZJ.API.Controllers
                     propertyLendRecord.BackTime = DateTime.MaxValue;// Convert.ToDateTime(propertyLendModel.BackTime);
                     propertyLendRecord.Property = property;
                     propertyLendRecord.State = propertyLendModel.Submit ? PropertyApproveState.DepartmentApprove : PropertyApproveState.Start;
-                 
+
                     propertyLendRecord.ProcessDate = DateTime.Now;
                     propertyLendRecord.SuggestGovernmentId = 0;// suggestGovernmentId; temp
-               
+
                     //如果当前用户是主管部门，则跳过主管部门审核环节
                     if (propertyLendModel.Submit && _workContext.CurrentAccountUser.IsParentGovernmentorAuditor())
                     {
@@ -2503,7 +2526,7 @@ namespace CSCZJ.API.Controllers
                     #endregion
 
                     SwitchPropertyLockState(propertyLendModel.Submit, property);
-                }             
+                }
             }
 
             return Ok();
@@ -2515,7 +2538,7 @@ namespace CSCZJ.API.Controllers
         {
             if (propertyRentModel.Ids == "") throw new Exception("请选择需要处置的资产");
             var rentIds = propertyRentModel.Ids.Split(';');
-            rentIds= rentIds.Where(s => !string.IsNullOrEmpty(s)).ToArray();  //删除空要素
+            rentIds = rentIds.Where(s => !string.IsNullOrEmpty(s)).ToArray();  //删除空要素
             var currentUser = _workContext.CurrentAccountUser;
             foreach (var id in rentIds)
             {
@@ -2588,7 +2611,7 @@ namespace CSCZJ.API.Controllers
                 if (id != "")
                 {
                     var property = _propertyService.GetPropertyById(Convert.ToInt32(id));
-                 
+
                     if (property == null) continue;  //防止错误的PropertyId传入
                     if (property.Locked || property.Deleted || !property.Published)
                         throw new Exception("无法对该资产进行操作或该资产已经不存在");
@@ -2603,7 +2626,7 @@ namespace CSCZJ.API.Controllers
                     allot.NowPropertyOwner = propertyAllotModel.NowPropertyOwner;
                     allot.NowGovernmentId = _governmentService.GetGovernmentUnitByName(propertyAllotModel.NowPropertyOwner).Id;
                     allot.Title = property.Name;
-                    allot.AllotTime =Convert.ToDateTime( propertyAllotModel.AllotTime);
+                    allot.AllotTime = Convert.ToDateTime(propertyAllotModel.AllotTime);
                     allot.Property = property;
                     allot.State = propertyAllotModel.Submit ? PropertyApproveState.DepartmentApprove : PropertyApproveState.Start;
                     allot.ProcessDate = DateTime.Now;
@@ -2658,11 +2681,12 @@ namespace CSCZJ.API.Controllers
                     off.Price = propertyOffModel.Price;
                     off.Title = property.Name;
                     off.Property = property;
-                    
+
                     off.SuggestGovernmentId = sid;
                     off.State = propertyOffModel.Submit ? PropertyApproveState.DepartmentApprove : PropertyApproveState.Start;
                     off.ProcessDate = DateTime.Now;
-                    switch (propertyOffModel.OffType) {
+                    switch (propertyOffModel.OffType)
+                    {
                         case "0":
                             off.OffType = OffType.Auction;
                             break;
@@ -2679,9 +2703,9 @@ namespace CSCZJ.API.Controllers
                     //如果当前用户是主管部门，则跳过主管部门审核环节
                     //if (propertyOffModel.Submit && _workContext.CurrentAccountUser.IsParentGovernmentorAuditor())
                     //{
-                        off.State = PropertyApproveState.AdminApprove;
-                        off.DSuggestion = "同意";
-                        off.DApproveDate = DateTime.Now;
+                    off.State = PropertyApproveState.AdminApprove;
+                    off.DSuggestion = "同意";
+                    off.DApproveDate = DateTime.Now;
                     //}
 
                     _propertyOffService.InsertPropertyOff(off);
@@ -2706,12 +2730,12 @@ namespace CSCZJ.API.Controllers
         }
 
         [HttpPut]
-        [Route("UpdateLend/{id}")]   
-        public IHttpActionResult UpdateLendRecord(int id,PropertyLendModel propertyLendModel)
+        [Route("UpdateLend/{id}")]
+        public IHttpActionResult UpdateLendRecord(int id, PropertyLendModel propertyLendModel)
         {
             var currentUser = _workContext.CurrentAccountUser;
             var lend = _propertyLendService.GetPropertyLendById(id);
-            
+
             if (!PropertyApproveCanEditDeleteAndSubmit(lend.State, lend.SuggestGovernmentId)) throw new Exception("该项目已无法编辑");
 
             lend = propertyLendModel.ToEntity(lend);
@@ -2740,23 +2764,23 @@ namespace CSCZJ.API.Controllers
                 }
             }
 
-                _propertyLendService.UpdatePropertyLend(lend);
+            _propertyLendService.UpdatePropertyLend(lend);
 
-            SwitchPropertyLockState(true , lend.Property);  //锁定资产
+            SwitchPropertyLockState(true, lend.Property);  //锁定资产
 
             return Ok();
         }
 
         [HttpPut]
         [Route("UpdateRent1111/{id}")]
-        public IHttpActionResult UpdateRentRecord(int id,PropertyRentModel propertyRentModel)
+        public IHttpActionResult UpdateRentRecord(int id, PropertyRentModel propertyRentModel)
         {
 
             var currentUser = _workContext.CurrentAccountUser;
             var rent = _propertyRentService.GetPropertyRentById(id);
             if (!PropertyApproveCanEditDeleteAndSubmit(rent.State, rent.SuggestGovernmentId)) throw new Exception("该项目已无法编辑");
 
-              rent = propertyRentModel.ToEntity(rent);
+            rent = propertyRentModel.ToEntity(rent);
 
             if (rent.BackTime <= rent.RentTime) throw new Exception("出租时间不能晚于或等于归还时间");
 
@@ -2782,11 +2806,12 @@ namespace CSCZJ.API.Controllers
                     rent.DApproveDate = DateTime.Now;
                 }
             }
-            else {
+            else
+            {
                 rent.State = PropertyApproveState.Start;
             }
 
-        _propertyRentService.UpdatePropertyRent(rent);
+            _propertyRentService.UpdatePropertyRent(rent);
 
             SwitchPropertyLockState(true, rent.Property);
 
@@ -2795,7 +2820,7 @@ namespace CSCZJ.API.Controllers
 
         [HttpPut]
         [Route("UpdateAllot/{id}")]
-        public IHttpActionResult UpdateAllotRecord(int id,PropertyAllotModel propertyAllotModel)
+        public IHttpActionResult UpdateAllotRecord(int id, PropertyAllotModel propertyAllotModel)
         {
             var currentUser = _workContext.CurrentAccountUser;
             var allot = _propertyAllotService.GetPropertyAllotById(id);
@@ -2818,7 +2843,8 @@ namespace CSCZJ.API.Controllers
                 }
             }
 
-            else {
+            else
+            {
                 allot.State = PropertyApproveState.Start;
             }
 
@@ -2831,7 +2857,7 @@ namespace CSCZJ.API.Controllers
 
         [HttpPut]
         [Route("UpdateOff/{id}")]
-        public IHttpActionResult UpdateOffRecord(int id,PropertyOffModel propertyOffModel)
+        public IHttpActionResult UpdateOffRecord(int id, PropertyOffModel propertyOffModel)
         {
             var currentUser = _workContext.CurrentAccountUser;
             var off = _propertyOffService.GetPropertyOffById(id);
@@ -2898,7 +2924,7 @@ namespace CSCZJ.API.Controllers
             {
                 Property = newCreate.Property.ToModel(),
                 PropertyNewCreate = newCreate.ToModel(),
-                CanApprove = PropertyCanApprove(newCreate.State,newCreate.SuggestGovernmentId),
+                CanApprove = PropertyCanApprove(newCreate.State, newCreate.SuggestGovernmentId),
                 CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(newCreate.State, newCreate.SuggestGovernmentId),
                 LinkMan = newCreate.Property.Government.Person,
                 LinkTel = newCreate.Property.Government.Tel
@@ -2910,8 +2936,8 @@ namespace CSCZJ.API.Controllers
             PreparePropertyPictures(response.Property);
             //获取文件
             PreparePropertyFiles(response.Property);
-            #endregion            
- 
+            #endregion
+
             return Ok(response);
         }
 
@@ -2933,14 +2959,14 @@ namespace CSCZJ.API.Controllers
 
             var response = new PropertyEditApproveModel
             {
-                CopyProperty = copyProperty.ToModel(),               
+                CopyProperty = copyProperty.ToModel(),
                 PropertyEdit = edit.ToModel(),
                 CanApprove = PropertyCanApprove(edit.State, edit.SuggestGovernmentId),
                 CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(edit.State, edit.SuggestGovernmentId),
                 LinkMan = edit.Property.Government.Person,
                 LinkTel = edit.Property.Government.Tel
             };
-            response.CopyProperty.GovernmentName = govermentName;            
+            response.CopyProperty.GovernmentName = govermentName;
 
             #region 新数据库对象
             #region 获取图片
@@ -2987,7 +3013,7 @@ namespace CSCZJ.API.Controllers
             response.CopyProperty.LogoUrl = string.IsNullOrEmpty(logoUrl) ? null : logoUrl;
             #endregion
 
-            if(edit.State== PropertyApproveState.Finish && edit.OriginCopyProperty_Id!=0)
+            if (edit.State == PropertyApproveState.Finish && edit.OriginCopyProperty_Id != 0)
             {
                 var originCopyProperty = _copyPropertyService.GetCopyPropertyById(edit.OriginCopyProperty_Id);
                 var originGovermentName = _governmentService.GetGovernmentUnitById(originCopyProperty.Government_Id).Name;
@@ -3058,7 +3084,8 @@ namespace CSCZJ.API.Controllers
 
         [HttpGet]
         [Route("Lend/{id}")]
-        public IHttpActionResult GetLendDetail(int id) {
+        public IHttpActionResult GetLendDetail(int id)
+        {
 
             var currentUser = _workContext.CurrentAccountUser;
             var government = currentUser.Government;
@@ -3072,7 +3099,7 @@ namespace CSCZJ.API.Controllers
             {
                 Property = lend.Property.ToBasicModel(),
                 PropertyLend = lend.ToModel(),
-                CanApprove = PropertyCanApprove(lend.State,lend.SuggestGovernmentId),
+                CanApprove = PropertyCanApprove(lend.State, lend.SuggestGovernmentId),
                 CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(lend.State, lend.SuggestGovernmentId),
                 LinkMan = lend.Property.Government.Person,
                 LinkTel = lend.Property.Government.Tel
@@ -3099,7 +3126,7 @@ namespace CSCZJ.API.Controllers
             {
                 Property = rent.Property.ToBasicModel(),
                 PropertyRent = rent.ToModel(),
-                CanApprove = PropertyCanApprove(rent.State,rent.SuggestGovernmentId),
+                CanApprove = PropertyCanApprove(rent.State, rent.SuggestGovernmentId),
                 CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(rent.State, rent.SuggestGovernmentId),
                 LinkMan = rent.Property.Government.Person,
                 LinkTel = rent.Property.Government.Tel
@@ -3107,7 +3134,7 @@ namespace CSCZJ.API.Controllers
 
             response.PropertyRent.Valid = DateTime.Now >= rent.RentTime && DateTime.Now < rent.BackTime;
 
-            if (response.PropertyRent.PriceString.EndsWith(";")) response.PropertyRent.PriceString = response.PropertyRent.PriceString.TrimEnd(';');            
+            if (response.PropertyRent.PriceString.EndsWith(";")) response.PropertyRent.PriceString = response.PropertyRent.PriceString.TrimEnd(';');
 
             PreparePropertyRentPicturesAndFiles(response.PropertyRent);
 
@@ -3130,7 +3157,7 @@ namespace CSCZJ.API.Controllers
             {
                 Property = allot.Property.ToBasicModel(),
                 PropertyAllot = allot.ToModel(),
-                CanApprove = PropertyCanApprove(allot.State,allot.SuggestGovernmentId),
+                CanApprove = PropertyCanApprove(allot.State, allot.SuggestGovernmentId),
                 CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(allot.State, allot.SuggestGovernmentId),
                 LinkMan = allot.Property.Government.Person,
                 LinkTel = allot.Property.Government.Tel
@@ -3154,7 +3181,7 @@ namespace CSCZJ.API.Controllers
             {
                 Property = off.Property.ToBasicModel(),
                 PropertyOff = off.ToModel(),
-                CanApprove = PropertyCanApprove(off.State,off.SuggestGovernmentId),
+                CanApprove = PropertyCanApprove(off.State, off.SuggestGovernmentId),
                 CanEditAndDelete = PropertyApproveCanEditDeleteAndSubmit(off.State, off.SuggestGovernmentId),
                 LinkMan = off.Property.Government.Person,
                 LinkTel = off.Property.Government.Tel
@@ -3182,7 +3209,7 @@ namespace CSCZJ.API.Controllers
                     {
                         var edit = _propertyEditService.GetPropertyEditById(id);
                         if (edit == null) return NotFound();
-                        
+
                         if (!PropertyApproveCanEditDeleteAndSubmit(edit.State, edit.SuggestGovernmentId)) throw new Exception("无法删除");
 
                         _propertyEditService.DeletePropertyEdit(edit);
@@ -3203,7 +3230,7 @@ namespace CSCZJ.API.Controllers
 
                         break;
                     }
-                    #endregion
+                #endregion
                 case "lend":
                     #region 出借审批
                     {
@@ -3285,9 +3312,9 @@ namespace CSCZJ.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("SubmitApprove/{id}")]
-        public IHttpActionResult SumbitApprove(int id,string approveType="")
+        public IHttpActionResult SumbitApprove(int id, string approveType = "")
         {
-          
+
             var currentUser = _workContext.CurrentAccountUser;
 
             switch (approveType)
@@ -3446,7 +3473,7 @@ namespace CSCZJ.API.Controllers
             }
             return Ok();
         }
-         
+
         /// <summary>
         /// 批量提交申请
         /// </summary>
@@ -3462,7 +3489,7 @@ namespace CSCZJ.API.Controllers
 
             var idArr = idsString.Split(';');
 
-            foreach(var idString in idArr)
+            foreach (var idString in idArr)
             {
                 int id = 0;
                 if (int.TryParse(idString, out id))
@@ -3632,7 +3659,7 @@ namespace CSCZJ.API.Controllers
                     }
                 }
             }
-            
+
             return Ok(result.ToString());
         }
 
@@ -3661,7 +3688,7 @@ namespace CSCZJ.API.Controllers
                         var newCreate = _propertyNewCreateService.GetPropertyNewCreateById(id);
                         if (newCreate == null || newCreate.Deleted) throw new Exception("找不到资源");
 
-                        if (!PropertyCanApprove(newCreate.State,newCreate.SuggestGovernmentId)) throw new Exception("没有审批权限");
+                        if (!PropertyCanApprove(newCreate.State, newCreate.SuggestGovernmentId)) throw new Exception("没有审批权限");
 
                         if (newCreate.State == PropertyApproveState.DepartmentApprove)
                         {
@@ -3672,7 +3699,7 @@ namespace CSCZJ.API.Controllers
                         {
                             newCreate.AApproveDate = DateTime.Now;
                             newCreate.ASuggestion = suggestion;
-                        }                      
+                        }
 
                         if (agree)
                         {
@@ -3749,19 +3776,19 @@ namespace CSCZJ.API.Controllers
                                 originCopyProperty.ConstructArea = property.ConstructArea;
                                 originCopyProperty.LandArea = property.LandArea;
                                 originCopyProperty.PropertyID = property.PropertyID;
-                              //  originCopyProperty.HasConstructID = property.HasConstructID;
-                              //  originCopyProperty.HasLandID = property.HasLandID;
-                             //   originCopyProperty.PropertyNature = property.PropertyNature;
-                             //   originCopyProperty.LandNature = property.LandNature;
-                             //   originCopyProperty.Price = property.Price;
+                                //  originCopyProperty.HasConstructID = property.HasConstructID;
+                                //  originCopyProperty.HasLandID = property.HasLandID;
+                                //   originCopyProperty.PropertyNature = property.PropertyNature;
+                                //   originCopyProperty.LandNature = property.LandNature;
+                                //   originCopyProperty.Price = property.Price;
                                 originCopyProperty.GetedDate = property.GetedDate;
-                             //   originCopyProperty.LifeTime = property.LifeTime;
+                                //   originCopyProperty.LifeTime = property.LifeTime;
                                 originCopyProperty.UsedPeople = property.UsedPeople;
-                             //   originCopyProperty.CurrentUse_Self = property.CurrentUse_Self;
-                             //   originCopyProperty.CurrentUse_Rent = property.CurrentUse_Rent;
-                              //  originCopyProperty.CurrentUse_Lend = property.CurrentUse_Lend;
-                              //  originCopyProperty.CurrentUse_Idle = property.CurrentUse_Idle;
-                             //   originCopyProperty.NextStepUsage = property.NextStepUsage;
+                                //   originCopyProperty.CurrentUse_Self = property.CurrentUse_Self;
+                                //   originCopyProperty.CurrentUse_Rent = property.CurrentUse_Rent;
+                                //  originCopyProperty.CurrentUse_Lend = property.CurrentUse_Lend;
+                                //  originCopyProperty.CurrentUse_Idle = property.CurrentUse_Idle;
+                                //   originCopyProperty.NextStepUsage = property.NextStepUsage;
                                 originCopyProperty.Location = property.Location == null ? "" : property.Location.AsText();
                                 originCopyProperty.Extent = property.Extent == null ? "" : property.Extent.AsText();
                                 originCopyProperty.Description = property.Description;
@@ -3786,19 +3813,19 @@ namespace CSCZJ.API.Controllers
                                 property.ConstructArea = copyproperty.ConstructArea;
                                 property.LandArea = copyproperty.LandArea;
                                 property.PropertyID = copyproperty.PropertyID;
-                            //    property.HasConstructID = copyproperty.HasConstructID;
-                            //    property.HasLandID = copyproperty.HasLandID;
-                             //   property.PropertyNature = copyproperty.PropertyNature;
-                             //   property.LandNature = copyproperty.LandNature;
-                             //   property.Price = copyproperty.Price;
+                                //    property.HasConstructID = copyproperty.HasConstructID;
+                                //    property.HasLandID = copyproperty.HasLandID;
+                                //   property.PropertyNature = copyproperty.PropertyNature;
+                                //   property.LandNature = copyproperty.LandNature;
+                                //   property.Price = copyproperty.Price;
                                 property.GetedDate = copyproperty.GetedDate;
-                            //    property.LifeTime = copyproperty.LifeTime;
+                                //    property.LifeTime = copyproperty.LifeTime;
                                 property.UsedPeople = copyproperty.UsedPeople;
-                          //      property.CurrentUse_Self = copyproperty.CurrentUse_Self;
-                            //    property.CurrentUse_Rent = copyproperty.CurrentUse_Rent;
-                           //     property.CurrentUse_Lend = copyproperty.CurrentUse_Lend;
-                           //     property.CurrentUse_Idle = copyproperty.CurrentUse_Idle;
-                            //   property.NextStepUsage = copyproperty.NextStepUsage;
+                                //      property.CurrentUse_Self = copyproperty.CurrentUse_Self;
+                                //    property.CurrentUse_Rent = copyproperty.CurrentUse_Rent;
+                                //     property.CurrentUse_Lend = copyproperty.CurrentUse_Lend;
+                                //     property.CurrentUse_Idle = copyproperty.CurrentUse_Idle;
+                                //   property.NextStepUsage = copyproperty.NextStepUsage;
                                 if (!string.IsNullOrEmpty(copyproperty.Location))
                                     property.Location = DbGeography.FromText(copyproperty.Location);
                                 else throw new Exception("空间位置未赋值");
@@ -4035,7 +4062,7 @@ namespace CSCZJ.API.Controllers
                                 allot.Property.Government = newGovernment;
 
                                 SwitchPropertyLockState(false, allot.Property);
-                                
+
                             }
                         }
                         else
@@ -4230,19 +4257,19 @@ namespace CSCZJ.API.Controllers
                                             originCopyProperty.ConstructArea = property.ConstructArea;
                                             originCopyProperty.LandArea = property.LandArea;
                                             originCopyProperty.PropertyID = property.PropertyID;
-                                          //  originCopyProperty.HasConstructID = property.HasConstructID;
-                                        //    originCopyProperty.HasLandID = property.HasLandID;
-                                         //   originCopyProperty.PropertyNature = property.PropertyNature;
-                                        //    originCopyProperty.LandNature = property.LandNature;
-                                         //   originCopyProperty.Price = property.Price;
+                                            //  originCopyProperty.HasConstructID = property.HasConstructID;
+                                            //    originCopyProperty.HasLandID = property.HasLandID;
+                                            //   originCopyProperty.PropertyNature = property.PropertyNature;
+                                            //    originCopyProperty.LandNature = property.LandNature;
+                                            //   originCopyProperty.Price = property.Price;
                                             originCopyProperty.GetedDate = property.GetedDate;
-                                         //   originCopyProperty.LifeTime = property.LifeTime;
+                                            //   originCopyProperty.LifeTime = property.LifeTime;
                                             originCopyProperty.UsedPeople = property.UsedPeople;
-                                        //    originCopyProperty.CurrentUse_Self = property.CurrentUse_Self;
-                                        //    originCopyProperty.CurrentUse_Rent = property.CurrentUse_Rent;
-                                         //   originCopyProperty.CurrentUse_Lend = property.CurrentUse_Lend;
-                                        //    originCopyProperty.CurrentUse_Idle = property.CurrentUse_Idle;
-                                       //     originCopyProperty.NextStepUsage = property.NextStepUsage;
+                                            //    originCopyProperty.CurrentUse_Self = property.CurrentUse_Self;
+                                            //    originCopyProperty.CurrentUse_Rent = property.CurrentUse_Rent;
+                                            //   originCopyProperty.CurrentUse_Lend = property.CurrentUse_Lend;
+                                            //    originCopyProperty.CurrentUse_Idle = property.CurrentUse_Idle;
+                                            //     originCopyProperty.NextStepUsage = property.NextStepUsage;
                                             originCopyProperty.Location = property.Location == null ? "" : property.Location.AsText();
                                             originCopyProperty.Extent = property.Extent == null ? "" : property.Extent.AsText();
                                             originCopyProperty.Description = property.Description;
@@ -4267,19 +4294,19 @@ namespace CSCZJ.API.Controllers
                                             property.ConstructArea = copyproperty.ConstructArea;
                                             property.LandArea = copyproperty.LandArea;
                                             property.PropertyID = copyproperty.PropertyID;
-                                        //    property.HasConstructID = copyproperty.HasConstructID;
-                                        //    property.HasLandID = copyproperty.HasLandID;
-                                         //   property.PropertyNature = copyproperty.PropertyNature;
-                                        //    property.LandNature = copyproperty.LandNature;
-                                         //   property.Price = copyproperty.Price;
+                                            //    property.HasConstructID = copyproperty.HasConstructID;
+                                            //    property.HasLandID = copyproperty.HasLandID;
+                                            //   property.PropertyNature = copyproperty.PropertyNature;
+                                            //    property.LandNature = copyproperty.LandNature;
+                                            //   property.Price = copyproperty.Price;
                                             property.GetedDate = copyproperty.GetedDate;
-                                       //     property.LifeTime = copyproperty.LifeTime;
+                                            //     property.LifeTime = copyproperty.LifeTime;
                                             property.UsedPeople = copyproperty.UsedPeople;
-                                       //     property.CurrentUse_Self = copyproperty.CurrentUse_Self;
-                                        //    property.CurrentUse_Rent = copyproperty.CurrentUse_Rent;
-                                        //    property.CurrentUse_Lend = copyproperty.CurrentUse_Lend;
-                                        //    property.CurrentUse_Idle = copyproperty.CurrentUse_Idle;
-                                       //     property.NextStepUsage = copyproperty.NextStepUsage;
+                                            //     property.CurrentUse_Self = copyproperty.CurrentUse_Self;
+                                            //    property.CurrentUse_Rent = copyproperty.CurrentUse_Rent;
+                                            //    property.CurrentUse_Lend = copyproperty.CurrentUse_Lend;
+                                            //    property.CurrentUse_Idle = copyproperty.CurrentUse_Idle;
+                                            //     property.NextStepUsage = copyproperty.NextStepUsage;
                                             if (!string.IsNullOrEmpty(copyproperty.Location))
                                                 property.Location = DbGeography.FromText(copyproperty.Location);
                                             else throw new Exception("空间位置未赋值");
@@ -4581,7 +4608,7 @@ namespace CSCZJ.API.Controllers
                                     break;
                                 }
                                 #endregion
-                        } 
+                        }
                         #endregion
                     }
                     catch (Exception e)
@@ -4629,15 +4656,17 @@ namespace CSCZJ.API.Controllers
             return Ok(response);
         }
 
-        public ArrayList GetPropertyTypeList(HighSearchModel highSearch) {      
+        public ArrayList GetPropertyTypeList(HighSearchModel highSearch)
+        {
             var propertyTypeList = new ArrayList();
-      
-            if(highSearch.House==true) propertyTypeList.Add(0);
-            if(highSearch.Land==true) propertyTypeList.Add(1);       
+
+            if (highSearch.House == true) propertyTypeList.Add(0);
+            if (highSearch.Land == true) propertyTypeList.Add(1);
             return propertyTypeList;
 
         }
-        public IList<int> GetRegionList(HighSearchModel highSearch) {
+        public IList<int> GetRegionList(HighSearchModel highSearch)
+        {
             var regionList = new List<int>();
             if (highSearch.TMZ == true) regionList.Add(0);
             if (highSearch.ZSZ == true) regionList.Add(1);
@@ -4649,15 +4678,18 @@ namespace CSCZJ.API.Controllers
         {
             var areaList = new ArrayList();
             if (highSearch.One == true) areaList.Add(49);
-            if (highSearch.Two == true) {
+            if (highSearch.Two == true)
+            {
                 areaList.Add(50);
                 areaList.Add(200);
             }
-            if (highSearch.Three == true) {
+            if (highSearch.Three == true)
+            {
                 areaList.Add(200);
                 areaList.Add(500);
             }
-            if (highSearch.Four == true) {
+            if (highSearch.Four == true)
+            {
                 areaList.Add(500);
                 areaList.Add(1000);
             }
@@ -4687,7 +4719,8 @@ namespace CSCZJ.API.Controllers
 
         [HttpPost]
         [Route("highSearch")]
-        public IHttpActionResult GetHighSearchProperties(HighSearchModel highSearch) {
+        public IHttpActionResult GetHighSearchProperties(HighSearchModel highSearch)
+        {
 
             var properyTypeList = GetPropertyTypeList(highSearch);
             var regionList = GetRegionList(highSearch);
@@ -4695,18 +4728,18 @@ namespace CSCZJ.API.Controllers
             var currentList = GetCurrentTypeList(highSearch);
             var rightList = GetRightList(highSearch);
 
-            var properties = _propertyService.GetHighSearchProperties(properyTypeList, regionList,areaList, currentList, rightList);
+            var properties = _propertyService.GetHighSearchProperties(properyTypeList, regionList, areaList, currentList, rightList);
 
 
 
-            var response =   properties.Select(p =>
-            {
-                var geoModel = p.ToGeoModel();
-                geoModel.X = Convert.ToDouble(geoModel.Location.Split(' ')[2].Substring(0, geoModel.Location.Split(' ')[2].Length - 1));
-                geoModel.Y = Convert.ToDouble(geoModel.Location.Split(' ')[1].Substring(1, geoModel.Location.Split(' ')[1].Length - 1));
+            var response = properties.Select(p =>
+          {
+              var geoModel = p.ToGeoModel();
+              geoModel.X = Convert.ToDouble(geoModel.Location.Split(' ')[2].Substring(0, geoModel.Location.Split(' ')[2].Length - 1));
+              geoModel.Y = Convert.ToDouble(geoModel.Location.Split(' ')[1].Substring(1, geoModel.Location.Split(' ')[1].Length - 1));
 
-                return geoModel;
-            });
+              return geoModel;
+          });
 
 
             return Ok(response);
@@ -4715,18 +4748,18 @@ namespace CSCZJ.API.Controllers
 
         [HttpGet]
         [Route("ProcessFilter")]
-        public IHttpActionResult GetAllProcess(string query = "", string sort = "",bool showHidden = false, long time = 0,
+        public IHttpActionResult GetAllProcess(string query = "", string sort = "", bool showHidden = false, long time = 0,
           bool manage = false, bool isGovernment = false, bool isInstitution = false, bool isCompany = false, int selectedId = 0,
           bool construct = false, bool land = false, bool constructOnLand = false,//资产类型
           bool old = false, bool west = false, bool jjq = false, bool kc = false, bool qj = false, bool other = false, //区域
           bool certi_both = false, bool certi_land = false, bool certi_construct = false, bool certi_none = false, //证书情况
           bool current_self = false, bool current_rent = false, bool current_lend = false, bool currnet_idle = false, //使用现状
           bool auction = false, bool ct = false, bool jt = false, bool jk = false, bool self = false, bool storeUp = false, bool adjust = false, bool greenland = false, bool house = false//下步使用
-       //   string constructAreaRange = "", string landAreaRange = "", string priceRange = "", string getDateRange=""  //范围参数
+                                                                                                                                                                                           //   string constructAreaRange = "", string landAreaRange = "", string priceRange = "", string getDateRange=""  //范围参数
           )
         {
             var currentUser = _workContext.CurrentAccountUser;
-            
+
 
             //初始化排序条件
             var sortConditions = PropertySortCondition.Instance(sort);
@@ -4745,15 +4778,15 @@ namespace CSCZJ.API.Controllers
                 NextStep = new NextStepModel { Adjust = adjust, Auction = auction, Ct = ct, Jt = jt, Jk = jk, Greenland = greenland, House = house, Self = self, StoreUp = storeUp },
                 Time = time
             };
-  
+
             //高级搜索参数设置
             PropertyAdvanceConditionRequest request = PrepareAdvanceCondition(advance);
 
             var governmentIds = _governmentService.GetGovernmentIdsByCurrentUser(true);  //不包含已有账号的下级单位
-            var properties = _propertyService.GetAllProcessProperties(governmentIds, query, 
-                request, sortConditions).Select(sp=>
+            var properties = _propertyService.GetAllProcessProperties(governmentIds, query,
+                request, sortConditions).Select(sp =>
                 {
-                    
+
                     return new
                     {
                         Id = sp.Id,
@@ -4792,7 +4825,7 @@ namespace CSCZJ.API.Controllers
                 Directory.CreateDirectory(path);
             }
             string filePath = Path.Combine(path, "资产导出.xls");
-          
+
 
             #region 获取导出的资产集合
             IList<Property> properties = new List<Property>();
@@ -4807,22 +4840,22 @@ namespace CSCZJ.API.Controllers
             //        properties.Add(property);
             //    }
             //}
-          //  else
-          //  {
-                //var currentUser = _workContext.CurrentAccountUser;
+            //  else
+            //  {
+            //var currentUser = _workContext.CurrentAccountUser;
 
-                //var showHidden = currentUser.IsRegistered() && currentUser.AccountUserRoles.Count == 1;  //只是注册单位可以获取未发布的
+            //var showHidden = currentUser.IsRegistered() && currentUser.AccountUserRoles.Count == 1;  //只是注册单位可以获取未发布的
 
-                ////初始化排序条件
-                //var sortConditions = PropertySortCondition.Instance(advance.Sort);
+            ////初始化排序条件
+            //var sortConditions = PropertySortCondition.Instance(advance.Sort);
 
-                ////特殊字段排序调整
-                //if (advance.Sort.ToLower().StartsWith("governmentname")) sortConditions[0].PropertyName = "Government";
+            ////特殊字段排序调整
+            //if (advance.Sort.ToLower().StartsWith("governmentname")) sortConditions[0].PropertyName = "Government";
 
-                ////高级搜索参数设置
-                //PropertyAdvanceConditionRequest request = PrepareAdvanceCondition(advance);
-                //var governmentIds = _governmentService.GetGovernmentIdsByCurrentUser();  //获取当前账户的可查询的资产
-                //properties = _propertyService.GetAllProperties(governmentIds, advance.Query, 0, int.MaxValue, showHidden, request, sortConditions);
+            ////高级搜索参数设置
+            //PropertyAdvanceConditionRequest request = PrepareAdvanceCondition(advance);
+            //var governmentIds = _governmentService.GetGovernmentIdsByCurrentUser();  //获取当前账户的可查询的资产
+            //properties = _propertyService.GetAllProperties(governmentIds, advance.Query, 0, int.MaxValue, showHidden, request, sortConditions);
 
             //}
             #endregion
@@ -4841,26 +4874,28 @@ namespace CSCZJ.API.Controllers
                         if (Convert.ToBoolean(item.GetValue(exportModel)) == true) headers.Add(data);
                     }
                 }
-               _exportManager.ExportPropertyToXlsx(stream, properties, headers);
+                _exportManager.ExportPropertyToXlsx(stream, properties, headers);
 
                 //activity log
                 _accountUserActivityService.InsertActivity("ExportProperties", "批量导出资产");
             }
 
-            try {
-                    FileStream outstream = new FileStream(filePath, FileMode.Open);               
-                    HttpResponseMessage httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-                    httpResponseMessage.Content = new StreamContent(outstream);
-                    httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.ms-excel");
-                    httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                    {
-                        FileName = "资产导出.xls"                 
-                    };
-                
+            try
+            {
+                FileStream outstream = new FileStream(filePath, FileMode.Open);
+                HttpResponseMessage httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                httpResponseMessage.Content = new StreamContent(outstream);
+                httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.ms-excel");
+                httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                {
+                    FileName = "资产导出.xls"
+                };
+
 
                 return httpResponseMessage;
             }
-            catch {
+            catch
+            {
                 return new HttpResponseMessage(HttpStatusCode.NoContent);
             }
 
@@ -4869,7 +4904,8 @@ namespace CSCZJ.API.Controllers
 
         [HttpPost]
         [Route("ExportRents")]
-        public HttpResponseMessage ExportRents(List<string> timeList) {
+        public HttpResponseMessage ExportRents(List<string> timeList)
+        {
             string path = System.Web.Hosting.HostingEnvironment.MapPath(@"~/Content/资产导出/" + DateTime.Now.ToString("yyyyMMddhhmmss"));
             if (!Directory.Exists(path))
             {
@@ -4878,11 +4914,12 @@ namespace CSCZJ.API.Controllers
             string filePath = Path.Combine(path, "出租表.xls");
             var rents = _propertyRentService.GetRentsByTime(timeList);
 
-            using (FileStream stream = System.IO.File.Create(filePath)) {
+            using (FileStream stream = System.IO.File.Create(filePath))
+            {
                 _exportManager.ExportRentsToExl(stream, rents);
             }
 
-                try
+            try
             {
                 FileStream outstream = new FileStream(filePath, FileMode.Open);
                 HttpResponseMessage httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
@@ -4914,20 +4951,20 @@ namespace CSCZJ.API.Controllers
 
             ImportResponse reponse = new ImportResponse();
             var httpRequest = HttpContext.Current.Request;
-            
+
             var id = currentUser.Government.Id;
-          
+
             string path = System.Web.Hosting.HostingEnvironment.MapPath(@"~/Content/资产导入/" + DateTime.Now.ToString("yyyyMMddhhmmss"));
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
-            }  
+            }
 
             foreach (string file in httpRequest.Files)
-            {              
+            {
                 var postedFile = httpRequest.Files[file];
                 var filePath = Path.Combine(path, postedFile.FileName);
-                var  stream = postedFile.InputStream;
+                var stream = postedFile.InputStream;
 
                 byte[] bytes = new byte[stream.Length];
                 stream.Read(bytes, 0, bytes.Length);
@@ -4943,17 +4980,18 @@ namespace CSCZJ.API.Controllers
 
                 if (UnRAR(path, path, postedFile.FileName))
                 {
-                    string excelPath = path + "\\"+postedFile.FileName.Substring(0, postedFile.FileName.Length-4) + "\\资产导入表.xlsx";
+                    string excelPath = path + "\\" + postedFile.FileName.Substring(0, postedFile.FileName.Length - 4) + "\\资产导入表.xlsx";
                     string picPath = path + "\\" + postedFile.FileName.Substring(0, postedFile.FileName.Length - 4);
-                    if (!Directory.Exists(excelPath)) {
+                    if (!Directory.Exists(excelPath))
+                    {
                         excelPath = GetXml(path);
-                        picPath = excelPath.Substring(0,excelPath.Length-11);
+                        picPath = excelPath.Substring(0, excelPath.Length - 11);
                     }
                     using (FileStream excelStream = new FileStream(excelPath, FileMode.Open))
                     {
 
                         if (excelStream == null) throw new Exception("没有找到名称为资产导入表的excel文件");
-                     
+
                         reponse = _importManager.ImportProductsFromXlsx(excelStream, picPath);
                     }
                 }
@@ -4962,7 +5000,7 @@ namespace CSCZJ.API.Controllers
             //activity log
             _accountUserActivityService.InsertActivity("ImportProperties", "批量导入资产");
             return Ok(reponse);
-          
+
 
         }
 
@@ -4972,7 +5010,8 @@ namespace CSCZJ.API.Controllers
         [HttpPost]
         [Route("exportMonthTotal/{month}")]
         #region 每月导出
-        public HttpResponseMessage ExportMonthTotal(string month) {
+        public HttpResponseMessage ExportMonthTotal(string month)
+        {
             string path = System.Web.Hosting.HostingEnvironment.MapPath(@"~/Content/资产导出/" + DateTime.Now.ToString("yyyyMMddhhmmss"));
             if (!Directory.Exists(path))
             {
@@ -4982,15 +5021,15 @@ namespace CSCZJ.API.Controllers
 
             var properties = new List<Property>();
 
-                var currentUser = _workContext.CurrentAccountUser;
-                var g = currentUser.Government;
-                properties = _propertyService.GetExportMonthTotalProperties(g.Id);
+            var currentUser = _workContext.CurrentAccountUser;
+            var g = currentUser.Government;
+            properties = _propertyService.GetExportMonthTotalProperties(g.Id);
 
-         
+
 
             using (FileStream stream = System.IO.File.Create(filePath))
             {
-                _exportManager.ExportMonthTotal(stream,properties,g.Id,month);
+                _exportManager.ExportMonthTotal(stream, properties, g.Id, month);
                 //activity log
                 _accountUserActivityService.InsertActivity("ExportProperties", "每月统计表导出");
             }
@@ -4998,19 +5037,19 @@ namespace CSCZJ.API.Controllers
             try
             {
 
-                   
-                    HttpResponseMessage httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-                    FileStream outstream = new FileStream(filePath, FileMode.Open);
-                    httpResponseMessage.Content = new StreamContent(outstream);
-                    httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.ms-excel");
-                    httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                    {
-                        FileName = "每月统计导出.xls"
-                    };
 
-                    return httpResponseMessage;
-                
-                       
+                HttpResponseMessage httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                FileStream outstream = new FileStream(filePath, FileMode.Open);
+                httpResponseMessage.Content = new StreamContent(outstream);
+                httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.ms-excel");
+                httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                {
+                    FileName = "每月统计导出.xls"
+                };
+
+                return httpResponseMessage;
+
+
             }
             catch
             {
@@ -5025,7 +5064,8 @@ namespace CSCZJ.API.Controllers
         #region 统计数据
         [HttpGet]
         [Route("Dashboard")]
-        public IHttpActionResult GetDashboardList() {
+        public IHttpActionResult GetDashboardList()
+        {
             var overview = new OverviewStatistics();
             var proeprties = _propertyService.GetAllProperties();
             var goverments = _governmentService.GetAllGeoGovernmentUnits();
@@ -5034,9 +5074,10 @@ namespace CSCZJ.API.Controllers
             var lands = proeprties.Where(p => p.PropertyKind == PropertyKind.Land).ToList();
             var house = proeprties.Where(p => p.PropertyKind == PropertyKind.House).ToList();
 
-            foreach (var g in goverments) {
+            foreach (var g in goverments)
+            {
 
-                var lambdaList = proeprties.Where(p => p.Government.Name== g.Name).ToList();
+                var lambdaList = proeprties.Where(p => p.Government.Name == g.Name).ToList();
 
             }
 
@@ -5045,5 +5086,96 @@ namespace CSCZJ.API.Controllers
 
         #endregion
 
+        #region for wechat api
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("AllForWechat")]
+        public IHttpActionResult GetAllForwechat(string query = "", string sort = "", int pageSize = 15, int pageIndex = 1, long time = 0)
+        {
+            var request = HttpContext.Current.Request;
+            var authToken = request.Headers["Authorization"].Replace("Bear ", "");
+
+            var openId = _wechatLoginEventService.GetOpenIdWithToken(authToken);
+            if (string.IsNullOrEmpty(openId)) throw new Exception("当前token无效");
+            var account = _accountUserService.GetAccountByOpenId(openId);    
+
+            //页码-1
+            if (pageIndex <= 0) pageIndex = 1;
+            //初始化排序条件
+            var sortConditions = PropertySortCondition.Instance(sort);
+
+            var governmentIds = new List<int>();// _governmentService.GetChildrenGovernmentIds(account.Government.Id);
+
+
+            var properties = _propertyService.GetAllProperties(governmentIds, query, pageIndex - 1, pageSize,
+               false, null, sortConditions);
+
+            var response = new ListResponse<PropertySimpleWechatModel>
+            {
+                Time = time,
+                Paging = new Paging
+                {
+                    PageIndex = pageIndex,
+                    PageSize = pageSize,
+                    Total = properties.TotalCount,
+                    FilterCount = string.IsNullOrEmpty(query) ? properties.TotalCount : properties.Count,
+                },
+                Data = properties.Select(s =>
+                {
+                    var propertyModel = s.ToSimpleWechatModel();
+                    if (s.Off)
+                        propertyModel.Name = propertyModel.Name + "（已核销）";
+                    else if (!s.Published)
+                        propertyModel.Name = propertyModel.Name + "（未发布）";
+
+                    propertyModel.Logo = GetLogoUrl(s);
+                    return propertyModel;
+                })
+            };
+
+            //activity log
+            _accountUserActivityService.InsertActivity("GetpropertyList", "获取资产列表信息");
+
+            return Ok(response);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Patrol/Create")]
+        public IHttpActionResult CreatePropertyPatrol(PropertyPatrolCreateModel createModel)
+        {
+            var request = HttpContext.Current.Request;
+            var authToken = request.Headers["Authorization"].Replace("Bear ", "");
+
+            var openId = _wechatLoginEventService.GetOpenIdWithToken(authToken);
+            if (string.IsNullOrEmpty(openId)) throw new Exception("当前token无效");
+            var account = _accountUserService.GetAccountByOpenId(openId);
+
+            try
+            {
+                var patrol = createModel.ToEntity();
+                patrol.Property = _propertyService.GetPropertyById(createModel.Property_Id);
+                if (patrol == null) throw new Exception("所巡查的资产不存在！");
+
+                patrol.PatrolDate = DateTime.Now;
+                patrol.People = account.UserName;
+                patrol.Title = patrol.Property.Name;
+
+                #region 处理巡查照片
+                var directoryPath = System.IO.Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath(@"~/Content"), openId);
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+
+                var filePath = System.IO.Path.Combine(directoryPath, string.Format("HealthCode-{0}.jpg", DateTime.Now.ToString("yyyyMMddHHmmssss")));
+                if (!UitilityHelper.Base64ToImage(healthReportUploadModel.HealthCode, filePath)) throw new Exception("健康码上传失败！");
+                #endregion
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return Ok("巡查记录添加成功！");
+        }
+
+        #endregion
     }
 }
