@@ -20,6 +20,7 @@ export class OverviewComponent implements OnInit {
   mapLoaded = false;
   isVisible =false;
   isOkLoading=false;
+  showloading=false;
   isClick=false;
 
   constructor(private http: HttpClient,private notification: NzNotificationService,private router: Router) { }

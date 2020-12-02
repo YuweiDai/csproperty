@@ -16,13 +16,13 @@
             </nz-card>
             <ng-template #extraTemplate>
                 <a class="" [routerLink]="['./create']">
-                    <i class="anticon anticon-plus"></i> 新增资产</a>
+                    <i nz-icon nzType="plus" ></i>新增资产</a>
                 <a class="m-l-md" [routerLink]="['./rent']">
-                    <i class="anticon anticon-pay-circle"></i> 资产出租</a>
+                    <i nz-icon nzType="pay-circle"></i> 资产出租</a>
                 <a class="m-l-md" [routerLink]="['./off']">
-                    <i class="anticon anticon-poweroff"></i> 资产核销</a>
+                    <i nz-icon nzType="poweroff"></i> 资产核销</a>
                 <a class="m-l-md" (click)="showModal()">
-                    <i class="anticon anticon-export"></i> 资产导出</a>
+                    <i nz-icon nzType="export"></i> 资产导出</a>
                    
 
                     <nz-modal [(nzVisible)]="isVisible" nzTitle="资产导出" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
@@ -43,7 +43,7 @@
                           </label>
                         </div>                       
                         <br>
-                        <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="updateAttributesChecked(data)" *ngFor="let data of Attributes">
+                        <nz-checkbox-wrapper style="width: 33.33%;" (nzOnChange)="updateAttributesChecked(data)" *ngFor="let data of Attributes">
                                 <div nz-row >
                                   <div nz-col nzSpan="24"><label nz-checkbox nzValue="data.value" [ngModel]="data.checked" >{{data.label}}</label></div>
                                 </div>

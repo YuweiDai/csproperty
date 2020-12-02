@@ -5,9 +5,10 @@ import { UiTableComponent } from '../../common/ui-table/ui-table.component';
 import { LayoutService } from "./../../../../services/layoutService";
 
 import { TablePageSize,TableColumn,TableOption } from "../../../../viewModels/common/TableOption";
-import { PropertyService } from '../../../../services/propertyService';
+import { PropertyService } from 'src/app/services/propertyService';
 
 import { ExportModel } from '../../../../viewModels/Properties/property';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 
 @Component({
@@ -23,17 +24,18 @@ export class PropertyListComponent implements OnInit {
   // @HostBinding('@routeAnimation') routeAnimation = true;
   // @HostBinding('style.display')   display = 'block';
   // @HostBinding('style.position')  position = 'absolute';
-  private contentHeight:number;
+  public contentHeight:number;
   data:any[];
   tableOption:TableOption;
-  private loading:boolean;
+  public loading:boolean;
+  
   httpResponse={
     responseType: "arraybuffer"
   }
 
 
 
-  private exportModel = new ExportModel();
+  public exportModel = new ExportModel();
   isVisible = false;
 
   showModal(): void {
@@ -93,9 +95,9 @@ export class PropertyListComponent implements OnInit {
       break;
      }    
     }
-
+    this.exportModel.govermentids="";
     for(let v of this.unit){
-        if(v.value!=null||v.value!=undefined){
+        if(v.value!=null&&v.value!=undefined){
           this.exportModel.govermentids += v.value+";";
         } 
       
@@ -208,8 +210,8 @@ export class PropertyListComponent implements OnInit {
 
 
   constructor(
-    private propertyService:PropertyService,
-    private layoutService:LayoutService){      
+    public propertyService:PropertyService,
+    public layoutService:LayoutService){      
 
     this.contentHeight=layoutService.getContentHeight()-70-2;
 
@@ -217,6 +219,8 @@ export class PropertyListComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(555);
+    
     this.tableOption={
       pageSize:{
         pageIndex:1,

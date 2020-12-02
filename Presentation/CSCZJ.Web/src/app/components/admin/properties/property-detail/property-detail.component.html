@@ -267,7 +267,7 @@
               </div>
 
             </nz-tab>
-            <nz-tab nzTitle="资产核销" *ngIf="property.propertyOff!=undefine">
+            <nz-tab nzTitle="资产核销" *ngIf="property.propertyOff!=null">
               <div class="rentItem">
                 <h1>核销日期：{{property.propertyOff.offTime}}</h1>
                 <div class="rentDetail" nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 8, xl: 8, xxl: 8 }">

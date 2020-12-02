@@ -40,6 +40,7 @@ export class PropertyCenterComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(123);
   }
 
 }

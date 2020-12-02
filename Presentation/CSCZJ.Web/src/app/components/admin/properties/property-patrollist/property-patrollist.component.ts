@@ -24,6 +24,7 @@ export class PropertyPatrollistComponent implements OnInit {
   sortKey = null;
   tabKey="全部";
   monthlist:any[];
+  dateFormat = 'yyyy/MM/dd';
  
 
   filterGender = [

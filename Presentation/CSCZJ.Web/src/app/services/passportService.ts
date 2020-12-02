@@ -6,7 +6,7 @@ import { Observable,of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 
-import { LocalStorageService, SessionStorageService } from 'ngx-webstorage';
+import { LocalStorageService } from 'ngx-webstorage';
 
 import { ConfigService } from "./configService";
 import { LogService } from "./logService";
@@ -103,7 +103,7 @@ export class AuthService {
                         authroziationData.refreshToken = response.refresh_token;
                     }
 
-                    that.localStorageService.store("authroziationData", authroziationData);
+                    //that.localStorageService.store("authroziationData", authroziationData);
 
                     that.authentication.isAuth = true;
                     that.authentication.account = loginModel.account;
@@ -111,6 +111,8 @@ export class AuthService {
                     that.authentication.useRefreshTokens = loginModel.useRefreshTokens;
                     that.authentication.roles = response.userRoles;
                     that.authentication.isAdmin = that.userHasRole(response.userRoles, "管理员");
+
+                    that.localStorageService.store(that.configService.getAuthKey(), authroziationData);
 
                    // console.log(that.localStorageService.retrieve("authorizationData"));
                     this.log(`getRefreshTokens`);
@@ -127,6 +129,12 @@ export class AuthService {
         this.authentication.account = "";
         this.authentication.nickName = "";
         this.authentication.useRefreshTokens = false;
+    }
+
+    getAuthorizationToken(): string {
+        var authData = this.localStorageService.retrieve(this.configService.getAuthKey()) as AuthenticationModel;
+        if (authData != undefined && authData != null) return authData.token;
+        else "";
     }
 
     isAdmin(): boolean {
@@ -174,6 +182,8 @@ export class AuthService {
             }
         }
     }
+
+    
 
     private userHasRole(roles: string, targetRole: string): boolean {
         return roles.indexOf(targetRole) > -1;

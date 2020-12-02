@@ -7,7 +7,7 @@
         </div>
         <div class="desc"></div>
       </div>
-      <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
+      <!-- <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
           <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg m-b-md"></nz-alert>
           <nz-form-item>
             <nz-form-control>
@@ -31,29 +31,28 @@
           <nz-form-item>
             <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading" class="ant-btn__block">登录</button>
           </nz-form-item>
-        </form>
-<!-- 
-        <form nz-form [nzLayout]="'inline'" [formGroup]="validateForm" (ngSubmit)="submitForm()">
-          <nz-form-item>
-            <nz-form-control nzErrorTip="Please input your username!">
-              <nz-input-group nzPrefixIcon="user">
-                <input formControlName="userName" nz-input placeholder="Username" />
-              </nz-input-group>
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-control nzErrorTip="Please input your Password!">
-              <nz-input-group nzPrefixIcon="lock">
-                <input formControlName="password" nz-input type="password" placeholder="Password" />
-              </nz-input-group>
-            </nz-form-control>
-          </nz-form-item>
-          <nz-form-item>
-            <nz-form-control>
-              <button nz-button nzType="primary" [disabled]="!validateForm.valid">Log in</button>
-            </nz-form-control>
-          </nz-form-item>
         </form> -->
+        <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
+          <nz-form-item>
+            <nz-form-control nzErrorTip="请输入账户名!">
+              <nz-input-group nzPrefixIcon="user">
+                <input type="text" nz-input formControlName="userName" placeholder="Username" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control nzErrorTip="请输入密码!">
+              <nz-input-group nzPrefixIcon="lock">
+                <input type="password" nz-input formControlName="password" placeholder="Password" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+      
+          <nz-form-item>
+            <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading" class="ant-btn__block">登录</button>
+          </nz-form-item>
+          
+        </form>
   
       <div class="ad-global-footer">
         <!---->

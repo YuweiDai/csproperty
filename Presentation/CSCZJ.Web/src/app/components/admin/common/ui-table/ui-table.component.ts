@@ -13,8 +13,8 @@ export class UiTableComponent implements OnInit {
   @Input() dataset:any[];
   @Input() tableOption:TableOption;
   @Output() paramsChange:EventEmitter<TableParams>=new EventEmitter();
-  private q:string;
-  private sortString:string;
+  public q:string;
+  public sortString:string;
 
   pageSizes=[
     { value: '15', label: '15条/页' },

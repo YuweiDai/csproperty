@@ -2,78 +2,80 @@
 <h2 style="font-family: 楷体;color: cornflowerblue;margin-top: 20px;margin-left: 10px;">资产统计工作薄</h2>
 
 <nz-divider></nz-divider>
-
-<div nz-row>
-    <div nz-col nzSpan="8"> 
-        <div class="text-center">
-
-        <img src="../../assets/js/OverView/资产.png">
-        <h3>资产总数2000条</h3>      
-
-    </div>
-    </div>
-    <div nz-col nzSpan="8">
-            <div class="text-center">
-                    <img src="../../assets/js/OverView/房产房子.png">       
-                    <h3>房产总数1600条</h3>                 
+<div >
+        <div nz-row>
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+        
+                                <img src="../../assets/js/OverView/资产.png">
+                                <h3>资产总数2000条</h3>
+        
+                        </div>
                 </div>
-    </div>
-    <div nz-col nzSpan="8">
-            <div class="text-center">
-
-                    <img src="../../assets/js/OverView/土地.png">       
-                    <h3>土地总数800条</h3>                
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+                                <img src="../../assets/js/OverView/房产房子.png">
+                                <h3>房产总数1600条</h3>
+                        </div>
                 </div>
-    </div>
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+        
+                                <img src="../../assets/js/OverView/土地.png">
+                                <h3>土地总数800条</h3>
+                        </div>
+                </div>
+        </div>
+        
+        <div nz-row style="margin-top: 30px;">
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+        
+                                <img src="../../assets/js/OverView/价值.png">
+                                <h3>资产总值5000万元</h3>
+        
+                        </div>
+                </div>
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+                                <img src="../../assets/js/OverView/价值币.png">
+                                <h3>房产总值4000万元</h3>
+                        </div>
+                </div>
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+        
+                                <img src="../../assets/js/OverView/价值分析.png">
+                                <h3>土地总值1000万元</h3>
+                        </div>
+                </div>
+        </div>
+        
+        <div nz-row style="margin-top: 30px;">
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+        
+                                <img src="../../assets/js/OverView/资产面积.png">
+                                <h3>资产总面积10000平方米</h3>
+        
+                        </div>
+                </div>
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+                                <img src="../../assets/js/OverView/房产面积.png">
+                                <h3>房产总面积8800平方米</h3>
+                        </div>
+                </div>
+                <div nz-col nzSpan="8">
+                        <div class="text-center">
+        
+                                <img src="../../assets/js/OverView/土地面积.png">
+                                <h3>土地总面积1200平方米</h3>
+                        </div>
+                </div>
+        </div>
 </div>
 
-<div nz-row style="margin-top: 30px;">
-        <div nz-col nzSpan="8"> 
-            <div class="text-center">
-    
-            <img src="../../assets/js/OverView/价值.png">
-            <h3>资产总值5000万元</h3>      
-    
-        </div>
-        </div>
-        <div nz-col nzSpan="8">
-                <div class="text-center">
-                        <img src="../../assets/js/OverView/价值币.png">       
-                        <h3>房产总值4000万元</h3>                 
-                    </div>
-        </div>
-        <div nz-col nzSpan="8">
-                <div class="text-center">
-    
-                        <img src="../../assets/js/OverView/价值分析.png">       
-                        <h3>土地总值1000万元</h3>                
-                    </div>
-        </div>
-    </div>
-
-    <div nz-row style="margin-top: 30px;">
-            <div nz-col nzSpan="8"> 
-                <div class="text-center">
-        
-                <img src="../../assets/js/OverView/资产面积.png">
-                <h3>资产总面积10000平方米</h3>      
-        
-            </div>
-            </div>
-            <div nz-col nzSpan="8">
-                    <div class="text-center">
-                            <img src="../../assets/js/OverView/房产面积.png">       
-                            <h3>房产总面积8800平方米</h3>                 
-                        </div>
-            </div>
-            <div nz-col nzSpan="8">
-                    <div class="text-center">
-        
-                            <img src="../../assets/js/OverView/土地面积.png">       
-                            <h3>土地总面积1200平方米</h3>                
-                        </div>
-            </div>
-        </div>
 
 
 
@@ -82,7 +84,7 @@
 <nz-divider></nz-divider>
 
 <div nz-row style="margin-top: 30px;">
-        <div echarts [options]="chartOption" class="demo-chart"></div>
+        <div nz-col nzSpan="24" echarts [options]="chartOption" class="demo-chart"></div>
 </div>
 
 <div nz-row style="margin-top: 50px;margin-bottom: 60px">

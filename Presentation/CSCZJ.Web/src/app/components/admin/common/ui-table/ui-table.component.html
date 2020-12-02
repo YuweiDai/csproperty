@@ -8,7 +8,7 @@
                 </nz-button-group>          [(ngModel)="q"]   -->
             </div>              
         <div nz-col nzSpan="6" nzOffset="12">
-            <nz-input-group nzSuffixIcon="anticon anticon-search">
+            <nz-input-group nzSuffixIcon="search">
                 <input #searchBox id="search-box" type="text" nz-input placeholder="输入关键字搜索..."  [ngModel]="q"
                 (ngModelChange)="search(searchBox.value)"  >
               </nz-input-group>          
@@ -16,7 +16,7 @@
     </div>
 </div>
 <div class="table-content">
-        <nz-table #nzTable nzBordered [nzLoading]="loading" [nzData]="dataset" [nzScroll]="tableOption.nzScroll" [nzFrontPagination]="false" [nzShowPagination]="false" [nzSize]="small">
+        <nz-table #nzTable nzBordered [nzLoading]="loading" [nzData]="dataset" [nzScroll]="tableOption.nzScroll" [nzFrontPagination]="false" [nzShowPagination]="false" [nzSize]="'small'">
             <thead (nzSortChange)="sort($event)" nzSingleSort>
                 <tr>
                 <!-- <th nzShowCheckbox nzShowRowSelection [nzSelections]="listOfSelection" [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>                         -->
