@@ -25,7 +25,7 @@ namespace CSCZJ.API.Controllers
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IAccountUserService _accountService;
-        private readonly IWechatLoginEventService _wechatLoginEventService = null;
+        private readonly IWechatLoginEventService _wechatLoginEventService;
         private readonly IAccountUserRegistrationService _accountUserRegistrationService;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IWorkflowMessageService _workflowMessageService;
@@ -331,7 +331,7 @@ namespace CSCZJ.API.Controllers
             }
             catch (Exception ex)
             {
-                response.Message = message;
+                response.Message = ex.Message;
                 response.Code = "401";
 
                 //_logger.Error(string.Format("获取微信状态失败，错误原因：{0}", ex.GetOriginalException().Message), finder);
@@ -366,7 +366,7 @@ namespace CSCZJ.API.Controllers
                 if (result != AccountUserLoginResults.Successful) throw new Exception("账号和密码不匹配！");
 
                 account = _accountService.GetAccountUserByUsername(accountBindModel.Username);
-                account.WechatNickName = accountBindModel.NickName;
+                account.WechatNickName = accountBindModel.Nickname;
                 account.AvatarUrl = accountBindModel.AvatarUrl;
 
                 var request = HttpContext.Current.Request;

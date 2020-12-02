@@ -82,6 +82,12 @@ namespace CSCZJ.Web.Api.Infrastructure
               .ForMember(dest => dest.PropertyType, mo => mo.MapFrom(src => src.PropertyTypeId))
             ;
 
+            Mapper.CreateMap<Property, PropertyWechatModel>()
+  .ForMember(dest => dest.Region, mo => mo.MapFrom(src => src.Region.ToDescription()))
+  .ForMember(dest => dest.PropertyType, mo => mo.MapFrom(src => src.PropertyType.ToDescription()));
+            Mapper.CreateMap<Property, PropertySimpleWechatModel>() 
+.ForMember(dest => dest.PropertyType, mo => mo.MapFrom(src => src.PropertyType.ToDescription()));
+
             Mapper.CreateMap<Property, PropertyModel>()
               .ForMember(dest => dest.Region, mo => mo.MapFrom(src => src.Region.ToDescription()))
               .ForMember(dest => dest.RegionId, mo => mo.MapFrom(src => src.Region))

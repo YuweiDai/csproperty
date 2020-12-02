@@ -1,2 +1,22 @@
 <view class="container">
+  <view class="section">
+    <van-search value="{{ page.query }}" placeholder="请输入搜索关键词" />
+  </view>
+
+  <view class="section">
+    <view class="propertyCard" wx:for="{{properties}}" wx:key="id">
+      <view class="thumb">
+        <image src="../../images/timg.jpg"></image>
+      </view>
+      <view class="detail">
+        <view class="title">{{item.name}}</view>
+        <view class="item">{{item.propertyType}}</view>
+        <view class="item">{{item.address}}</view>
+        <view class="item">{{item.governmentName}}</view>
+        <view class="btns">
+          <van-button type="primary" size="mini">查看详情</van-button>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>

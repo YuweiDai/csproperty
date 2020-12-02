@@ -11,7 +11,7 @@ namespace CSCZJ.API.Models.AccountUsers
 
         public string Password { get; set; }
 
-        public string Nickame { get; set; }
+        public string Nickname { get; set; }
 
         public string AvatarUrl { get; set; }
     }
