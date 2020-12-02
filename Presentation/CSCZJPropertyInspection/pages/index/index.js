@@ -10,6 +10,9 @@ Page({
 
   data: {
     properties: [],
+    layout: {
+      scrollHeight: 500,
+    },
     page: {
       index: 1,
       pageSize: 15,
@@ -24,6 +27,12 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
+    var wHeight = app.globalData.deviceInfo.windowHeight; //窗体高度
+    var scrollHeight = wHeight - (60 + 54 + 1);
+    console.log(scrollHeight);
+    that.setData({
+      'layout.scrollHeight': scrollHeight
+    });
 
     // 自定义加载图标
     Toast.loading({
@@ -124,5 +133,13 @@ Page({
 
       }
     });
+  },
+
+  //导航至详情页面
+  navToDetail: function (event) {
+    console.log(event);
+    wx.navigateTo({
+      url: '../details/details?pId=' + event.currentTarget.dataset.id
+    })
   }
 })

@@ -5162,12 +5162,17 @@ namespace CSCZJ.API.Controllers
                 patrol.Title = patrol.Property.Name;
 
                 #region 处理巡查照片
-                var directoryPath = System.IO.Path.Combine(System.Web.Hosting.HostingEnvironment.MapPath(@"~/Content"), openId);
-                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
 
-                var filePath = System.IO.Path.Combine(directoryPath, string.Format("HealthCode-{0}.jpg", DateTime.Now.ToString("yyyyMMddHHmmssss")));
-                if (!UitilityHelper.Base64ToImage(healthReportUploadModel.HealthCode, filePath)) throw new Exception("健康码上传失败！");
+                foreach(var base64Str in createModel.PatrolPictures)
+                {
+                    var picture = _pictureService.InsertPicture(base64Str);
+
+                    patrol.PatrolPictures.Add(new PropertyPatrolPicture() { Picture = picture });
+                }
+
                 #endregion
+
+                _propertyPatrolService.InsertPropertyPatrol(patrol);
             }
             catch(Exception ex)
             {

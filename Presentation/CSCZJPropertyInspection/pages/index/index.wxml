@@ -3,19 +3,32 @@
     <van-search value="{{ page.query }}" placeholder="请输入搜索关键词" />
   </view>
 
-  <view class="section">
-    <view class="propertyCard" wx:for="{{properties}}" wx:key="id">
+  <!-- <view class="section">
+  
+  </view> -->
+
+  <scroll-view scroll-y style="height:{{layout.scrollHeight}}px">
+    <view class="propertyCard" data-id="{{item.id}}" wx:for="{{properties}}" wx:key="id" bindtap="navToDetail">
       <view class="thumb">
-        <image src="../../images/timg.jpg"></image>
+        <image src="{{item.logo?item.logo:'../../images/timg.jpg'}}"></image>
       </view>
       <view class="detail">
         <view class="title">{{item.name}}</view>
         <view class="item">{{item.propertyType}}</view>
         <view class="item">{{item.address}}</view>
         <view class="item">{{item.governmentName}}</view>
-        <view class="btns">
-          <van-button type="primary" size="mini">查看详情</van-button>
-        </view>
+      </view>
+    </view>
+
+  </scroll-view>
+
+  <view class="section finderInfo">
+    <view class="avatar">
+      <van-image round custom-class="avatarImg" src="{{finder.avatarUrl}}" bindlongpress="unbindFinder" />
+    </view>
+    <view class="infoBar">
+      <view class="name">{{finder.name}}
+        共点亮
       </view>
     </view>
   </view>

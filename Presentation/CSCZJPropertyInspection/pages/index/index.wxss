@@ -1,55 +1,119 @@
 /**index.wxss**/
-.container
-{
+.container {
   background-color: silver;
 }
 
-.propertyCard
-{
+.propertyCard {
   background-color: white;
   padding: 15rpx;
   margin-bottom: 5px;
   display: flex;
 }
 
-.propertyCard .thumb
-{
+.propertyCard .thumb {
   margin-right: 10rpx;
 }
 
-.propertyCard .thumb image
-{
+.propertyCard .thumb image {
   width: 230rpx;
   height: 230rpx;
+  overflow: hidden;
 }
 
-.propertyCard .detail
-{
+.propertyCard .detail {
   width: 480rpx;
   height: 230rpx;
+  overflow: hidden;
 }
 
-.propertyCard .detail .title
-{
-  height: 60rpx;
+.propertyCard .detail .title {
+  height: 120rpx;
   line-height: 60rpx;
-  font-size: 40rpx;
+  font-size: 34rpx;
   font-weight: bolder;
   overflow: hidden;
-  text-overflow:ellipsis;
+  text-overflow: ellipsis;
+}
+
+.propertyCard .detail .item {
+  height: 38rpx;
+  line-height: 38rpx;
+  font-size: 24rpx;
+  color: silver;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.propertyCard .detail .item
-{
-  height: 38rpx;
-  line-height: 38rpx;
-  font-size: 30rpx;
-  color:silver;
-}
-
-.propertyCard .detail .btns
-{
+.propertyCard .detail .btns {
   height: 55rpx;
   text-align: right;
+}
+
+/* 打卡信息 */
+.finderInfo {
+  background-color: white;
+  position: relative;
+  width: 100%;
+  padding: 0 20rpx;  
+  bottom: 0rpx;
+  border-top: silver 1px solid;
+}
+
+.finderInfo .avatar {
+  height: 100rpx;
+  width: 100rpx;
+  position: absolute;
+  left: 15rpx;
+  top: 10rpx;
+}
+
+.finderInfo .avatar .avatarImg {
+  border: #f5f5f5 solid 1px;
+  width: 100%;
+  height: 100%;
+}
+
+.finderInfo .infoBar {
+
+  /* margin-top: 40rpx;
+  margin-left: 50rpx; */
+  height: 120rpx;
+  background-color: white;
+  padding: 10rpx 10rpx 10rpx 130rpx;
+}
+
+.finderInfo .infoBar swiper {
+  height: 100%;
+}
+
+.finderInfo .infoBar .name {
+  height: 60rpx;
+  line-height: 60rpx;
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.finderInfo .infoBar .school {
+  height: 40rpx;
+  line-height: 40rpx;
+  font-size: 30rpx;
+}
+
+.finderInfo .infoBar .wordProgress {
+  height: 50rpx;
+  line-height: 50rpx;
+  font-size: 36rpx;
+}
+
+.finderInfo .infoBar .wordProgress .wtag {
+  font-weight: bolder;
+}
+
+.finderInfo .infoBar .finished {
+  color: #07c160;
+}
+
+.finderInfo .infoBar .left {
+  color: #ee0a24;
 }
