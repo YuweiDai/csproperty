@@ -93,7 +93,7 @@ export class PropertyCreateComponent implements OnInit {
      this.sameCardIdChecked=false;
 
     this.basicInfoForm = this.fb.group({
-      pName: ['', [Validators.required], [this.propertyNameAsyncValidator]],
+      pName: ['', [Validators.required]],
       pType: ['', [Validators.required]],
       pAddress: ['', [Validators.required]],
       pFloor: [''],
@@ -396,21 +396,21 @@ console.log("next");
         }
         else {
           //预处理
-          this.property.getedDate = format(new Date(this.property.getedDate), 'YYYY/MM/DD');
+          this.property.getedDate = format(new Date(this.property.getedDate), 'yyyy-MM-dd');
 
           if (this.property.registerEstate == "true") {
             this.property.constructId = "";
             this.property.constructTime = "";
             this.property.landId = "";
             this.property.landTime = "";
-            if (this.property.estateTime != undefined) this.property.estateTime = format(new Date(this.property.estateTime), 'YYYY/MM/DD');
+            if (this.property.estateTime != undefined) this.property.estateTime = format(new Date(this.property.estateTime), 'yyyy-MM-dd');
           }
           else {
             this.property.estateId = "";
             this.property.estateTime = "";
 
-            if (this.property.constructTime != undefined) this.property.constructTime = format(new Date(this.property.constructTime) , 'YYYY/MM/DD');
-            if (this.property.landTime != undefined) this.property.landTime = format(new Date(this.property.landTime) , 'YYYY/MM/DD');
+            if (this.property.constructTime != undefined) this.property.constructTime = format(new Date(this.property.constructTime) , 'yyyy-MM-dd');
+            if (this.property.landTime != undefined) this.property.landTime = format(new Date(this.property.landTime) , 'yyyy-MM-dd');
           }
         }
 

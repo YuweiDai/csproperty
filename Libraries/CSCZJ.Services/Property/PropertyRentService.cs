@@ -334,9 +334,10 @@ namespace CSCZJ.Services.Property
 
         public List<PropertyRent> GetRentsByTime(List<string> timeList)
         {
-
+            var time1 = Convert.ToDateTime(timeList[0]);
+            var time2 = Convert.ToDateTime(timeList[1]);
             var query = from c in _propertyRentRepository.Table
-                        where c.RentTime> Convert.ToDateTime(timeList[0]) && c.RentTime<Convert.ToDateTime(timeList[1])
+                        where DateTime.Compare(c.RentTime,time1)>0 && DateTime.Compare(c.RentTime, time2) < 0
                         select c;
             var rents = query.ToList();
             return rents;

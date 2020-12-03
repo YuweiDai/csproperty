@@ -9,10 +9,10 @@ export class ConfigService{
 
     constructor(){
         this.authKey = "authroziationData";
-        this.apiUrl = "http://localhost:8084/api/";
+        this.apiUrl = "/api/";
         this.ddAPPId = "dingoayqnfibggoazv13rm";
        // this.redirectUrl = "http://localhost:4200/passport/binding";
-        this.redirectUrl="http://localhost:8084/login"
+        //this.redirectUrl="http://localhost:8084/login"
     }
 
     getApiUrl(): string {

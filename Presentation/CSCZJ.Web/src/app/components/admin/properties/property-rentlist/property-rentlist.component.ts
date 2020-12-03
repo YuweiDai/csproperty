@@ -105,6 +105,7 @@ export class PropertyRentlistComponent implements OnInit {
 
 
   exportThisYear(number: any): void {
+    console.log("开始导出出租表");
     var now = new Date();
     switch (number) {
       case 1:
@@ -151,6 +152,11 @@ export class PropertyRentlistComponent implements OnInit {
     })
 
 
+  }
+
+  onChange(result: Date[]): void {
+    console.log('onChange: ', result);
+    this.timeRange=result;
   }
 
   handleOk(): void {
