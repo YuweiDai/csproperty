@@ -49,39 +49,10 @@ Page({
       Toast.clear();
     });
 
-
-    // console.log("detail query");
-    // console.log(query.propertyId);
-    // console.log("finish");
-
-    // var pId = app.globalData.initialPropertyId;
-    // if (pId > 0) fromInitialData = true;
-    // else if (pId == 0) pId = query.propertyId;
-
-    // var url = app.globalData.apiBaseUrl + "properties/" + pId;
-
-    // util.httpGet(url).then(function (res) { 
-    //   that.setData({
-    //     current: res.data
-    //   });
-    // }).catch(function (err) {
-    //   console.log(err);
-    //   util.showToastPromisified({
-    //     title: '未识别到有效的资产信息',
-    //     icon: 'none',
-    //     duration: 2000,
-    //     mask: true
-    //   }).then(function () {
-    //     clearIntialPropertyId();
-    //     util.redirectToPromisified({
-    //       url: '/pages/index/index'
-    //     });
-    //   });
-    // });
-
+    console.log(app.globalData.deviceInfo.windowHeight - 102 / app.globalData.dpr);
 
     this.setData({
-      scrollHeight: app.globalData.systemInfo.windowHeight - 102 / app.globalData.rpx,
+      scrollHeight: app.globalData.deviceInfo.windowHeight - 102 / app.globalData.dpr,
     })
   },
 
