@@ -94,7 +94,7 @@
 
         <nz-form-control [nzSpan]="14">
           <!-- <nz-range-picker [nzFormat]="dateFormat" [(ngModel)]="timeRange" name="timeRange"></nz-range-picker> -->
-          <nz-range-picker [nzFormat]="dateFormat"></nz-range-picker>
+          <nz-range-picker [nzFormat]="dateFormat" [(ngModel)]="timeRange" (ngModelChange)="onChange($event)" name="timerange"></nz-range-picker>
         </nz-form-control>
       </nz-form-item >
     </form>

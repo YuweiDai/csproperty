@@ -18,6 +18,7 @@ import { Property, PropertyCreateModel, SimplePropertyModel,SameIdPropertyModel,
 import { property_map } from '../viewModels/Properties/property_map';
 import { PropertyNameList } from '../viewModels/Properties/propertyName';
 import { HighSearchProperty } from '../viewModels/Properties/highSearchModel';
+import { OverViewModel } from '../viewModels/overview/OverViewModel';
 
 
 const httpOptions = {
@@ -78,6 +79,17 @@ getRentById(id: number): Observable<PropertyRentModel> {
     catchError(this.handleError<PropertyRentModel>(`getRentById id=${id}`))
   );
 }
+
+//获取统计信息
+getOverViewInfo():Observable<OverViewModel> {
+  const url = `${this.apiUrl}/Dashboard`;
+  return this.http.get<OverViewModel>(url).pipe(
+    tap(_ => this.log(`get Rent property id`)),
+    catchError(this.handleError<OverViewModel>(`addProperty Rent`))
+  );
+
+}
+
  //出租变更
  updatedRent(propertyRentModel: PropertyRentModel): Observable<PropertyRentModel> {
   const url = `${this.apiUrl}/UpdateRent/${propertyRentModel.id}`;

@@ -5074,14 +5074,23 @@ namespace CSCZJ.API.Controllers
             var lands = proeprties.Where(p => p.PropertyKind == PropertyKind.Land).ToList();
             var house = proeprties.Where(p => p.PropertyKind == PropertyKind.House).ToList();
 
-            foreach (var g in goverments)
+            overview.ConstructCount = house.Count();
+            overview.LandCount = lands.Count();
+            foreach (var land in lands) {
+                overview.LandArea += land.LandArea;
+            }
+            foreach (var h in house)
             {
+                overview.ConstructArea += h.LandArea;
+            }
+
+            foreach (var g in goverments) {
 
                 var lambdaList = proeprties.Where(p => p.Government.Name == g.Name).ToList();
 
             }
 
-            return Ok();
+            return Ok(overview);
         }
 
         #endregion

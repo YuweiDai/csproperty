@@ -6,6 +6,9 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import * as echarts from 'echarts';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
+import { OverViewModel } from '../../../../viewModels/overview/OverViewModel';
+
+
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
@@ -22,10 +25,14 @@ export class OverviewComponent implements OnInit {
   isOkLoading=false;
   showloading=false;
   isClick=false;
+  overviewModel=new OverViewModel;
 
   constructor(private http: HttpClient,private notification: NzNotificationService,private router: Router) { }
 
   ngOnInit() {
+
+
+    
     //加载叠域图
     this.chartOption = {
       title: {
