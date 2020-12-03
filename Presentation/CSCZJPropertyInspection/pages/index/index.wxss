@@ -117,3 +117,8 @@
 .finderInfo .infoBar .left {
   color: #ee0a24;
 }
+
+van-empty
+{
+  background-color: white;
+}

@@ -308,8 +308,8 @@ namespace CSCZJ.API.Controllers
         [Route("GetWechatStatus")]
         public IHttpActionResult GetWechatStatus()
         {
-            var response = new SimpleResponse();
-            var status = "0";
+            var response = new ResponseObject<WechatAccountModel>();
+
             var message = "当前用户未绑定";
             AccountUser account = null;
 
@@ -322,9 +322,18 @@ namespace CSCZJ.API.Controllers
                 if (string.IsNullOrEmpty(openId)) throw new Exception("当前token无效");
                 account = _accountService.GetAccountByOpenId(openId);
 
-                if (account != null) status = "1";
+                if (account != null)
+                {
+                    response.Data = new WechatAccountModel()
+                    {
+                        UserName = account.UserName,
+                        NickName = account.WechatNickName,
+                        AvatarUrl = account.AvatarUrl,
+                        Government = account.Government.Name
+                    };
+                    message = "用户已绑定。";
+                }
 
-                response.Data = status;
                 response.Message = message;
                 response.Code = "200";
                 //_logger.Information("获取微信状态成功！", account);

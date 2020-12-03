@@ -1,41 +1,41 @@
 <view class="page">
   <scroll-view scroll-y="{{true}}" style="height: {{scrollHeight}}px;" class="content-container">
     <view class="header">
-      <image src="{{current.logoUrl}}" mode="aspectFill"/>
-      <view class="backBtn" bindtap="navToIndex">扫一扫</view>
+      <image src="{{property.logoUrl}}" mode="aspectFill"/>
+      <!-- <view class="backBtn" bindtap="navToIndex">扫一扫</view> -->
     </view>
     <view class="content">
       <view class="section titleInfo">
-        <view class="name">{{current.name}}</view>
+        <view class="name">{{property.name}}</view>
         <view class="tags">
-          <view class="tag bg_primary">{{current.propertyType}}</view>
-          <view class="tag bg_primary">{{current.useType}}</view>
+          <view class="tag bg_primary">{{property.propertyType}}</view>
+          <view class="tag bg_primary">{{property.useType}}</view>
         </view>
         <view class="info-list">
           <view class="info-item region">
             <view class="label">所属乡镇</view>
-            <view class="value">{{current.region}}</view>
+            <view class="value">{{property.region}}</view>
           </view>
           <view class="info-item address">
             <view class="label">资产地址</view>
-            <view class="value">{{current.address}}</view>
+            <view class="value">{{property.address}}</view>
             <view class="more mapBtn" bindtap="navToMap">导航</view>
           </view>
           <view class="info-item owner">
             <view class="label">产权单位</view>
-            <view class="value">{{current.governmentName}}</view>
+            <view class="value">{{property.governmentName}}</view>
           </view>
           <view class="info-item usedPeople">
             <view class="label">使用单位</view>
-            <view class="value">{{current.usedPeople}}</view>
+            <view class="value">{{property.usedPeople}}</view>
           </view>
         </view>
       </view>
-      <view class="section panorama" bindtap="nanToPano">
+      <!-- <view class="section panorama" bindtap="nanToPano">
         <image class="bg" mode="aspectFill" src="http://220.191.237.169/cspanos/panos/%E5%8E%BF%E6%94%BF%E5%BA%9C.tiles/pano_b.jpg"/>
         <image class="icon" mode="aspectFill" src="/images/panorama.png"/>
         <view class="tag">全景图</view>
-      </view>
+      </view> -->
       <view class="section moreInfo">
         <view class="navBar">
           <view class="nav-item {{activeMoreInfoNav==0?'active':''}}" data-id="0" bindtap="navTap">详细信息</view>
@@ -43,29 +43,29 @@
           <view class="nav-item {{activeMoreInfoNav==2?'active':''}}" data-id="2" bindtap="navTap">租用信息</view>
         </view>
         <view class="nav"></view>
-        <swiper indicator-dots="{{false}}" autoplay="{{false}}" current="{{activeMoreInfoNav}}" onChange="navChange">
+        <swiper indicator-dots="{{false}}" autoplay="{{false}}" property="{{activeMoreInfoNav}}" onChange="navChange">
           <swiper-item>
             <view class="info-list">
-              <view class="info-item">房产面积：{{current.constructArea}} 平方米</view>
-              <view class="info-item">土地面积：{{current.landArea}} 平方米</view>
-              <view class="info-item">获得日期：{{current.getedDate}}</view>
-              <view class="info-item">获得价格：{{current.price}} 元</view>
-              <view class="info-item">获得方式：{{current.getMode}}</view>
-              <view class="info-item">当前状态：{{current.currentType}}</view>
+              <view class="info-item">房产面积：{{property.constructArea}} 平方米</view>
+              <view class="info-item">土地面积：{{property.landArea}} 平方米</view>
+              <view class="info-item">获得日期：{{property.getedDate}}</view>
+              <view class="info-item">获得价格：{{property.price}} 元</view>
+              <view class="info-item">获得方式：{{property.getMode}}</view>
+              <view class="info-item">当前状态：{{property.propertyType}}</view>
             </view>
           </swiper-item>
           <swiper-item>
             <view class="info-list">
-              <view class="info-item">房产证号：{{current.constructId}}</view>
-              <view class="info-item">土地证号：{{current.landId}}</view>
+              <view class="info-item">房产证号：{{property.constructId}}</view>
+              <view class="info-item">土地证号：{{property.landId}}</view>
             </view>
           </swiper-item>
           <swiper-item>
             <view class="info-list">
-              <view class="info-item">出租日期：{{current.rentTime}}</view>
-              <view class="info-item">土地面积：{{current.rentArea}}</view>
-              <view class="info-item">土地期限：{{current.rentMonth}}</view>
-              <view class="info-item">土地价格：{{current.priceString}}</view>
+              <view class="info-item">出租日期：{{property.rentTime}}</view>
+              <view class="info-item">土地面积：{{property.rentArea}}</view>
+              <view class="info-item">土地期限：{{property.rentMonth}}</view>
+              <view class="info-item">土地价格：{{property.priceString}}</view>
             </view>
           </swiper-item>
         </swiper>
@@ -73,7 +73,10 @@
     </view>
   </scroll-view>
   <view class="footer-container">
-    <button size="default" open-type="share" class="shareBtn">资产分享</button>
+    <!-- <button size="default" open-type="share" class="shareBtn">资产分享</button> -->
     <button size="default" type="primary" class="navBtn" bindtap="sigIn">巡查打卡</button>
   </view>
 </view>
+
+<!-- 提示框 -->
+<van-toast id="van-toast" />

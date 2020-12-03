@@ -1,35 +1,35 @@
 <view class="container">
   <view class="section">
-    <van-search value="{{ page.query }}" placeholder="请输入搜索关键词" />
+    <van-search bind:change="searchProperties" value="{{ page.query }}" placeholder="请输入搜索关键词" />
   </view>
 
-  <!-- <view class="section">
-  
-  </view> -->
-
-  <scroll-view scroll-y style="height:{{layout.scrollHeight}}px">
+  <scroll-view scroll-y style="height:{{layout.scrollHeight}}px" bindscrolltolower="scrolltolower">
     <view class="propertyCard" data-id="{{item.id}}" wx:for="{{properties}}" wx:key="id" bindtap="navToDetail">
       <view class="thumb">
         <image src="{{item.logo?item.logo:'../../images/timg.jpg'}}"></image>
       </view>
       <view class="detail">
         <view class="title">{{item.name}}</view>
-        <view class="item">{{item.propertyType}}</view>
-        <view class="item">{{item.address}}</view>
-        <view class="item">{{item.governmentName}}</view>
+        <view class="item">类型:{{item.propertyType}}</view>
+        <view class="item">地址：{{item.address}}</view>
+        <view class="item">产权：{{item.governmentName}}</view>
       </view>
     </view>
-
+    <van-empty wx:if="{{properties.length==0}}" description="搜索不到相关资产..." />
   </scroll-view>
 
   <view class="section finderInfo">
     <view class="avatar">
-      <van-image round custom-class="avatarImg" src="{{finder.avatarUrl}}" bindlongpress="unbindFinder" />
+      <van-image round custom-class="avatarImg" src="{{account.avatarUrl}}" bindlongpress="unbindFinder" />
     </view>
     <view class="infoBar">
-      <view class="name">{{finder.name}}
-        共点亮
+      <view class="name">{{account.nickName}}
+      </view>
+      <view class="school">{{account.government}}巡查员
       </view>
     </view>
   </view>
 </view>
+
+<!-- 提示框 -->
+<van-toast id="van-toast" />

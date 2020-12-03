@@ -245,6 +245,7 @@
     <Compile Include="Models\AccountUsers\AccountUserModel.cs" />
     <Compile Include="Models\AccountUsers\LoginModel.cs" />
     <Compile Include="Models\AccountUsers\AccountUserRoleModel.cs" />
+    <Compile Include="Models\AccountUsers\WechatAccountModel.cs" />
     <Compile Include="Models\AccountUsers\WechatLoginEventModel.cs" />
     <Compile Include="Models\AccountUsers\WechatTokenModel.cs" />
     <Compile Include="Models\Media\MediaModel.cs" />

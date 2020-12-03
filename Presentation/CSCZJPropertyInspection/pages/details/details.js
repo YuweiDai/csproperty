@@ -1,3 +1,5 @@
+import Toast from '../../miniprogram_npm/@vant/weapp/toast/toast';
+
 var app = getApp();
 const util = require('../../utils/util');
 var fromInitialData = false;
@@ -5,40 +7,77 @@ Page({
   data: {
     scrollHeight: 500,
     activeMoreInfoNav: 0,
-    current: null,
-    properties:[]
+    property: null
   },
   onLoad(query) {
     var that = this;
+    var propertyId = 0;
+    console.log(query);
+    try {
+      propertyId = parseInt(query.pId);
+      if (isNaN(propertyId)) propertyId = 0;
+    } catch (e) {
+      propertyId = 0;
+    }
 
-    console.log("detail query");
-    console.log(query.propertyId);
-    console.log("finish");
+    if (propertyId == 0) {
+      wx.reLaunch({
+        url: '../index/index',
+      })
+    }
 
-    var pId = app.globalData.initialPropertyId;
-    if (pId > 0) fromInitialData = true;
-    else if (pId == 0) pId = query.propertyId;
-
-    var url = app.globalData.apiBaseUrl + "properties/" + pId;
-
-    util.httpGet(url).then(function (res) { 
-      that.setData({
-        current: res.data
-      });
-    }).catch(function (err) {
-      console.log(err);
-      util.showToastPromisified({
-        title: '未识别到有效的资产信息',
-        icon: 'none',
-        duration: 2000,
-        mask: true
-      }).then(function () {
-        clearIntialPropertyId();
-        util.redirectToPromisified({
-          url: '/pages/index/index'
-        });
-      });
+    // 自定义加载图标
+    Toast.loading({
+      duration: 10000,
+      mask: true,
+      message: '加载中...',
+      forbidClick: true
     });
+
+    var url = app.globalData.apiUrl + 'Properties/' + propertyId;
+
+    app.requestWithToken({
+      url: url,
+    }).then(function (res) {
+      var response = res.data;
+      if (response) {
+        that.setData({
+          property: response
+        })
+      }
+
+      Toast.clear();
+    });
+
+
+    // console.log("detail query");
+    // console.log(query.propertyId);
+    // console.log("finish");
+
+    // var pId = app.globalData.initialPropertyId;
+    // if (pId > 0) fromInitialData = true;
+    // else if (pId == 0) pId = query.propertyId;
+
+    // var url = app.globalData.apiBaseUrl + "properties/" + pId;
+
+    // util.httpGet(url).then(function (res) { 
+    //   that.setData({
+    //     current: res.data
+    //   });
+    // }).catch(function (err) {
+    //   console.log(err);
+    //   util.showToastPromisified({
+    //     title: '未识别到有效的资产信息',
+    //     icon: 'none',
+    //     duration: 2000,
+    //     mask: true
+    //   }).then(function () {
+    //     clearIntialPropertyId();
+    //     util.redirectToPromisified({
+    //       url: '/pages/index/index'
+    //     });
+    //   });
+    // });
 
 
     this.setData({
@@ -91,11 +130,9 @@ Page({
         title: '提示',
         content: '当前位置距离资产位置较远，无法打卡，请接近后再次尝试',
         buttonText: '我知道了',
-        success: () => {
-        },
+        success: () => {},
       });
-    }
-    else {
+    } else {
       wx.confirm({
         title: '温馨提示',
         content: '您已进入巡查打卡范围，是要对资产【' + that.data.current.name + '】进行巡查打卡?',
@@ -128,7 +165,7 @@ Page({
   },
 
   //清除默认自带的参数
-  clearIntialPropertyId(){
+  clearIntialPropertyId() {
     if (fromInitialData) app.globalData.initialPropertyId = 0;
   }
 });
