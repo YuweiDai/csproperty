@@ -1,7 +1,9 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/register/register"
+    "pages/register/register",
+    "pages/mine/mine",
+    "pages/details/details"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -22,8 +24,11 @@
     }
   },
   "usingComponents": {
-    "van-image": "@vant/weapp/image/index",
+    "van-empty": "@vant/weapp/empty/index",
     "van-button": "@vant/weapp/button/index",
+    "van-search": "@vant/weapp/search/index",
+    "van-dialog": "@vant/weapp/dialog/index",
+    "van-image": "@vant/weapp/image/index",
     "van-field": "@vant/weapp/field/index",
     "van-popup": "@vant/weapp/popup/index",
     "van-uploader": "@vant/weapp/uploader/index",

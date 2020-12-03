@@ -3,35 +3,18 @@ import Notify from '../../miniprogram_npm/@vant/weapp/notify/notify';
 import Toast from '../../miniprogram_npm/@vant/weapp/toast/toast';
 import Dialog from '../../miniprogram_npm/@vant/weapp/dialog/dialog';
 
-
 Page({
   /**
    * 页面的初始数据
    */
   data: {
-    initial: {
-      schoolloading: true,
-      reportLoading: true
-    },
     layout: {
       registerFormsHeight: 200,
       scrolViewHeight: 300
     },
     userInfo: null,
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    steps: {
-      active: 0,
-      group: [{
-          text: '步骤一',
-          desc: '绑定学生'
-        },
-        {
-          text: '步骤二',
-          desc: '填写健康承诺书'
-        }
-      ]
-    }
+    canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
 
   /**
@@ -40,29 +23,13 @@ Page({
   onLoad: function (options) {
 
     var that = this;
-    var active = 0;
-
-    try {
-      active = parseInt(options.active);
-      if (isNaN(active)) active = 0;
-    } catch (e) {
-      active = 0;
-    }
-
-    if (active > 1 || active < 0) {
-      wx.reLaunch({
-        url: '../index/index',
-      })
-    }
-
 
     var wHeight = app.globalData.deviceInfo.windowHeight; //窗体高度
     var registerFormsHeight = wHeight - (10 * 2 + 420) / app.globalData.dpr;
 
     that.setData({
-      'steps.active': active,
       'layout.registerFormsHeight': registerFormsHeight,
-      'layout.scrolViewHeight': registerFormsHeight - 49 
+      'layout.scrolViewHeight': registerFormsHeight - 49
     });
 
     //#region 获取用户信息部分代码
@@ -127,18 +94,15 @@ Page({
 
     //弹出确认信息对话框
     Dialog.confirm({
-      title: "请确认您绑定的学生信息",
-      message: "学校：" + that.data.schoolAndClassConfig.school +
-        "，班级：" + that.data.schoolAndClassConfig.class +
-        "，姓名：" + name +
-        "，学号：" + password
+      title: "请确认您绑定的账号信息",
+      message: "账号：" + name
     }).then(function () {
       //后台进行关联    
-      var accountBindingModel = {        
-        name: name,
+      var accountBindingModel = {
+        userName: name,
         password: password,
         nickName: that.data.userInfo.nickName,
-        avatarUrl: that.data.userInfo.avatarUrl        
+        avatarUrl: that.data.userInfo.avatarUrl
       }
 
       console.log(accountBindingModel);
@@ -158,10 +122,10 @@ Page({
         Toast.clear();
         var response = res.data;
 
-        if (response.code != "200" && response.code != "210") {
+        if (response.code != "200") {
           Dialog.alert({
-            title:'绑定失败',
-            message:response.message
+            title: '绑定失败',
+            message: response.message
           });
         } else {
           Notify({
@@ -170,22 +134,16 @@ Page({
             duration: 1500
           });
 
-          if (response.code == "210") {
-            wx.reLaunch({
-              url: '../index/index',
-            })
-          } else {
-            that.setData({
-              'steps.active': 1
-            })
-          }
+          wx.reLaunch({
+            url: '../index/index',
+          })
         }
         console.log(res)
       }, function (err) {
         Toast.clear();
       });
 
-    }).catch(function(){
+    }).catch(function () {
       console.log("核对信息，取消了绑定操作！")
     });
   },

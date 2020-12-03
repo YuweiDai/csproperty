@@ -168,4 +168,17 @@ namespace CSCZJ.API.Models.Properties
 
         public int ParentPropertyId { get; set; }
     }
+
+    public class PropertySimpleWechatModel : BaseQMEntityModel
+    {
+        public string Name { get; set; }
+
+        public string PropertyType { get; set; }
+
+        public string Address { get; set; }
+
+        public string Logo { get; set; }
+
+        public string GovernmentName { get; set; }
+    }
 }

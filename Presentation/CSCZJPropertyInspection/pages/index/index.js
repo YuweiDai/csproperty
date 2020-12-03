@@ -1,5 +1,5 @@
 // pages/index/index.js
-// import Dialog from '../../miniprogram_npm/@vant/weapp/dialog/dialog';
+import Dialog from '../../miniprogram_npm/@vant/weapp/dialog/dialog';
 import Notify from '../../miniprogram_npm/@vant/weapp/notify/notify';
 import Toast from '../../miniprogram_npm/@vant/weapp/toast/toast';
 
@@ -8,6 +8,19 @@ const app = getApp();
 
 Page({
 
+  data: {
+    properties: [],
+    layout: {
+      scrollHeight: 500,
+    },
+    page: {
+      index: 1,
+      pageSize: 15,
+      query: ""
+    },
+    account: {}
+  },
+
   //#region 页面事件集合
 
   /**
@@ -15,7 +28,12 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
-
+    var wHeight = app.globalData.deviceInfo.windowHeight; //窗体高度
+    var scrollHeight = wHeight - (60 + 54 + 1);
+    console.log(scrollHeight);
+    that.setData({
+      'layout.scrollHeight': scrollHeight
+    });
     // 自定义加载图标
     Toast.loading({
       duration: 10000,
@@ -23,82 +41,33 @@ Page({
       message: '加载中...',
       forbidClick: true
     });
-
     //获取用户状态
     app.requestWithToken({
       url: app.globalData.apiUrl + 'Systemmanage/Accounts/GetWechatStatus',
     }).then(function (res) {
+      console.log(res);
       var response = res.data;
       if (response.code == "200") {
+        Toast.clear();
 
-        if (response.data == "0" || response.data == "1") {
+        if (response.data == undefined || response.data == null) {
           that.setData({
             'initial.accountLoading': false
           });
-          Toast.clear();
-          //#region  若为状态0，1 则表示当前微信用户未绑定，专跳绑定页面
-          wx.navigateTo({
-            url: '../register/register?active=' + response.data,
+
+          //#region  若为状态0则表示当前微信用户未绑定，专跳绑定页面
+          wx.reLaunch({
+            url: '../register/register',
           })
           //#endregion
         }
 
         that.setData({
-          'account.status': response.data
+          'account': response.data
         });
 
-        //#region 加载checkinpoints数据
-        app.requestWithToken({
-          url: app.globalData.apiUrl + 'checkinpoints',
-          header: {
-            'content-type': 'application/json' // 默认值
-          }
-        }).then(function (res) {
-          var response = res.data;
-          if (response.code == "200") {
-            var checkInPoints = response.data;
+        that.getProperties();
 
-            //重新计算位置
-            checkInPoints.forEach(function (item, index) {
-              item.x = item.x * (app.globalData.clientWidth / 1080);
-              item.y = item.y * (app.globalData.clientHeight / 1920);
-              item.width = (app.globalData.clientWidth / 1080) * item.width;
-              item.height = (app.globalData.clientHeight / 1920) * item.height;
-            });
-
-            that.setData({
-              'initial.checkInPointsLoading': false,
-              'checkInPoints': checkInPoints
-            });
-
-            if (!that.data.initial.accountLoading && !that.data.initial.checkInPointsLoading) {
-              Toast.clear();
-              //启动计算
-              that.startCalculation();
-            }
-          } else {
-            Notify({
-              message: '获取信打卡点信息失败!',
-              duration: 2000
-            });
-
-            Toast.clear();
-          }
-        }, function (err) {});
-        //#endregion
-
-        //#region 加载系统配置
-
-        app.requestWithToken({
-          url: app.globalData.apiUrl + 'Common/LoadSystemConfig',
-        }).then(function (res) {
-          var response = res.data;
-          that.setData({
-            'config.mock': response.data == "TRUE"
-          })
-        }, function (err) {});
-
-        //#endregion
       } else {
         Notify({
           type: 'danger',
@@ -133,6 +102,113 @@ Page({
     }
   },
 
+  //触底加载
+  onReachBottom: function () {
+
+  },
+
   //#endregion
 
+  //解绑微信账号
+  unbindFinder: function () {
+
+    app.wxp.showModal({
+      title: '提示',
+      content: '是否要解除与当前微信账号的绑定？'
+    }).then(function (res) {
+      if (res.confirm) {
+
+        Toast.loading({
+          duration: 10000,
+          mask: true,
+          message: '解绑中...',
+          forbidClick: true
+        });
+
+        return app.requestWithToken({
+          url: app.globalData.apiUrl + "Systemmanage/Accounts/UnBinding",
+          method: 'POST'
+        });
+      }
+    }).then(function (res) {
+      var response = res.data;
+      if (response.code == "200") {
+        wx.reLaunch({
+          url: 'index'
+        });
+
+        Toast.clear();
+      } else {
+        Notify({
+          message: response.message,
+          duration: 2000
+        });
+        Toast.clear();
+      }
+    }, function () {
+      Toast.clear();
+    });
+  },
+
+  //资产列表滑动到底部
+  scrolltolower: function (event) {
+    console.log(event);
+    this.setData({
+      'page.index': this.data.page.index + 1
+    });
+
+    this.getProperties();
+  },
+
+  //资产搜索
+  searchProperties: function (e) {
+    console.log(e);
+    this.setData({
+      'page.index': 1,
+      'page.pageSize': 15,
+      'page.query': e.detail
+    });
+
+    this.getProperties(true);
+  },
+
+  //加载资产
+  getProperties: function (reset = false) {
+    var that = this;
+    // 自定义加载图标
+    Toast.loading({
+      duration: 10000,
+      mask: true,
+      message: '加载中...',
+      forbidClick: true
+    });
+    // string query = "", string sort = "", int pageSize = 15, int pageIndex = 1,
+    var url = app.globalData.apiUrl + 'Properties/AllForWechat?' + 'pageSize=' + that.data.page.pageSize + "&pageIndex=" + that.data.page.index + "&time=" + Date.parse(new Date());
+
+    if (that.data.page.query) url += '&query=' + that.data.page.query;
+
+    app.requestWithToken({
+      url: url,
+    }).then(function (res) {
+      var response = res.data;
+
+
+      var newProperties = reset ? response.data : that.data.properties.concat(response.data);
+
+      that.setData({
+        properties: newProperties
+      })
+
+
+      Toast.clear();
+    });
+  },
+
+  //导航至详情页面
+  navToDetail: function (event) {
+    console.log(event);
+    wx.navigateTo({
+      url: '../details/details?pId=' + event.currentTarget.dataset.id
+    })
+  }
 })
