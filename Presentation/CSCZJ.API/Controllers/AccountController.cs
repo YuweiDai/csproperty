@@ -375,7 +375,7 @@ namespace CSCZJ.API.Controllers
                 if (result != AccountUserLoginResults.Successful) throw new Exception("账号和密码不匹配！");
 
                 account = _accountService.GetAccountUserByUsername(accountBindModel.Username);
-                account.WechatNickName = accountBindModel.Nickname;
+                account.WechatNickName = accountBindModel.NickName;
                 account.AvatarUrl = accountBindModel.AvatarUrl;
 
                 var request = HttpContext.Current.Request;

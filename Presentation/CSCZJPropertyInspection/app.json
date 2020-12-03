@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/register/register",
     "pages/mine/mine",
-    "pages/details/details"
+    "pages/details/details",
+    "pages/map/map"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -24,6 +25,7 @@
     }
   },
   "usingComponents": {
+    "van-divider": "@vant/weapp/divider/index",
     "van-empty": "@vant/weapp/empty/index",
     "van-button": "@vant/weapp/button/index",
     "van-search": "@vant/weapp/search/index",

@@ -237,8 +237,12 @@ namespace CSCZJ.Web.Api.Extensions
             return createmodel.MapTo<PropertyPatrolCreateModel, PropertyPatrol>();
         }
 
+        public static PropertyPatrolPictureModel ToModel(this PropertyPatrolPicture entity)
+        {
+            return entity.MapTo<PropertyPatrolPicture, PropertyPatrolPictureModel>();
+        }
 
-        
+
         #endregion
 
         #region 资产划拨

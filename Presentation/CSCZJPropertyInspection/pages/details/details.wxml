@@ -1,7 +1,10 @@
 <view class="page">
   <scroll-view scroll-y="{{true}}" style="height: {{scrollHeight}}px;" class="content-container">
     <view class="header">
-      <image src="{{property.logoUrl}}" mode="aspectFill" />
+      <image wx:if="{{!property.logoUrl}}" src="{{property.logoUrl}}" mode="aspectFill" />
+      <van-image wx:if="{{property.logoUrl}}" use-error-slot>
+        <text slot="error">加载失败</text>
+      </van-image>
       <!-- <view class="backBtn" bindtap="navToIndex">扫一扫</view> -->
     </view>
     <view class="content">
@@ -10,6 +13,8 @@
         <view class="tags">
           <van-tag type="primary">{{property.propertyType}}</van-tag>
           <van-tag type="primary">{{property.useType}}</van-tag>
+          <van-tag type="{{currentDist<200?'success':'danger'}}" wx:if="{{location.length==2}}">当前距离：{{currentDist}} 米
+          </van-tag>
         </view>
         <view class="info-list">
           <view class="info-item region">
@@ -19,7 +24,7 @@
           <view class="info-item address">
             <view class="label">资产地址</view>
             <view class="value">{{property.address}}</view>
-            <view class="more mapBtn" bindtap="navToMap">导航</view>
+            <view class="more mapBtn" bindtap="navToMap" wx:if="{{location.length==2}}">导航</view>
           </view>
           <view class="info-item owner">
             <view class="label">产权单位</view>
@@ -41,31 +46,31 @@
           <view class="nav-item {{activeMoreInfoNav==0?'active':''}}" data-id="0" bindtap="navTap">详细信息</view>
           <view class="nav-item {{activeMoreInfoNav==1?'active':''}}" data-id="1" bindtap="navTap">巡查记录</view>
         </view>
-        <view class="nav"></view>
-        <swiper indicator-dots="{{false}}" autoplay="{{false}}" property="{{activeMoreInfoNav}}" onChange="navChange">
-          <swiper-item>
-            <view class="info-list">
-              <van-cell-group>
-                <van-cell title="房产面积" value="{{property.constructArea}}平方米" />
-                <van-cell title="土地面积" value="{{property.landArea}}平方米" />
-                <van-cell title="获得日期" value="{{property.getedDate}}" />
-                <van-cell title="获得价格" value="{{property.price}}元" />
-                <van-cell title="获得方式" value="{{property.getMode}}" />
-                <van-cell title="当前状态" value="{{property.propertyType}}" />
-                <van-cell title="房产证号" value="{{property.constructId}}" />
-                <van-cell title="土地证号" value="{{property.landId}}" />
-              </van-cell-group>
+
+        <view class="info-list" id="detailInfo" wx:if="{{activeMoreInfoNav==0}}">
+          <van-cell-group>
+            <van-cell title="房产面积" value="{{property.constructArea}}平方米" />
+            <van-cell title="土地面积" value="{{property.landArea}}平方米" />
+            <van-cell title="获得日期" value="{{property.getedDate}}" />
+            <van-cell title="获得价格" value="{{property.price}}元" />
+            <van-cell title="获得方式" value="{{property.getMode}}" />
+            <van-cell title="当前状态" value="{{property.currentType}}" />
+            <van-cell title="房产证号" value="{{property.constructId}}" />
+            <van-cell title="土地证号" value="{{property.landId}}" />
+            <van-cell title="不动产证" value="{{property.propertyID}}" />
+          </van-cell-group>
+        </view>
+
+        <view id="patrolList" wx:if="{{activeMoreInfoNav==1}}">
+          <view class="patrolCard" wx:for="{{property.patrols}}" wx:key="id">
+            <van-divider contentPosition="center">{{item.patrolDate}}</van-divider>
+            <view class="content item">巡查情况：{{item.content}}</view>
+            <view class="imgs item">
+              <van-image data-href="{{picture.href}}" bindclick="previewImg" width="50" height="50"
+                src="{{picture.href}}" wx:for="{{item.patrolPictures}}" wx:for-item="picture" wx:key="pictureId" />
             </view>
-          </swiper-item>
-          <swiper-item>
-            <van-cell-group>
-              <van-cell title="所属乡镇" value="{{property.region}}" />
-              <van-cell title="资产地址" value="{{property.address}}" arrow-direction="right" />
-              <van-cell title="产权单位" value="{{property.governmentName}}" />
-              <van-cell title="使用单位" value="{{property.usedPeople}}" />
-            </van-cell-group>
-          </swiper-item>
-        </swiper>
+          </view>
+        </view>
       </view>
     </view>
   </scroll-view>
@@ -76,3 +81,20 @@
 
 <!-- 提示框 -->
 <van-toast id="van-toast" />
+<!-- 在页面内添加对应的节点 -->
+<van-notify id="van-notify" />
+
+<!-- 巡查对话框 -->
+<van-dialog use-slot title="标题" show="{{ patrolDialogVisible }}" show-cancel-button bind:close="onClose"
+  bind:confirm="submitPatrol">
+  <van-cell-group>
+    <van-field value="{{ patrol.message }}" clearable label="用户名" placeholder="请输入巡查情况..." border="{{ false }}"
+      bind:change="onPatrolMsgChange" />
+  </van-cell-group>
+
+  <view style="text-align:center;margin-top:15px">
+    <van-uploader file-list="{{ patrol.imgs }}" max-count="2" accept="image" sizeType="compressed"
+      bind:after-read="healthCodeAfterRead" bind:delete="healthCodeDelete" />
+  </view>
+
+</van-dialog>

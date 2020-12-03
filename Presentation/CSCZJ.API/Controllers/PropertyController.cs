@@ -953,6 +953,7 @@ namespace CSCZJ.API.Controllers
 
             foreach (var propertyPictureModel in propertyPatrolModel.PatrolPictures)
             {
+                var picture = _pictureService.GetPictureById(propertyPictureModel.PictureId);
                 propertyPictureModel.Href = _pictureService.GetPictureUrl(propertyPictureModel.PictureId);
             }
 
@@ -1239,7 +1240,6 @@ namespace CSCZJ.API.Controllers
             }
             else
             {
-
                 var model = property.ToModel();
                 model.LogoUrl = GetLogoUrl(property);
                 model.NewCreate = _propertyNewCreateService.GetPropertyNewCreateByPropertyId(model.Id).ToModel();
@@ -1270,7 +1270,7 @@ namespace CSCZJ.API.Controllers
 
                     PreparePropertyRentPicturesAndFiles(rentModel);
                 }
-
+                model.Patrols = model.Patrols.OrderByDescending(pr => pr.PatrolDate).ToList();
                 foreach (var patrolModel in model.Patrols)
                 {
                     // var patrol = _propertyPatrolService.GetPropertyPatrolById(patrolModel.Id);
@@ -5182,6 +5182,11 @@ namespace CSCZJ.API.Controllers
                 #endregion
 
                 _propertyPatrolService.InsertPropertyPatrol(patrol);
+
+                var patrolModel = patrol.ToModel();
+                PreparePropertyPatrolPictures(patrolModel);
+
+                return Ok(patrolModel);
             }
             catch(Exception ex)
             {
