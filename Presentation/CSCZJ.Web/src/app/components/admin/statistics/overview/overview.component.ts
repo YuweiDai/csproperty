@@ -7,6 +7,7 @@ import * as echarts from 'echarts';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { OverViewModel } from '../../../../viewModels/overview/OverViewModel';
+import { PropertyService } from '../../../../services/propertyService';
 
 
 @Component({
@@ -27,9 +28,15 @@ export class OverviewComponent implements OnInit {
   isClick=false;
   overviewModel=new OverViewModel;
 
-  constructor(private http: HttpClient,private notification: NzNotificationService,private router: Router) { }
+  constructor(private http: HttpClient,private notification: NzNotificationService,private router: Router,private propertyService: PropertyService) { }
 
   ngOnInit() {
+
+    console.log(123);
+    this.propertyService.getOverViewInfo().subscribe(response=>{
+        this.overviewModel=response;
+        this.overviewModel.constructArea=Math.floor(this.overviewModel.constructArea*100)/100;
+    })
 
 
     

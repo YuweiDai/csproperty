@@ -1,20 +1,20 @@
 export class OverViewModel {
-        TotalCount:number;
+        totalCount:number;
 
-        ConstructCount:number;
+        constructCount:number;
 
-        LandCount:number;
+        landCount:number;
 
-        TotalPrice:number;
+        totalPrice:number;
 
-        ConstructPrice:number;
+        constructPrice:number;
 
-        LandPrice:number;
+        landPrice:number;
 
-        ConstructArea:number;
+        constructArea:number;
 
-        LandArea:number;
-        TotalArea:number;
+        landArea:number;
+        totalArea:number;
         
 }
 
