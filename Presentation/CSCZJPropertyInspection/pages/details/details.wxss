@@ -38,20 +38,13 @@
 }
 
 .content .titleInfo .name {
-  font-size: 60rpx;
+  font-size: 44rpx;
   font-weight: bolder;
   margin-bottom: 20rpx;
 }
 
-.content .titleInfo .tags .tag {
-  font-size: 24rpx;
+.content .titleInfo .tags van-tag {
   margin-right: 10rpx;
-  padding: 7rpx 12rpx;
-  width: 70rpx;
-  text-align: center;
-  color: white;
-  border-radius: 5rpx;
-  display: inline-block;
 }
 
 .content .titleInfo .info-list .info-item {
@@ -130,7 +123,7 @@
 
 .content .moreInfo .navBar .nav-item {
   display: inline-block;
-  width: 230rpx;
+  width: 345rpx;
   text-align: center;
   padding: 10rpx 0;
 }
@@ -161,16 +154,12 @@
   position: fixed;
   bottom: 0;
   background-color: #F6F6F6;
+  width: 100%;
 }
 
 .footer-container button {
   margin: 10rpx 0;
   display: inline-block;
-  width: 345rpx;
   height: 80rpx;
   line-height: 80rpx;
-}
-
-.footer-container button.shareBtn {
-  margin-right: 20rpx;
 }
