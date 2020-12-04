@@ -36,6 +36,11 @@ namespace CSCZJ.Services.Property
         /// <returns></returns>
         IPagedList<CSCZJ.Core.Domain.Properties.Property> GetAllProperties(IList<int> governmentIds, string search = "",int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false, PropertyAdvanceConditionRequest advanceCondition=null, params PropertySortCondition[] sortConditions);
 
+        /// <summary>
+        /// 根据当前位置获取周边资产
+        /// </summary>
+        /// <returns></returns>
+        IList<CSCZJ.Core.Domain.Properties.Property> GetAllPropertiesByDistance(double lat, double lng, string search = "", int pageIndex = 0, int pageSize = int.MaxValue);
 
         IList<CSCZJ.Core.Domain.Properties.Property> GetAllProcessProperties(IList<int> governmentIds, string search = "", PropertyAdvanceConditionRequest advanceCondition = null, params PropertySortCondition[] sortConditions);
 
