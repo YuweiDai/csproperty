@@ -7,7 +7,7 @@ import {
 App({
   wxp: {},
   globalData: {
-    apiUrl: "http://localhost:8844/api/",
+    apiUrl: "http://qzschy.vaiwan.com/api/",
     // apiUrl: "http://qzgis.vaiwan.com/api/",
     // apiUrl: "https://www.qzgis.cn/dapi/",
     userInfo: null,

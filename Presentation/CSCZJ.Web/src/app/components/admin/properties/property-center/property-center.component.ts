@@ -25,7 +25,7 @@ export class PropertyCenterComponent implements OnInit {
       { icon: "icon-liebiao", title: "出租管理",url:"./rentlist",active:false },
       { icon: "icon-liebiao", title: "巡查管理",url:"./patrollist",active:false },
       // { icon: "icon-xinzeng", title: "新增资产",url:"./create",active:false },
-      { icon: "icon-shenpi", title: "审批管理",url:"./",active:false }
+     // { icon: "icon-shenpi", title: "审批管理",url:"./",active:false }
     ];
 
     activateInfo.queryParams.subscribe(queryParams => {

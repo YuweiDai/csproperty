@@ -11,7 +11,7 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 import { format, compareAsc } from 'date-fns'
 
-import { PropertyCreateModel, PropertyPictureModel, PropertyFileModel,SameIdPropertyModel } from '../../../../viewModels/Properties/property';
+import { PropertyCreateModel, PropertyPictureModel, PropertyFileModel, SameIdPropertyModel } from '../../../../viewModels/Properties/property';
 
 import { MapService } from 'src/app/services/map/mapService';
 import { PropertyService } from 'src/app/services/propertyService';
@@ -31,14 +31,14 @@ declare var Wkt: any;
 export class PropertyCreateComponent implements OnInit {
   public id: number;
   public title: string;
-  public current: number;  
+  public current: number;
   public stepStatus: string;
   public property = new PropertyCreateModel();
   public orginalPropertyName: string;
-  public isSameCardIdLoading:boolean;
-  public sameCardIdChecked:boolean;
-  public sameCardProperties:SameIdPropertyModel[];
- 
+  public isSameCardIdLoading: boolean;
+  public sameCardIdChecked: boolean;
+  public sameCardProperties: SameIdPropertyModel[];
+
   public wkt: any;
   public map: any;
   public marker = null;
@@ -89,8 +89,8 @@ export class PropertyCreateComponent implements OnInit {
     private mapService: MapService, private configService: ConfigService, private propertyService: PropertyService, private governmentService: GovernmentService) {
 
 
-     this.sameCardProperties=[];
-     this.sameCardIdChecked=false;
+    this.sameCardProperties = [];
+    this.sameCardIdChecked = false;
 
     this.basicInfoForm = this.fb.group({
       pName: ['', [Validators.required]],
@@ -157,7 +157,7 @@ export class PropertyCreateComponent implements OnInit {
 
   //资产类别变化引起的表单验证切换
   propertyTypeValidateSwicher(): void {
-    if (this.property.propertyTypeId == "0"||this.property.propertyTypeId == "2") {
+    if (this.property.propertyTypeId == "0") {
 
       this.basicInfoForm.get('pConstructArea').setValidators(Validators.required);
       this.basicInfoForm.get('pConstructArea').markAsDirty();
@@ -361,16 +361,16 @@ export class PropertyCreateComponent implements OnInit {
   ngAfterViewInit() {
   }
 
-  pre(): void { 
+  pre(): void {
     this.current -= 1;
     this.changeContent();
 
     console.log("pre");
-     
+
   }
 
   next(): void {
-console.log("next");
+    console.log("next");
 
     var validation = false;
     var title = "数据错误", content = "";
@@ -409,8 +409,8 @@ console.log("next");
             this.property.estateId = "";
             this.property.estateTime = "";
 
-            if (this.property.constructTime != undefined) this.property.constructTime = format(new Date(this.property.constructTime) , 'yyyy-MM-dd');
-            if (this.property.landTime != undefined) this.property.landTime = format(new Date(this.property.landTime) , 'yyyy-MM-dd');
+            if (this.property.constructTime != undefined) this.property.constructTime = format(new Date(this.property.constructTime), 'yyyy-MM-dd');
+            if (this.property.landTime != undefined) this.property.landTime = format(new Date(this.property.landTime), 'yyyy-MM-dd');
           }
         }
 
@@ -456,22 +456,21 @@ console.log("next");
 
           console.log(this.property);
           //获取同号资产
-           
+
           var typeId = this.property.registerEstate == "true" ? "0" : "1";
-          var number = this.property.registerEstate == "true" ? this.property.estateId : 
-          (this.property.propertyTypeId=="0"?this.property.constructId:this.property.landId);
+          var number = this.property.registerEstate == "true" ? this.property.estateId :
+            (this.property.propertyTypeId == "0" ? this.property.constructId : this.property.landId);
 
 
-          this.propertyService.getPropertiesBySameNumberId(number, typeId,0)
+          this.propertyService.getPropertiesBySameNumberId(number, typeId, 0)
             .subscribe(response => {
               var that = this;
-              that.sameCardIdChecked=true;
-              that.sameCardProperties=response;
+              that.sameCardIdChecked = true;
+              that.sameCardProperties = response;
 
               that.sameCardProperties.forEach(element => {
-                if(element.isMain)
-                {
-                  that.property.parentPropertyId=element.id;
+                if (element.isMain) {
+                  that.property.parentPropertyId = element.id;
                   return false;
                 }
               });
@@ -524,8 +523,8 @@ console.log("next");
                 //this.router.navigate(['../properties/edit/' + id]);
               },
               nzOnCancel: function () {
-                window.location.href="http://localhost:8084/#/admin/properties/"+id;
-               // that.router.navigate(['../properties/' + id]);
+                window.location.href = "http://localhost:8084/#/admin/properties/" + id;
+                // that.router.navigate(['../properties/' + id]);
               }
             });
           }
