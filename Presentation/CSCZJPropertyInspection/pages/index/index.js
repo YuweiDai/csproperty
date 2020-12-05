@@ -29,14 +29,14 @@ Page({
   onLoad: function (options) {
     var that = this;
     var wHeight = app.globalData.deviceInfo.windowHeight; //窗体高度
-    var scrollHeight = wHeight - (60 + 54 + 1);
+    var scrollHeight = wHeight - 54 - 1 - 120 / app.globalData.dpr;
     console.log(scrollHeight);
     that.setData({
       'layout.scrollHeight': scrollHeight
     });
     // 自定义加载图标
     Toast.loading({
-      duration: 10000,
+      duration: 0,
       mask: true,
       message: '加载中...',
       forbidClick: true
@@ -102,11 +102,6 @@ Page({
     }
   },
 
-  //触底加载
-  onReachBottom: function () {
-
-  },
-
   //#endregion
 
   //解绑微信账号
@@ -119,7 +114,7 @@ Page({
       if (res.confirm) {
 
         Toast.loading({
-          duration: 10000,
+          duration: 0,
           mask: true,
           message: '解绑中...',
           forbidClick: true
@@ -176,30 +171,32 @@ Page({
   getProperties: function (reset = false) {
     var that = this;
     // 自定义加载图标
+    var url = app.globalData.apiUrl + 'Properties/AllForWechat?' + 'pageSize=' + that.data.page.pageSize + "&pageIndex=" + that.data.page.index + "&time=" + Date.parse(new Date());
     Toast.loading({
-      duration: 10000,
+      duration: 0,
       mask: true,
       message: '加载中...',
       forbidClick: true
     });
-    // string query = "", string sort = "", int pageSize = 15, int pageIndex = 1,
-    var url = app.globalData.apiUrl + 'Properties/AllForWechat?' + 'pageSize=' + that.data.page.pageSize + "&pageIndex=" + that.data.page.index + "&time=" + Date.parse(new Date());
-
     if (that.data.page.query) url += '&query=' + that.data.page.query;
 
     app.requestWithToken({
       url: url,
     }).then(function (res) {
       var response = res.data;
-
+      Toast.clear();
 
       var newProperties = reset ? response.data : that.data.properties.concat(response.data);
 
       that.setData({
         properties: newProperties
       })
-
-
+    }, function (err) {
+      Notify({
+        type: 'danger',
+        message: '获取资产错误！',
+        duration: 2000
+      });
       Toast.clear();
     });
   },

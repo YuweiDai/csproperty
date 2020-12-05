@@ -1,3 +1,5 @@
+var geoUtil = require('../../utils/WSCoordinate.js')
+import Notify from '../../miniprogram_npm/@vant/weapp/notify/notify';
 import Toast from '../../miniprogram_npm/@vant/weapp/toast/toast';
 
 var app = getApp();
@@ -7,8 +9,16 @@ Page({
   data: {
     scrollHeight: 500,
     activeMoreInfoNav: 0,
-    property: null
+    property: null,
+    location: [],
+    currentDist: 0,
+    patrolDialogVisible: false,
+    patrol: {
+      message: "",
+      imgs: []
+    }
   },
+
   onLoad(query) {
     var that = this;
     var propertyId = 0;
@@ -41,9 +51,20 @@ Page({
     }).then(function (res) {
       var response = res.data;
       if (response) {
+
+        var lnglat = [];
+        if (response.location) {
+          //POINT (118.51692642056332 28.905588892905769)
+          var coordStrs = response.location.replace('POINT (', '').replace(')', '').split(' ');
+          lnglat.push(parseFloat(coordStrs[0]));
+          lnglat.push(parseFloat(coordStrs[1]));
+        }
         that.setData({
-          property: response
-        })
+          property: response,
+          location: lnglat
+        });
+
+        that.calculateDistance();
       }
 
       Toast.clear();
@@ -68,75 +89,198 @@ Page({
 
   },
 
-  navChange: function (event) {
-    console.log(event);
-    this.setData({
-      activeMoreInfoNav: event.detail.current
-    })
-  },
 
   navToMap: function () {
-    wx.navigateTo({
-      url: "pages/map/map"
-    })
+
+    if (this.data.location.length != 2) return;
+
+    var targetLocation = geoUtil.transformFromWGSToGCJ(this.data.location[1], this.data.location[0]);
+    wx.openLocation({
+      latitude: targetLocation.latitude,
+      longitude: targetLocation.longitude,
+    });
   },
 
-  nanToPano: function (event) {
-    wx.navigateTo({
-      url: "/pages/panorama/panorama"
-    })
-  },
-
-  navToIndex: function (event) {
-    this.clearIntialPropertyId();
-    wx.reLaunch({
-      url: "/pages/index/index"
-    })
-  },
-
+  //显示巡查输入对话框
   sigIn: function (event) {
+    this.setData({
+      patrolDialogVisible: true
+    })
+  },
+
+  onPatrolDialogClose() {
+    this.setData({
+      patrolDialogVisible: false
+    })
+  },
+
+  //巡查意见变化
+  onPatrolMsgChange: function (event) {
+    this.setData({
+      'patrol.message': event.detail
+    });
+  },
+
+  //提交巡查
+  submitPatrol: function () {
     var that = this;
-    if (this.data.current.name == "原交通局办公楼") {
-      wx.alert({
-        title: '提示',
-        content: '当前位置距离资产位置较远，无法打卡，请接近后再次尝试',
-        buttonText: '我知道了',
-        success: () => {},
+
+    if (!this.data.patrol.message) {
+      Toast('请输入巡查情况！');
+      return;
+    }
+
+    if (this.data.patrol.imgs.length == 0) {
+      Toast('请上传至少一张现场照片！');
+      return;
+    }
+
+    //照片转换成base64
+
+    var base64Array = [];
+    this.data.patrol.imgs.forEach(function (item, index) {
+      var filePath = item.url;
+      var base64 = wx.getFileSystemManager().readFileSync(filePath, "base64");
+      base64Array.push(base64);
+    })
+
+    var patrolCreateModel = {
+      content: this.data.patrol.message,
+      patrolPictures: base64Array,
+      property_Id: this.data.property.id
+    };
+
+    //异步提示
+    Toast.loading({
+      duration: 0,
+      mask: true,
+      message: '提交中...',
+      forbidClick: true
+    });
+
+    app.requestWithToken({
+      url: app.globalData.apiUrl + 'properties/Patrol/Create',
+      method: 'POST',
+      data: JSON.stringify(patrolCreateModel)
+    }).then(function (res) {
+      var response = res.data;
+      Notify({
+        type: 'success',
+        message: '巡查打卡成功！',
+        duration: 2000
       });
-    } else {
-      wx.confirm({
-        title: '温馨提示',
-        content: '您已进入巡查打卡范围，是要对资产【' + that.data.current.name + '】进行巡查打卡?',
-        confirmButtonText: '拍照打卡',
-        cancelButtonText: '暂不需要',
-        success: (result) => {
-          if (result.confirm) {
-            wx.chooseImage({
-              count: 1,
-              sourceType: ['camera'],
-              success: (res) => {
-                wx.alert({
-                  title: '打卡成功！'
-                })
-              },
-            });
-          }
-        },
-      });
+
+      var property = that.data.property;
+      property.patrols.unshift(response);
+
+      //清空数据
+      that.setData({
+        property: property,
+        patrol: {
+          message: '',
+          imgs: []
+        }
+      })
+
+      Toast.clear();
+    }, function (err) {
+      Toast.clear();
+    });
+  },
+
+  //预览图片
+  previewImg: function (event) {
+
+    var href = event.currentTarget.dataset.href;
+    if (href) {
+      wx.previewImage({
+        current: href, // 当前显示图片的http链接
+        urls: [href] // 需要预览的图片http链接列表
+      })
     }
   },
 
-  onShareAppMessage() {
-    var title = this.data.current.name;
-    return {
-      title: title,
-      desc: "资产巡查系统",
-      path: "pages/index/index"
-    };
+  //上传
+  healthCodeAfterRead: function (event) {
+    const {
+      file
+    } = event.detail;
+
+    var fileList = this.data.patrol.imgs;
+    fileList.push({
+      ...file,
+      url: file.url
+    });
+    this.setData({
+      'patrol.imgs': fileList
+    });
+  },
+  //删除
+  healthCodeDelete: function (event) {
+    console.log(event)
+    const {
+      index
+    } = event.detail;
+
+    var fileList = this.data.patrol.imgs;
+    fileList.splice(index, 1);
+    this.setData({
+      'patrol.imgs': fileList
+    });
   },
 
-  //清除默认自带的参数
-  clearIntialPropertyId() {
-    if (fromInitialData) app.globalData.initialPropertyId = 0;
-  }
+
+  getUserLocation: function () {
+    return app.wxp.getLocation({
+      type: 'wgs84',
+    }).then(function (res) {
+      return res;
+    }, function () {
+      Notify({
+        type: 'danger',
+        message: '请点击小程序右上角【...】按钮，进入小程序设置，开启【使用我的地理位置】授权！。',
+        duration: 2000
+      });
+      return {
+        latitude: 0,
+        longitude: 0,
+        accuracy: 0
+      };
+    });
+  },
+
+  //计算距离
+  calculateDistance: function () {
+    var that = this;
+    if (that.data.location.length != 2) return;
+
+    that.getUserLocation().then(function (res) {
+        var userLng = res.longitude;
+        var userLat = res.latitude;
+        var accuracy = res.accuracy;
+        console.log("定位精度：" + accuracy);
+        var distance = that.calculateDistanceBetweenTwoPoints(userLat, userLng, that.data.location[1], that.data.location[0]);
+        that.setData({
+          currentDist: parseInt(distance)
+        })
+      },
+      function () {})
+  },
+
+  //计算两个点之间的位置，返回距离值
+  calculateDistanceBetweenTwoPoints: function (lat1, lng1, lat2, lng2) {
+    lat1 = lat1 || 0;
+    lng1 = lng1 || 0;
+    lat2 = lat2 || 0;
+    lng2 = lng2 || 0;
+
+    var rad1 = lat1 * Math.PI / 180.0;
+    var rad2 = lat2 * Math.PI / 180.0;
+    var a = rad1 - rad2;
+    var b = lng1 * Math.PI / 180.0 - lng2 * Math.PI / 180.0;
+    var r = 6378137;
+    var distance = r * 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(rad1) * Math.cos(rad2) * Math.pow(Math.sin(b / 2), 2)));
+
+    return parseInt(distance);
+  },
 });

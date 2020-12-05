@@ -313,12 +313,16 @@ namespace CSCZJ.Web.Api.Infrastructure
                 .ForMember(dest => dest.Tel, mo => mo.Ignore());
 
             Mapper.CreateMap<PropertyPatrol, PropertyPatrolModel>()
-                   .ForMember(dest => dest.PatrolDate, mo => mo.MapFrom(src => src.PatrolDate.ToString("yyyy-MM-dd")));
+                   .ForMember(dest => dest.PatrolDate, mo => mo.MapFrom(src => src.PatrolDate.ToString("yyyy-MM-dd HH:mm:ss")));
 
 
             Mapper.CreateMap<PropertyPatrolCreateModel, PropertyPatrol>()
             .ForMember(dest => dest.PatrolPictures, mo => mo.Ignore());
 
+            Mapper.CreateMap<PropertyPatrolPicture, PropertyPatrolPictureModel>()
+   .ForMember(dest => dest.SeoFilename, mo => mo.MapFrom(src => src.Picture.SeoFilename))
+   .ForMember(dest => dest.Alt, mo => mo.MapFrom(src => src.Picture.AltAttribute))
+   .ForMember(dest => dest.Title, mo => mo.MapFrom(src => src.Picture.TitleAttribute));
 
             //资产核销
             Mapper.CreateMap<PropertyOffModel, PropertyOff>()

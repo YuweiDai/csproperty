@@ -27,6 +27,7 @@ using System.Data;
 using Newtonsoft.Json.Linq;
 using CSCZJ.Core.Domain.Panoramas;
 using CSCZJ.API.Models.Properties;
+using CSCZJ.Web.Api.Extensions;
 
 namespace CSCZJ.API.Controllers
 {
@@ -103,6 +104,9 @@ namespace CSCZJ.API.Controllers
         [Route("Demo")]
         public IHttpActionResult Demo()
         {
+            //var properties = _propertyService.GetAllPropertiesByDistance(28.8, 118.52, "", 0, 15).Select(p => { return p.ToModel(); }).ToList();
+            //return Ok(properties);
+
             return Ok("123");
         }
 

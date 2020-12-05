@@ -101,6 +101,8 @@ namespace CSCZJ.Services.Media
             string altAttribute = null, string titleAttribute = null,
             bool isNew = true, bool validateBinary = true);
 
+        Picture InsertPicture(string base64);
+
         /// <summary>
         /// 根据base64保存图片
         /// </summary>

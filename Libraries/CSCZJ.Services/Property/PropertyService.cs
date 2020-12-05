@@ -27,6 +27,7 @@ namespace CSCZJ.Services.Properties
         private const string kcegion = "";
         private const string qjregion = "";
 
+        private readonly IDbContext _context;
         private readonly IRepository<CSCZJ.Core.Domain.Properties.Property> _propertyRepository;
         private readonly IRepository<CSCZJ.Core.Domain.Properties.GovernmentUnit> _governmentUnitRepository;
         private readonly IRepository<PropertyPicture> _propertyPictureRepository;
@@ -35,7 +36,7 @@ namespace CSCZJ.Services.Properties
         private readonly ICacheManager _cacheManager;
 
 
-        public PropertyService(ICacheManager cacheManager,
+        public PropertyService(ICacheManager cacheManager, IDbContext context,
              IRepository<CSCZJ.Core.Domain.Properties.Property> propertyRepository, IRepository<CSCZJ.Core.Domain.Properties.GovernmentUnit> governmentUnitRepository,
              IRepository<PropertyPicture> propertyPictureRepository, IRepository<PropertyFile> propertyFileRepository,
         IEventPublisher eventPublisher)
@@ -50,6 +51,8 @@ namespace CSCZJ.Services.Properties
             _propertyFileRepository = propertyFileRepository;
 
             this._eventPublisher = eventPublisher;
+
+            this._context = context;
         }
 
         public void GetProperties(string wkt)
@@ -361,6 +364,43 @@ namespace CSCZJ.Services.Properties
 
             var properties = new PagedList<CSCZJ.Core.Domain.Properties.Property>(query, pageIndex, pageSize);
             return properties;
+        }
+
+        public IList<CSCZJ.Core.Domain.Properties.Property> GetAllPropertiesByDistance(double lat = 28.9721214555, double lng = 118.8898357316, string search = "", int pageIndex = 0, int pageSize = int.MaxValue)
+        {
+            var sql = "declare @currentLocation geography select @currentLocation = geography::STPointFromText('POINT (114.403479 30.556776)', 4326)select *,Location.STDistance(@currentLocation) as 距离 from CSStateProperty.dbo.Property where Location.STDistance(@currentLocation) < 1000000 order by Location.STDistance(@currentLocation)";
+            var query = _context.SqlQuery<CSCZJ.Core.Domain.Properties.Property>(sql);
+
+            return query.ToList();
+            //var query = from ps in _propertyRepository.TableNoTracking
+            //            where !ps.Deleted
+            //            select ps;
+
+            //_propertyReposito
+
+            //var panoramaScenes = query.ToList();
+
+            //var panoramaScenesOrderedResult = panoramaScenes
+            //    .OrderBy(ps => GeographyHelper.GetDistance(ps.PanoramaLocation.Lat, ps.PanoramaLocation.Lng, lat, lng))
+            //    .ThenByDescending(ps => ps.ProductionDate);
+
+            //var locationNameList = new List<string>();
+            //var resultPanomarScenesFilterResult = new List<PanoramaScene>();
+            //foreach (var scene in panoramaScenesOrderedResult)
+            //{
+            //    if (locationNameList.Contains(scene.PanoramaLocation.Name))
+            //    {
+            //        continue;
+            //    }
+            //    else
+            //    {
+            //        resultPanomarScenesFilterResult.Add(scene);
+            //        locationNameList.Add(scene.PanoramaLocation.Name);
+            //    }
+            //}
+
+            //var resultPanomarScenesResult = resultPanomarScenesFilterResult.Skip(pageIndex * pageSize).Take(pageSize);
+            //return resultPanomarScenesResult;
         }
 
         public CSCZJ.Core.Domain.Properties.Property GetPropertyById(int propertyId)

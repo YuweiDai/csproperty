@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using File = System.IO.File;
+using System.Drawing.Imaging;
 
 namespace CSCZJ.Services.Media
 {
@@ -688,6 +689,13 @@ namespace CSCZJ.Services.Media
 
             return InsertPicture(pictureBinary, mimeType, seoFilename, altAttribute, titleAttribute, isNew, validateBinary);
         }
+
+        public virtual Picture InsertPicture(string base64)
+        {
+            byte[] pictureBinary = Convert.FromBase64String(base64);
+            return InsertPicture(pictureBinary, "image/jpeg", "", "", "", true, false);
+        }
+
 
         /// <summary>
         /// Updates the picture
