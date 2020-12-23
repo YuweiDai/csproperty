@@ -1,0 +1,80 @@
+
+<div class="component-container">
+    <div nz-row>
+        <div nz-col nzSpan="24" class="breadcrumb-container">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    文件列表
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+  
+        <div nz-col nzSpan="24">
+         
+          <div class="card-container">
+
+
+            <nz-table #nzTable [nzData]="listOfDisplayData" nzTableLayout="fixed">
+                <thead>
+                  <tr>
+                    <th nzCustomFilter>
+                      文件名称
+                      <nz-filter-trigger [(nzVisible)]="namevisible" [nzActive]="searchnameValue.length > 0" [nzDropdownMenu]="namemenu">
+                        <i nz-icon nzType="search"></i>
+                      </nz-filter-trigger>
+                    </th>
+                    <th>文件类别</th>
+                    <th>相关资产
+                        <nz-filter-trigger [(nzVisible)]="visible" [nzActive]="searchValue.length > 0" [nzDropdownMenu]="menu">
+                            <i nz-icon nzType="search"></i>
+                        </nz-filter-trigger>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of nzTable.data">
+                    <td><a href="http://localhost:4200/assets/logo.png" download="">{{ data.name }}</a></td>
+                    <td>{{ data.type }}</td>
+                    <td>{{ data.address }}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+
+              <nz-dropdown-menu #namemenu="nzDropdownMenu">
+                <div class="ant-table-filter-dropdown">
+                  <div class="search-box">
+                    <input type="text" nz-input placeholder="搜索文件名称" [(ngModel)]="searchnameValue" />
+                    <button nz-button nzSize="small" nzType="primary" (click)="searchname()" class="search-button">
+                      确定
+                    </button>
+                    <button nz-button nzSize="small" (click)="resetname()">重置</button>
+                  </div>
+                </div>
+              </nz-dropdown-menu>
+
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <div class="ant-table-filter-dropdown">
+                  <div class="search-box">
+                    <input type="text" nz-input placeholder="搜索资产名称" [(ngModel)]="searchValue" />
+                    <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">
+                      确定
+                    </button>
+                    <button nz-button nzSize="small" (click)="reset()">重置</button>
+                  </div>
+                </div>
+              </nz-dropdown-menu>
+         
+            
+          </div>
+  
+  
+        </div>
+  
+  
+  
+    </div>
+  </div>
+
+
+
+

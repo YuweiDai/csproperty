@@ -372,7 +372,7 @@ namespace CSCZJ.API.Controllers
 
             var cz = new GovernmentUnit
             {
-                Name = "县财政局",
+                Name = "常山县城市投资运营有限责任公司",
                 GovernmentType = GovernmentType.Government,
                 Person = "联系人",
                 Tel = "0570-5062456"
@@ -385,7 +385,7 @@ namespace CSCZJ.API.Controllers
 
             var user = new AccountUser()
             {
-                UserName = "张三",
+                UserName = "城投公司",
                 AccountUserGuid = Guid.NewGuid(),
                 Active = true,
                 CreatedOn = DateTime.Now,
@@ -403,7 +403,7 @@ namespace CSCZJ.API.Controllers
 
            user = new AccountUser()
             {
-                UserName = "lisi",
+                UserName = "国资委",
                 AccountUserGuid = Guid.NewGuid(),
                 Active = true,
                 CreatedOn = DateTime.Now,
@@ -431,8 +431,8 @@ namespace CSCZJ.API.Controllers
         [Route("ImportJson")]
         public IHttpActionResult ImportJson()
         {
-            return Ok("已经更新");
-            string jsonfile = "D://数据//范围面.json";//JSON文件路径  
+           // return Ok("已经更新");
+            string jsonfile = "D://重新导入//extent.json";//JSON文件路径  
 
             using (System.IO.StreamReader file = System.IO.File.OpenText(jsonfile))
             {
@@ -442,29 +442,56 @@ namespace CSCZJ.API.Controllers
                     var properties = _propertyService.GetAllProperties();
                     foreach (var property in o["features"])
                     {
-                        foreach(var p in properties){
-                            if (property["attributes"]["_rootname"].ToString().Split('、').Contains(p.Number))
+                        var nameList = property["attributes"]["_rootname"].ToString().Split('、');
+                        foreach (var name in nameList)
+                        {
+                            if (name != null)
                             {
-                              //  var wkt = property["geometry"]["rings"].ToString().Replace("\r", "").Replace("\n", "").Replace("[", "(").Replace("]", ")");
-                                var graphy = DbGeography.FromText(property["attributes"]["WKT"].ToString());
-                                p.Extent = graphy;
-                                _propertyService.UpdateProperty(p);
+
+                                if (name.Contains("-"))
+                                {
+                                    for (int i = Convert.ToInt32(name.Split('-')[0]); i < Convert.ToInt32(name.Split('-')[1]); i++)
+                                    {
+                                        var p = _propertyService.GetPropertyById(i);
+                                        var graphy = DbGeography.FromText(property["attributes"]["wkt"].ToString());
+                                        p.Extent = graphy;
+                                        _propertyService.UpdateProperty(p);
+                                    }
+                                }
+                                else
+                                {
+                                    var p = _propertyService.GetPropertyById(Convert.ToInt32(name));
+                                    var graphy = DbGeography.FromText(property["attributes"]["wkt"].ToString());
+                                    p.Extent = graphy;
+                                    _propertyService.UpdateProperty(p);
+                                }
+
                             }
+
                         }
+                        //foreach(var p in properties){
+                        //    if (property["attributes"]["_rootname"].ToString().Split('、').Contains(p.Number))
+                        //    {
+                        //      //  var wkt = property["geometry"]["rings"].ToString().Replace("\r", "").Replace("\n", "").Replace("[", "(").Replace("]", ")");
+                        //        var graphy = DbGeography.FromText(property["attributes"]["wkt"].ToString());
+                        //        p.Extent = graphy;
+                        //        _propertyService.UpdateProperty(p);
+                        //    }
+                        //}
 
                     }
 
                 }
             }
-            return Ok();
+            return Ok("导入成功");
         }
 
         [HttpGet]
         [Route("ImportPointJson")]
         public IHttpActionResult ImportPointJson()
         {
-            return Ok("已经更新");
-            string jsonfile = "D://数据//中心点.json";//JSON文件路径  
+           // return Ok("已经更新");
+            string jsonfile = "D://重新导入//pt1.json";//JSON文件路径  
 
             using (System.IO.StreamReader file = System.IO.File.OpenText(jsonfile))
             {
@@ -474,22 +501,46 @@ namespace CSCZJ.API.Controllers
                     var properties = _propertyService.GetAllProperties();
                     foreach (var property in o["features"])
                     {
-                        foreach (var p in properties)
-                        {
-                            if (property["attributes"]["_rootname"].ToString().Split('、').Contains(p.Number))
-                            {
-                              //  var wkt = property["geometry"]["rings"].ToString().Replace("\r", "").Replace("\n", "").Replace("[", "(").Replace("]", ")");
-                                var graphy = DbGeography.FromText(property["attributes"]["wkt"].ToString());
-                                p.Location = graphy;
-                                _propertyService.UpdateProperty(p);
+                        var nameList = property["attributes"]["_rootname"].ToString().Split('、');
+                        foreach (var name in nameList) {
+                            if (name != null) {
+
+                                if (name.Contains("-")) {
+                                    for (int i = Convert.ToInt32(name.Split('-')[0]); i < Convert.ToInt32(name.Split('-')[1]); i++)
+                                    {
+                                        var p = _propertyService.GetPropertyById(i);
+                                        var graphy = DbGeography.FromText(property["attributes"]["wkt"].ToString());
+                                        p.Location = graphy;
+                                        _propertyService.UpdateProperty(p);
+                                    }
+                                }
+                                else {
+                                    var p = _propertyService.GetPropertyById(Convert.ToInt32(name));
+                                    var graphy = DbGeography.FromText(property["attributes"]["wkt"].ToString());
+                                    p.Location = graphy;
+                                    _propertyService.UpdateProperty(p);
+                                }
+                             
                             }
+                          
                         }
+
+                        //foreach (var p in properties)
+                        //{
+                        //    if (property["attributes"]["_rootname"].ToString().Split('、').Contains(p.Number))
+                        //    {
+                        //      //  var wkt = property["geometry"]["rings"].ToString().Replace("\r", "").Replace("\n", "").Replace("[", "(").Replace("]", ")");
+                        //        var graphy = DbGeography.FromText(property["attributes"]["wkt"].ToString());
+                        //        p.Location = graphy;
+                        //        _propertyService.UpdateProperty(p);
+                        //    }
+                        //}
 
                     }
 
                 }
             }
-            return Ok();
+            return Ok("导入成功");
         }
 
 
@@ -570,8 +621,8 @@ namespace CSCZJ.API.Controllers
             //var result = ReadXlsFile(filePath);
 
 
-            var filePath = @"D://数据//资产表精简2.xls";
-            var imageFilePath = @"D://数据//";
+            var filePath = @"D://重新导入//资产导入.xls";
+            var imageFilePath = @"D://重新导入//";
 
 
             string strConn = "Provider=Microsoft.Jet.OLEDB.4.0;" + "Data Source=" + filePath + ";" + "Extended Properties=Excel 8.0;";
@@ -594,9 +645,19 @@ namespace CSCZJ.API.Controllers
                 var row = table.Rows[i];
                 var p = new Property();
                 p.Number = row[0].ToString();
+                p.PropertyNumber = row[1].ToString();
                 p.Name = row[2].ToString();
                 #region 资产类别
                 switch (row[3].ToString()) {
+                    case "安置房":
+                        p.PropertyType = PropertyType.House;
+                        break;
+                    case "纯土地":
+                        p.PropertyType = PropertyType.Land;
+                        break;
+                    case "农民迁建宅基地":
+                        p.PropertyType = PropertyType.ZJD;
+                        break;
                     case "非转经（财政局）":
                         p.PropertyType = PropertyType.CZJ;
                         break;
@@ -800,14 +861,14 @@ namespace CSCZJ.API.Controllers
                         break;
                 }
                 #endregion
-                p.GetedDate = (row[9] == null) ? Convert.ToDateTime(row[9]) : DateTime.Now;
+                p.GetedDate = (row[9].ToString() == "") ? DateTime.Now : Convert.ToDateTime(row[9]);
                 p.UsedPeople = row[10].ToString();
                 if (p.Government == null) {
                   //  var gs = _governmentService.GetAllGeoGovernmentUnits();
                     var g = _governmentService.GetGovernmentUnitByName("常山县城市投资运营有限责任公司");
                     p.Government = g;
                 }
-                p.LandArea = (row[12].ToString() == "") ? 0 : Convert.ToDouble(row[12].ToString()); 
+                p.ConstructArea = (row[12].ToString() == "") ? 0 : Convert.ToDouble(row[12].ToString()); 
 
                 p.LandArea = (row[13].ToString() == "") ? 0 : Convert.ToDouble(row[13].ToString()); 
                 #region 使用现状
@@ -862,21 +923,21 @@ namespace CSCZJ.API.Controllers
                 p.IsMortgage = (row[16].ToString() == "是") ? true : false;
                 p.Description = row[19].ToString();
                 #region 资产封面导入
-                if (row[17].ToString() != "")
+                if (row[18].ToString() != "")
                 {
                     var filepath = "";
-                    if (Directory.Exists(imageFilePath + row[17].ToString()))
+                    if (Directory.Exists(imageFilePath + row[18].ToString()))
                     {
-                        filepath = imageFilePath + row[17].ToString();
+                        filepath = imageFilePath + row[18].ToString();
                     }
                     else {
-                        var fileArr = (imageFilePath + row[17].ToString()).Split(new string[] { "文件夹" }, StringSplitOptions.None);
+                        var fileArr = (imageFilePath + row[18].ToString()).Split(new string[] { "文件夹" }, StringSplitOptions.None);
                         filepath = fileArr[0] + "文件夹 " + fileArr[1];
                     }
                 DirectoryInfo dir = new DirectoryInfo(filepath);
                 FileInfo[] fileInfo = dir.GetFiles();
                 var index = 0;
-              
+
                     foreach (FileInfo item in fileInfo)
                     {
 
@@ -907,22 +968,22 @@ namespace CSCZJ.API.Controllers
                 #endregion
 
                 //其余照片
-                if (row[18].ToString() !="")
+                if (row[17].ToString() !="")
                 {
                     var filepath = "";
-                    if (Directory.Exists(imageFilePath + row[18].ToString()))
+                    if (Directory.Exists(imageFilePath + row[17].ToString()))
                     {
-                        filepath = imageFilePath + row[18].ToString();
+                        filepath = imageFilePath + row[17].ToString();
                     }
                     else
                     {
-                        var fileArr = (imageFilePath + row[18].ToString()).Split(new string[] { "文件夹" }, StringSplitOptions.None);
+                        var fileArr = (imageFilePath + row[17].ToString()).Split(new string[] { "文件夹" }, StringSplitOptions.None);
                         filepath = fileArr[0] + "文件夹 " + fileArr[1];
                     }
                 var pictures = new List<Picture>();
                 DirectoryInfo dir1 = new DirectoryInfo(filepath);
                 FileInfo[] fileInfo1 = dir1.GetFiles();
-              
+
                     foreach (FileInfo item in fileInfo1)
                     {
                         if (item != null)
@@ -956,7 +1017,10 @@ namespace CSCZJ.API.Controllers
                     }
 
                 }
-               
+
+                //账面价值 
+                p.Price = (row[20].ToString() == "") ? 0:Convert.ToDouble(row[20].ToString()) ;
+
 
                 _propertyService.InsertProperty(p);
 
@@ -1125,7 +1189,7 @@ namespace CSCZJ.API.Controllers
         [Route("ImportRent")]
         public IHttpActionResult ImportRent() {
 
-            var filePath = @"D:\数据\资产表精简1.xls";
+            var filePath = @"D:\数据\资产表精简.xls";
             var imageFilePath = @"D:\数据\";
 
 
@@ -1220,7 +1284,7 @@ namespace CSCZJ.API.Controllers
         [HttpGet]
         [Route("UpdateRent")]
         public IHttpActionResult UpdateRent() {
-            var filePath = @"D:\数据\资产表精简1.xls";
+            var filePath = @"D:\数据\资产表精简.xls";
             
 
             string strConn = "Provider=Microsoft.Jet.OLEDB.4.0;" + "Data Source=" + filePath + ";" + "Extended Properties=Excel 8.0;";
@@ -1241,7 +1305,8 @@ namespace CSCZJ.API.Controllers
                 var row = table.Rows[i];
                 foreach(var rent in rents){
                     if (row[2].ToString() == rent.Name && row[2].ToString() != "")
-                    { 
+                    {
+                        rent.Title = row[1].ToString();
                         var rentTime = row[3].ToString().Split('.');
                         rent.RentTime = new DateTime(Convert.ToInt32( rentTime[0]),Convert.ToInt32( rentTime[1]),Convert.ToInt32( rentTime[2]));
                         var backTime = row[4].ToString().Split('.');

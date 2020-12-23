@@ -14,7 +14,7 @@ import { PropertyOffComponent } from './properties/property-off/property-off.com
 import { PropertyExportComponent } from './properties/property-export/property-export.component';
 import { PropertyRentlistComponent } from './properties/property-rentlist/property-rentlist.component';
 import { PropertyPatrollistComponent } from './properties/property-patrollist/property-patrollist.component';
-
+import { PropertyFilelistComponent } from './properties/property-filelist/property-filelist.component';
 import { AuthGuard } from "../../services/auth-guard.service";
 
 const adminRoutes: Routes = [
@@ -48,6 +48,10 @@ const adminRoutes: Routes = [
                       path: 'patrollist',
                       component: PropertyPatrollistComponent
                   },
+                  {
+                    path: 'filelist',
+                    component: PropertyFilelistComponent
+                  },     
                   {
                       path: 'rent',
                       component: PropertyRentComponent

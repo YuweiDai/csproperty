@@ -57,7 +57,7 @@ namespace CSCZJ.API.Controllers
 
             var properties = _propertyService.GetAllProperties(governmentIds, false);
             var constructProperties = properties.Where(p => p.PropertyType == PropertyType.House);
-            var constructLandProperties = properties.Where(p => p.PropertyType == PropertyType.LandUnderHouse);
+            var constructLandProperties = properties.Where(p => p.PropertyType == PropertyType.ZJD);
             var landProperties = properties.Where(p => p.PropertyType == PropertyType.Land);
 
             var response = new OverviewStatistics();

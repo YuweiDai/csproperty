@@ -17,6 +17,7 @@ import { PropertyOffComponent } from './properties/property-off/property-off.com
 import { PropertyPatrollistComponent } from './properties/property-patrollist/property-patrollist.component';
 import { PropertyRentComponent } from './properties/property-rent/property-rent.component';
 import { PropertyRentlistComponent } from './properties/property-rentlist/property-rentlist.component';
+import { PropertyFilelistComponent } from './properties/property-filelist/property-filelist.component';
 import { OverviewComponent } from './statistics/overview/overview.component';
 import { AccountListComponent } from './systemmanager/account-list/account-list.component';
 
@@ -86,7 +87,7 @@ import 'leaflet.markercluster';
 
 
 @NgModule({
-  declarations: [AdminCenterComponent, LeftmenuComponent, UiTableComponent, FooterComponent, HeaderComponent, MapHomeComponent, PropertyCenterComponent, PropertyCreateComponent, PropertyDetailComponent, PropertyExportComponent, PropertyListComponent, PropertyOffComponent, PropertyPatrollistComponent, PropertyRentComponent, PropertyRentlistComponent, OverviewComponent, AccountListComponent],
+  declarations: [AdminCenterComponent, LeftmenuComponent, UiTableComponent, FooterComponent, HeaderComponent, MapHomeComponent, PropertyCenterComponent, PropertyCreateComponent, PropertyDetailComponent, PropertyExportComponent, PropertyListComponent, PropertyOffComponent, PropertyPatrollistComponent, PropertyRentComponent, PropertyRentlistComponent, OverviewComponent, AccountListComponent, PropertyFilelistComponent],
   imports: [
     NgxEchartsModule.forRoot({
       /**

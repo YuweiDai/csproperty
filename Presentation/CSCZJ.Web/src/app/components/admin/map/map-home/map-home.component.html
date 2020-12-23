@@ -50,11 +50,8 @@
       高级搜索
     </button>
     <ng-template #contentTemplate>
-      <p>资产单位</p>
-      <nz-checkbox-group [(ngModel)]="propertyGoverment"></nz-checkbox-group><br>
-      <nz-divider></nz-divider>
       <p>资产类别</p>
-      <nz-checkbox-group [(ngModel)]="propertyType"></nz-checkbox-group><br>
+      <input nz-input placeholder="输入资产类别..." [(ngModel)]="propertyType" (input)="changeKey($event.target?.value)" /><br> 
       <nz-divider></nz-divider>
       <p>所属乡镇</p>
       <nz-checkbox-group [(ngModel)]="regionType"></nz-checkbox-group><br>
@@ -66,9 +63,6 @@
       <nz-checkbox-group [(ngModel)]="propertyRights"></nz-checkbox-group><br>
       <nz-divider></nz-divider>
   
-      <p>建筑面积</p>
-      <nz-checkbox-group [(ngModel)]="area"></nz-checkbox-group><br>
-      <nz-divider></nz-divider>
   
       <button nz-button [nzType]="'danger'" (click)='Close()'>关闭</button>
       <button nz-button [nzType]="'default'" (click)='Reset()'>重置</button>

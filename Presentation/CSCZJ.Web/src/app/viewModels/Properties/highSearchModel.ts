@@ -1,11 +1,18 @@
 export class HighSearchProperty{
+    TMJD:boolean;
+    ZGJD:boolean;
+    BSZ:boolean;
+    FCZ:boolean;
+    ZXZ:boolean;
+    QCZ:boolean;
+    DAX:boolean;
+    HJX:boolean;
+    QSZ:boolean;
+    JCJD:boolean;
+    TGX:boolean;
 
-    House:boolean;
-    Land:boolean;
-    TMZ:boolean;
-    ZSZ:boolean;
-    HBZ:boolean;
-    SBZ:boolean;
+
+
     ZY:boolean;
     CC:boolean;
     XZ:boolean;
@@ -14,11 +21,14 @@ export class HighSearchProperty{
     isHouse:boolean;
     isLand:boolean;
     None:boolean;
-    One:boolean;
-    Two:boolean;
-    Three:boolean;
-    Four:boolean;
-    Five:boolean;
-   
+     
+    propertyType:string;
     
+}
+
+export class HighSearch{
+    propertyType:string;
+    regionType:string;
+    currentType:string;
+    propertyRights:string;
 }

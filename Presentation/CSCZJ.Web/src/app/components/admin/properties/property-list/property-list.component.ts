@@ -9,6 +9,7 @@ import { PropertyService } from 'src/app/services/propertyService';
 
 import { ExportModel } from '../../../../viewModels/Properties/property';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { HighSearchProperty } from '../../../../viewModels/Properties/highSearchModel';
 
 
 @Component({
@@ -27,20 +28,67 @@ export class PropertyListComponent implements OnInit {
   public contentHeight:number;
   data:any[];
   tableOption:TableOption;
+  highSearchProperty = new HighSearchProperty;
   public loading:boolean;
   
   httpResponse={
     responseType: "arraybuffer"
   }
 
+  propertyGoverment = [
+    { label: '常山县财政局', value: '1', checked: true },
+    { label: '常山县公路管理局', value: '2', checked: true },
+    { label: '常山县教育局', value: '3', checked: true }
+  ];
+  propertyType ="";
+  regionType = [
+    { label: '天马街道', value: 'TMJD', checked: false },
+    { label: '紫港街道', value: 'ZGJD', checked: false },
+    { label: '金川街道', value: 'JCJD', checked: false },
+    { label: '白石镇', value: 'BSZ', checked: false },
+    { label: '芳村镇', value: 'FCZ', checked: false },
+    { label: '招贤镇', value: 'ZXZ', checked: false },
+    { label: '球川镇', value: 'QCZ', checked: false },
+    { label: '东案乡', value: 'DAX', checked: false },
+    { label: '何家乡', value: 'HJX', checked: false },
+    { label: '青石镇', value: 'QSZ', checked: false },
+    { label: '同弓乡', value: 'TGX', checked: false }
+
+  ];
+  area = [
+    { label: '50以下', value: 'One', checked: false },
+    { label: '50-200', value: 'Two', checked: false },
+    { label: '200-500', value: 'Three', checked: false },
+    { label: '500-1000', value: 'Four', checked: false },
+    { label: '1000以上', value: 'Five', checked: false }
+  ];
+  currentType = [
+    { label: '自用', value: 'ZY', checked: false },
+    { label: '出租', value: 'CC', checked: false },
+    { label: '闲置', value: 'XZ', checked: false },
+    { label: '调配使用', value: 'SYDP', checked: false }
+  ];
+  propertyRights = [
+    { label: '两证齐全', value: 'All', checked: false },
+    { label: '有房产证', value: 'isHouse', checked: false },
+    { label: '有土地证', value: 'isLand', checked: false },
+    { label: '两证全无', value: 'None', checked: false }
+  ];
+
 
 
   public exportModel = new ExportModel();
   isVisible = false;
+  isHighVisible = false;
 
   showModal(): void {
     this.isVisible = true;
   }
+  highSearch():void{
+
+    this.isHighVisible=true;
+  }
+
 
   handleOk(): void {
 
@@ -123,10 +171,107 @@ export class PropertyListComponent implements OnInit {
     this.isVisible = false;
   }
 
+  handleHighOk():void{
+
+    this.highSearchProperty.TMJD = false;
+    this.highSearchProperty.ZGJD = false;
+    this.highSearchProperty.BSZ = false;
+    this.highSearchProperty.FCZ = false;
+
+    this.highSearchProperty.ZXZ = false;
+    this.highSearchProperty.QCZ = false;
+    this.highSearchProperty.DAX = false;
+    this.highSearchProperty.HJX = false;
+
+    this.highSearchProperty.QSZ = false;
+    this.highSearchProperty.JCJD = false;
+    this.highSearchProperty.TGX = false;
+
+
+    this.highSearchProperty.ZY = false;
+    this.highSearchProperty.CC = false;
+    this.highSearchProperty.XZ = false;
+    this.highSearchProperty.SYDP = false;
+    this.highSearchProperty.All = false;
+    this.highSearchProperty.isHouse = false;
+    this.highSearchProperty.isLand = false;
+    this.highSearchProperty.None = false;
+
+
+    this.highSearchProperty.propertyType= this.propertyType;
+
+    this.regionType.forEach(p => {
+      if (p.checked == true) {
+
+
+        for (var h in this.highSearchProperty) {
+          if (h == p.value) this.highSearchProperty[h] = true;
+        }
+
+      }
+    });
+
+    this.area.forEach(p => {
+      if (p.checked == true) {
+
+
+        for (var h in this.highSearchProperty) {
+          if (h == p.value) this.highSearchProperty[h] = true;
+        }
+
+      }
+    });
+    this.currentType.forEach(p => {
+      if (p.checked == true) {
+
+
+        for (var h in this.highSearchProperty) {
+          if (h == p.value) this.highSearchProperty[h] = true;
+        }
+
+      }
+    });
+
+    this.propertyRights.forEach(p => {
+      if (p.checked == true) {
+        for (var h in this.highSearchProperty) {
+          if (h == p.value) this.highSearchProperty[h] = true;
+        }
+
+      }
+    });
+
+    this.propertyService.getHighSearchInTable(this.highSearchProperty).subscribe(response =>  {
+      var that=this;
+      setTimeout(function(){
+        that.loading=false;
+        if(response.data!=undefined && response.data!=null)
+        {
+          that.data=response.data;
+          that.tableOption.pageSize=response.paging;
+        }      
+      },200);
+
+      that.isHighVisible=false;
+
+    })
+   
+
+  }
+
   handleCancel(): void {
     console.log('Button cancel clicked!');
     this.isVisible = false;
   }
+
+  handleHighCancel():void{
+    this.isHighVisible=false;
+  }
+
+  onInput(value: string): void {
+    this.propertyType=value;
+    console.log(this.propertyType);
+  };
 
   allChecked = true;
   Unitindeterminate = true;

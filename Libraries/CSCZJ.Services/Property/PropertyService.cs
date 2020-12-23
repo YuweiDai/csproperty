@@ -13,6 +13,7 @@ using CSCZJ.Core.Domain.Properties;
 using System.Data.Entity.Spatial;
 using System.Reflection;
 using System.Collections;
+using System.ComponentModel;
 
 namespace CSCZJ.Services.Properties
 {
@@ -950,117 +951,119 @@ namespace CSCZJ.Services.Properties
           //  throw new NotImplementedException();
         }
 
-        public IList<Core.Domain.Properties.Property> GetHighSearchProperties(ArrayList properyTypeList, IList<int> regionList, ArrayList areaList, IList<int> currentList, ArrayList rightList)
+        public IList<Core.Domain.Properties.Property> GetHighSearchProperties(string properyType, IList<int> regionList, IList<int> currentList, ArrayList rightList)
         {
             var query = _propertyRepository.Table.AsNoTracking().AsQueryable();
 
             Expression<Func<CSCZJ.Core.Domain.Properties.Property, bool>> expression = p => !p.Deleted;
+
+            if (properyType != "") expression = expression.And(p => p.PropertyType.GetEnumDescription().Contains(properyType));
             #region 资产类别和建筑面积土地面积
 
-            if (properyTypeList.Count != 1)
-            {
-                if (areaList.Count >1)
-                {
-                    int min = 0, max = 10000000;
-                        min = Convert.ToInt32(areaList[0]);
-                        max = Convert.ToInt32(areaList[areaList.Count - 1]);
-                    if (min == 49 && max != 1001)
-                    {
-                        expression = expression.And(p => p.ConstructArea <= max);
-                        expression = expression.Or(p => p.LandArea <= max);
-                    }
-                    else if (max == 1001 && min != 49)
-                    {
-                        expression = expression.And(p => p.ConstructArea >= min);
-                        expression = expression.Or(p => p.LandArea >= min);
-                    }
-                    else if (min != 49 && max != 1001) {
-                        expression = expression.And(p => p.ConstructArea >= min && p.ConstructArea <= max);
-                        expression = expression.Or(p => p.LandArea >= min && p.LandArea <= max);
-                    } 
-                }
+            //if (properyTypeList.Count != 1)
+            //{
+            //    if (areaList.Count >1)
+            //    {
+            //        int min = 0, max = 10000000;
+            //            min = Convert.ToInt32(areaList[0]);
+            //            max = Convert.ToInt32(areaList[areaList.Count - 1]);
+            //        if (min == 49 && max != 1001)
+            //        {
+            //            expression = expression.And(p => p.ConstructArea <= max);
+            //            expression = expression.Or(p => p.LandArea <= max);
+            //        }
+            //        else if (max == 1001 && min != 49)
+            //        {
+            //            expression = expression.And(p => p.ConstructArea >= min);
+            //            expression = expression.Or(p => p.LandArea >= min);
+            //        }
+            //        else if (min != 49 && max != 1001) {
+            //            expression = expression.And(p => p.ConstructArea >= min && p.ConstructArea <= max);
+            //            expression = expression.Or(p => p.LandArea >= min && p.LandArea <= max);
+            //        } 
+            //    }
 
-                else if (areaList.Count == 1) {
-                    switch ((int)areaList[0]) {
-                        case 49:
-                            expression = expression.And(p => p.ConstructArea <50);
-                            expression = expression.Or(p => p.LandArea < 50);
-                            break;
-                        case 1001:
-                            expression = expression.And(p => p.ConstructArea >1000);
-                            expression = expression.Or(p => p.LandArea > 1000);
-                            break;
-                    }               
-                }
+            //    else if (areaList.Count == 1) {
+            //        switch ((int)areaList[0]) {
+            //            case 49:
+            //                expression = expression.And(p => p.ConstructArea <50);
+            //                expression = expression.Or(p => p.LandArea < 50);
+            //                break;
+            //            case 1001:
+            //                expression = expression.And(p => p.ConstructArea >1000);
+            //                expression = expression.Or(p => p.LandArea > 1000);
+            //                break;
+            //        }               
+            //    }
 
 
-            }
-            else  if(properyTypeList.Count==1){
+            //}
+            //else  if(properyTypeList.Count==1){
 
-                if (properyTypeList.Contains(0)) {
+            //    if (properyTypeList.Contains(0)) {
 
-                    if (areaList.Count > 1)
-                    {                      
-                        int min = 0, max = 10000000;
-                            min =Convert.ToInt32( areaList[0]);
-                            max = Convert.ToInt32( areaList[areaList.Count - 1]);
-                        if (min == 49 &&max!=1001) expression = expression.And(p => p.ConstructArea <= max);
-                        else if(max==1001&&min!=49) expression = expression.And(p => p.ConstructArea >=min);
-                        else if(min!=49&&max!=1001) expression = expression.And(p => p.ConstructArea >= min&&p.ConstructArea<=max);
-                    }
+            //        if (areaList.Count > 1)
+            //        {                      
+            //            int min = 0, max = 10000000;
+            //                min =Convert.ToInt32( areaList[0]);
+            //                max = Convert.ToInt32( areaList[areaList.Count - 1]);
+            //            if (min == 49 &&max!=1001) expression = expression.And(p => p.ConstructArea <= max);
+            //            else if(max==1001&&min!=49) expression = expression.And(p => p.ConstructArea >=min);
+            //            else if(min!=49&&max!=1001) expression = expression.And(p => p.ConstructArea >= min&&p.ConstructArea<=max);
+            //        }
 
-                    else if (areaList.Count == 1)
-                    {
-                        switch ((int)areaList[0])
-                        {
-                            case 49:
-                                expression = expression.And(p => p.ConstructArea < 50);
-                              //  expression = expression.And(p => p.PropertyType == PropertyType.House);
-                                break;
-                            case 1001:
-                                expression = expression.And(p => p.ConstructArea >= 1000);
-                             //   expression = expression.And(p => p.PropertyType == PropertyType.House);
-                                break;
-                        }
-                    }
-                  //  expression = expression.And(p => p.PropertyType == PropertyType.House);
-                }
+            //        else if (areaList.Count == 1)
+            //        {
+            //            switch ((int)areaList[0])
+            //            {
+            //                case 49:
+            //                    expression = expression.And(p => p.ConstructArea < 50);
+            //                  //  expression = expression.And(p => p.PropertyType == PropertyType.House);
+            //                    break;
+            //                case 1001:
+            //                    expression = expression.And(p => p.ConstructArea >= 1000);
+            //                 //   expression = expression.And(p => p.PropertyType == PropertyType.House);
+            //                    break;
+            //            }
+            //        }
+            //      //  expression = expression.And(p => p.PropertyType == PropertyType.House);
+            //    }
 
-                if (properyTypeList.Contains(1))
-                {
+            //    if (properyTypeList.Contains(1))
+            //    {
 
-                    if (areaList.Count > 1)
-                    {
-                            int min = 0, max = 10000000;
-                            min = Convert.ToInt32(areaList[0]);
-                            max = Convert.ToInt32(areaList[areaList.Count - 1]);
+            //        if (areaList.Count > 1)
+            //        {
+            //                int min = 0, max = 10000000;
+            //                min = Convert.ToInt32(areaList[0]);
+            //                max = Convert.ToInt32(areaList[areaList.Count - 1]);
 
-                        if (min == 49 && max != 1001) expression = expression.And(p => p.LandArea <= max);
-                        else if (max == 1001 && min != 49) expression = expression.And(p => p.LandArea >= min);
-                        else if (min != 49 && max != 1001) expression = expression.And(p => p.LandArea >= min && p.ConstructArea <= max);
-                    }
+            //            if (min == 49 && max != 1001) expression = expression.And(p => p.LandArea <= max);
+            //            else if (max == 1001 && min != 49) expression = expression.And(p => p.LandArea >= min);
+            //            else if (min != 49 && max != 1001) expression = expression.And(p => p.LandArea >= min && p.ConstructArea <= max);
+            //        }
 
-                    else if (areaList.Count == 1)
-                    {
-                        switch ((int)areaList[0])
-                        {
-                            case 50:
-                                expression = expression.And(p => p.LandArea <= 50);
-                            //    expression = expression.And(p => p.PropertyType == PropertyType.Land);
-                                break;
-                            case 1001:
-                                expression = expression.And(p => p.LandArea >= 1000);
-                           //     expression = expression.And(p => p.PropertyType == PropertyType.Land);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                      //  expression = expression.And(p => p.PropertyType == PropertyType.Land);
-                    }
-                }
+            //        else if (areaList.Count == 1)
+            //        {
+            //            switch ((int)areaList[0])
+            //            {
+            //                case 50:
+            //                    expression = expression.And(p => p.LandArea <= 50);
+            //                //    expression = expression.And(p => p.PropertyType == PropertyType.Land);
+            //                    break;
+            //                case 1001:
+            //                    expression = expression.And(p => p.LandArea >= 1000);
+            //               //     expression = expression.And(p => p.PropertyType == PropertyType.Land);
+            //                    break;
+            //            }
+            //        }
+            //        else
+            //        {
+            //          //  expression = expression.And(p => p.PropertyType == PropertyType.Land);
+            //        }
+            //    }
 
-            }
+            //}
             #endregion
 
             if (regionList.Count != 0)  expression = expression.And(p => regionList.Contains((int)p.Region));
@@ -1078,5 +1081,33 @@ namespace CSCZJ.Services.Properties
 
             return query.ToList();
         }
+
+    
+
+
     }
+}
+
+public static class A {
+
+    public static string GetEnumDescription(this Enum enumValue)
+    {
+        try
+        {
+            Type type = enumValue.GetType();
+            MemberInfo[] memInfo = type.GetMember(enumValue.ToString());
+            if (null != memInfo && memInfo.Length > 0)
+            {
+                object[] attrs = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+                if (null != attrs && attrs.Length > 0)
+                    return ((DescriptionAttribute)attrs[0]).Description;
+            }
+            return enumValue.ToString();
+        }
+        catch (Exception)
+        {
+            return "Unknown";
+        }
+    }
+
 }

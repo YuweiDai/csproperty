@@ -10,6 +10,7 @@ import { PropertyOffComponent } from './property-off/property-off.component';
 import { PropertyExportComponent } from './property-export/property-export.component';
 import { PropertyRentlistComponent } from './property-rentlist/property-rentlist.component';
 import { PropertyPatrollistComponent } from './property-patrollist/property-patrollist.component';
+import { PropertyFilelistComponent } from './property-filelist/property-filelist.component';
 
 const propertyCenterRoutes: Routes = [
   {
@@ -43,6 +44,10 @@ const propertyCenterRoutes: Routes = [
       {
         path: 'patrollist',
         component: PropertyPatrollistComponent
+      },     
+      {
+        path: 'filelist',
+        component: PropertyFilelistComponent
       },      
       {
         path: ':id',

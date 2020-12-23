@@ -28,6 +28,7 @@ using System.Web.Http;
 using System.Collections;
 using CSCZJ.API.Models.Statistics;
 using CSCZJ.Services.Authentication;
+using System.ComponentModel;
 
 namespace CSCZJ.API.Controllers
 {
@@ -99,7 +100,7 @@ namespace CSCZJ.API.Controllers
             _wechatLoginEventService = wechatLoginEventService;
         }
 
-        #region utility     
+        #region utility    
 
         /// <summary>
         /// 模型检查
@@ -2137,7 +2138,7 @@ namespace CSCZJ.API.Controllers
                     var pcrl = pcr.ToListModel();
 
                     pcrl.RentTime = pcr.RentTime.ToString("yyyy/MM/dd") + " - " + pcr.BackTime.ToString("yyyy/MM/dd");
-                    pcrl.PriceString = "";
+                    pcrl.PriceString = pcr.PriceString;
                     var priceList = pcr.PriceString.Split(';');
                     var index = 1;
                     var ysindex = 1;
@@ -4668,10 +4669,20 @@ namespace CSCZJ.API.Controllers
         public IList<int> GetRegionList(HighSearchModel highSearch)
         {
             var regionList = new List<int>();
-            if (highSearch.TMZ == true) regionList.Add(0);
-            if (highSearch.ZSZ == true) regionList.Add(1);
-            if (highSearch.HBZ == true) regionList.Add(2);
-            if (highSearch.SBZ == true) regionList.Add(3);
+            if (highSearch.TMJD == true) regionList.Add(0);
+            if (highSearch.ZGJD == true) regionList.Add(1);
+            if (highSearch.BSZ == true) regionList.Add(2);
+            if (highSearch.FCZ == true) regionList.Add(3);
+
+            if (highSearch.ZXZ == true) regionList.Add(4);
+            if (highSearch.QCZ == true) regionList.Add(5);
+            if (highSearch.DAX == true) regionList.Add(6);
+            if (highSearch.HJX == true) regionList.Add(7);
+
+            if (highSearch.QSZ == true) regionList.Add(8);
+            if (highSearch.JCJD == true) regionList.Add(9);
+            if (highSearch.TGX == true) regionList.Add(10);
+      
             return regionList;
         }
         public ArrayList GetAreaList(HighSearchModel highSearch)
@@ -4722,13 +4733,13 @@ namespace CSCZJ.API.Controllers
         public IHttpActionResult GetHighSearchProperties(HighSearchModel highSearch)
         {
 
-            var properyTypeList = GetPropertyTypeList(highSearch);
+            var properyTypeList = highSearch.PropertyType;
             var regionList = GetRegionList(highSearch);
             var areaList = GetAreaList(highSearch);
             var currentList = GetCurrentTypeList(highSearch);
             var rightList = GetRightList(highSearch);
 
-            var properties = _propertyService.GetHighSearchProperties(properyTypeList, regionList, areaList, currentList, rightList);
+            var properties = _propertyService.GetHighSearchProperties(properyTypeList, regionList, currentList, rightList);
 
 
 
@@ -4741,6 +4752,60 @@ namespace CSCZJ.API.Controllers
               return geoModel;
           });
 
+
+            return Ok(response);
+
+        }
+
+        [HttpPost]
+        [Route("highSearchInTable")]
+        public IHttpActionResult GetHighSearchInTable(HighSearchModel highSearch)
+        {
+
+            var properyType = highSearch.PropertyType;
+            var regionList = GetRegionList(highSearch);
+            var areaList = GetAreaList(highSearch);
+            var currentList = GetCurrentTypeList(highSearch);
+            var rightList = GetRightList(highSearch);
+
+            var properties = _propertyService.GetHighSearchProperties(properyType, regionList, currentList, rightList);
+
+            var time = 0;
+            var pageIndex = 1;
+            var pageSize = 10;
+
+            var response = new ListResponse<PropertyListModel>
+            {
+                Time = time,
+                Paging = new Paging
+                {
+                    PageIndex = pageIndex,
+                    PageSize = pageSize,
+                    Total = properties.Count,
+                    FilterCount =properties.Count,
+                },
+                Data = properties.Select(s =>
+                {
+                   
+                    var propertyModel = s.ToListModel();
+                    if (highSearch.PropertyType != "")
+                    {
+                        propertyModel.PropertyType.Contains(highSearch.PropertyType);
+                    }
+                    if (s.Off)
+                        propertyModel.Name = propertyModel.Name + "（已核销）";
+                    else if (!s.Published)
+                        propertyModel.Name = propertyModel.Name + "（未发布）";
+
+
+                    propertyModel.CanEditDelete = false;// PropertyCanEditDelete(s);
+
+                    return propertyModel;
+                })
+            };
+
+            //activity log
+            _accountUserActivityService.InsertActivity("GetpropertyList", "获取资产列表信息");
 
             return Ok(response);
 
@@ -5197,4 +5262,8 @@ namespace CSCZJ.API.Controllers
 
         #endregion
     }
+
+
+
+   
 }

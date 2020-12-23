@@ -56,6 +56,7 @@ export class MapHomeComponent implements OnInit {
   land: any;
   markers: any;
   panomarkers = new L.LayerGroup();
+  panolines=new L.LayerGroup();
   public wkt: any;
   extent: any;
   choosePropert: any;
@@ -104,17 +105,19 @@ export class MapHomeComponent implements OnInit {
     { label: '常山县公路管理局', value: '2', checked: true },
     { label: '常山县教育局', value: '3', checked: true }
   ];
-  propertyType = [
-    { label: '房产', value: 'House', checked: false },
-    { label: '土地', value: 'Land', checked: false }
-
-  ];
+  propertyType ="";
   regionType = [
-    { label: '天马镇', value: 'TMZ', checked: false },
-    { label: '招贤镇', value: 'ZSZ', checked: false },
-    { label: '辉埠镇', value: 'HBZ', checked: false },
-    { label: '球川镇', value: 'LQZ', checked: false },
-    { label: '宋畈乡', value: 'SBZ', checked: false }
+    { label: '天马街道', value: 'TMJD', checked: false },
+    { label: '紫港街道', value: 'ZGJD', checked: false },
+    { label: '金川街道', value: 'JCJD', checked: false },
+    { label: '白石镇', value: 'BSZ', checked: false },
+    { label: '芳村镇', value: 'FCZ', checked: false },
+    { label: '招贤镇', value: 'ZXZ', checked: false },
+    { label: '球川镇', value: 'QCZ', checked: false },
+    { label: '东案乡', value: 'DAX', checked: false },
+    { label: '何家乡', value: 'HJX', checked: false },
+    { label: '青石镇', value: 'QSZ', checked: false },
+    { label: '同弓乡', value: 'TGX', checked: false }
 
   ];
   area = [
@@ -136,6 +139,10 @@ export class MapHomeComponent implements OnInit {
     { label: '有土地证', value: 'isLand', checked: false },
     { label: '两证全无', value: 'None', checked: false }
   ];
+
+  changeKey(value: string):void{
+   this.propertyType=value;
+  }
 
 
   //输入框模糊搜索
@@ -359,12 +366,20 @@ export class MapHomeComponent implements OnInit {
     this.basicInfo = null;
     if (this.extent != null || this.extent != undefined) this.map.removeLayer(this.extent);
 
-    this.highSearchProperty.House = false;
-    this.highSearchProperty.Land = false;
-    this.highSearchProperty.TMZ = false;
-    this.highSearchProperty.ZSZ = false;
-    this.highSearchProperty.HBZ = false;
-    this.highSearchProperty.SBZ = false;
+    this.highSearchProperty.TMJD = false;
+    this.highSearchProperty.ZGJD = false;
+    this.highSearchProperty.BSZ = false;
+    this.highSearchProperty.FCZ = false;
+
+    this.highSearchProperty.ZXZ = false;
+    this.highSearchProperty.QCZ = false;
+    this.highSearchProperty.DAX = false;
+    this.highSearchProperty.HJX = false;
+
+    this.highSearchProperty.QSZ = false;
+    this.highSearchProperty.JCJD = false;
+    this.highSearchProperty.TGX = false;
+
     this.highSearchProperty.ZY = false;
     this.highSearchProperty.CC = false;
     this.highSearchProperty.XZ = false;
@@ -373,22 +388,9 @@ export class MapHomeComponent implements OnInit {
     this.highSearchProperty.isHouse = false;
     this.highSearchProperty.isLand = false;
     this.highSearchProperty.None = false;
-    this.highSearchProperty.One = false;
-    this.highSearchProperty.Two = false;
-    this.highSearchProperty.Three = false;
-    this.highSearchProperty.Four = false;
-    this.highSearchProperty.Five = false;
+    
+    this.highSearchProperty.propertyType=this.propertyType;
 
-    this.propertyType.forEach(p => {
-      if (p.checked == true) {
-
-
-        for (var h in this.highSearchProperty) {
-          if (h == p.value) this.highSearchProperty[h] = true;
-        }
-
-      }
-    });
 
     this.regionType.forEach(p => {
       if (p.checked == true) {
@@ -524,16 +526,17 @@ export class MapHomeComponent implements OnInit {
           var wkt = new Wkt.Wkt();
           wkt.read(element.attributes.wkt);
           var line = wkt.toObject(lineStyle);
-          line.addTo(this.map);
+          line.addTo(this.panolines);
         });
 
       })
 
       this.panomarkers.addTo(this.map);
+      this.panolines.addTo(this.map);
     }
     else {
       this.map.removeLayer(this.panomarkers);
-      this.map.removeLayer(this.panomarkers);
+      this.map.removeLayer(this.panolines);
 
     }
 
@@ -549,9 +552,7 @@ export class MapHomeComponent implements OnInit {
   }
 
   Reset() {
-    this.propertyType.forEach(e => {
-      e.checked = false;
-    });
+    this.propertyType="";
     this.regionType.forEach(e => {
       e.checked = false;
     });
@@ -564,11 +565,21 @@ export class MapHomeComponent implements OnInit {
     this.area.forEach(e => {
       e.checked = false;
     });
-    this.highSearchProperty.Land = false;
-    this.highSearchProperty.TMZ = false;
-    this.highSearchProperty.ZSZ = false;
-    this.highSearchProperty.HBZ = false;
-    this.highSearchProperty.SBZ = false;
+    this.highSearchProperty.TMJD = false;
+    this.highSearchProperty.ZGJD = false;
+    this.highSearchProperty.BSZ = false;
+    this.highSearchProperty.FCZ = false;
+
+    this.highSearchProperty.ZXZ = false;
+    this.highSearchProperty.QCZ = false;
+    this.highSearchProperty.DAX = false;
+    this.highSearchProperty.HJX = false;
+
+    this.highSearchProperty.QSZ = false;
+    this.highSearchProperty.JCJD = false;
+    this.highSearchProperty.TGX = false;
+
+
     this.highSearchProperty.ZY = false;
     this.highSearchProperty.CC = false;
     this.highSearchProperty.XZ = false;
@@ -577,12 +588,7 @@ export class MapHomeComponent implements OnInit {
     this.highSearchProperty.isHouse = false;
     this.highSearchProperty.isLand = false;
     this.highSearchProperty.None = false;
-    this.highSearchProperty.One = false;
-    this.highSearchProperty.Two = false;
-    this.highSearchProperty.Three = false;
-    this.highSearchProperty.Four = false;
-    this.highSearchProperty.Five = false;
-
+  
     this.searchProperties = [];
     this.showCollapse = false;
 

@@ -195,6 +195,15 @@ getOverViewInfo():Observable<OverViewModel> {
       );
 
   }
+   //获取表单高级搜索资产
+   getHighSearchInTable(highSearch: HighSearchProperty): Observable<ListResponse> {
+    return this.http.post<ListResponse>(this.apiUrl + "/highSearchInTable", highSearch)
+      .pipe(
+        tap(response => { }),
+        catchError(this.handleError('gethighSearchPropertiesInMap', {}))
+      );
+
+  }
 
 
   getPropertiesBySameNumberId(numberId:string,typeId:string,id:number): Observable<SameIdPropertyModel[]> {

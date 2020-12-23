@@ -8,6 +8,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { OverViewModel } from '../../../../viewModels/overview/OverViewModel';
 import { PropertyService } from '../../../../services/propertyService';
+import { ConfigService } from "../../../../services/configService";
 
 
 @Component({
@@ -27,8 +28,11 @@ export class OverviewComponent implements OnInit {
   showloading=false;
   isClick=false;
   overviewModel=new OverViewModel;
+  showRentCard:boolean;
 
-  constructor(private http: HttpClient,private notification: NzNotificationService,private router: Router,private propertyService: PropertyService) { }
+  constructor(private http: HttpClient,private notification: NzNotificationService,private router: Router,private propertyService: PropertyService,private configService: ConfigService) {    
+      this.isVisible=this.configService.showRentCard;  
+  }
 
   ngOnInit() {
 
@@ -386,15 +390,6 @@ this.http.get('../../../../assets/js/CS.json').subscribe(geoJson=>{
 
 })
 
-if(this.isClick==false){
-
-  setTimeout(() => {
-    this.isVisible=true;
-
-  },3000);
-}
-
-
 
   }
   
@@ -405,7 +400,7 @@ if(this.isClick==false){
       this.isOkLoading = false;
     }, 1000);
     this.router.navigate(['/admin/properties/rentlist'],{ queryParams: { id: 1 }});
-    this.isClick = true;
+    this.configService.showRentCard=false;
   }
 
   handleCancel(): void {

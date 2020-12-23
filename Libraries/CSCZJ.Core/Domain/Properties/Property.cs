@@ -46,6 +46,15 @@ namespace CSCZJ.Core.Domain.Properties
         public Region Region { get; set; }
 
         /// <summary>
+        /// 账面价值
+        /// </summary>
+        public double Price { get; set; }
+
+
+        public string PropertyNumber { get; set; }
+             
+
+        /// <summary>
         /// 获取方式
         /// </summary>
         public GetMode GetMode { get; set; }

@@ -21,6 +21,8 @@
                     <i nz-icon nzType="pay-circle"></i> 资产出租</a>
                 <a class="m-l-md" [routerLink]="['./off']">
                     <i nz-icon nzType="poweroff"></i> 资产核销</a>
+                <a class="m-l-md" (click)="highSearch()">
+                    <i nz-icon nzType="search"></i> 高级搜索</a>
                 <a class="m-l-md" (click)="showModal()">
                     <i nz-icon nzType="export"></i> 资产导出</a>
                    
@@ -50,6 +52,29 @@
                               </nz-checkbox-wrapper>
 
                         <!-- <nz-checkbox-group [(ngModel)]="Attributes" (ngModelChange)="updateAttributesChecked()"></nz-checkbox-group> -->
+            
+                      </nz-modal>
+
+
+                      <nz-modal [(nzVisible)]="isHighVisible" nzTitle="高级搜索" (nzOnCancel)="handleHighCancel()" (nzOnOk)="handleHighOk()">
+                        <div>
+                            
+                            <p>资产类别</p>
+                            <input nz-input placeholder="输入资产类别..." [(ngModel)]="propertyType" (input)="onInput($event.target?.value)" /><br>                         
+                            <nz-divider></nz-divider>
+                            <p>所属乡镇</p>
+                            <nz-checkbox-group [(ngModel)]="regionType"></nz-checkbox-group><br>
+                            <nz-divider></nz-divider>
+                            <p>使用现状</p>
+                            <nz-checkbox-group [(ngModel)]="currentType"></nz-checkbox-group><br>
+                            <nz-divider></nz-divider>
+                            <p>产权情况</p>
+                            <nz-checkbox-group [(ngModel)]="propertyRights"></nz-checkbox-group><br>
+                            <nz-divider></nz-divider>      
+                            
+                           
+                                                  
+                        </div>
             
                       </nz-modal>
 

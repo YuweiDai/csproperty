@@ -23,9 +23,9 @@ namespace CSCZJ.Core.Domain.Properties
          [Description("青石镇")]
          QSZ = 8,
          [Description("金川街道")]
-         JCJD = 8,
+         JCJD = 9,
          [Description("同弓乡")]
-         TGX = 8,
+         TGX = 10,
          [Description("其他")]
          Others = 99
     }

@@ -6,13 +6,19 @@ export class ConfigService{
     private apiUrl: string;
     private ddAPPId: string;
     private redirectUrl: string;
+    public showRentCard:boolean;
 
     constructor(){
         this.authKey = "authroziationData";
         this.apiUrl = "/api/";
         this.ddAPPId = "dingoayqnfibggoazv13rm";
+        this.showRentCard=true;
        // this.redirectUrl = "http://localhost:4200/passport/binding";
         //this.redirectUrl="http://localhost:8084/login"
+    }
+
+    getShowCard():boolean{
+      return this.showRentCard;
     }
 
     getApiUrl(): string {
